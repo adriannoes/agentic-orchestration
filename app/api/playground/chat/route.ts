@@ -1,5 +1,5 @@
 import { streamText, tool, convertToModelMessages, type UIMessage, stepCountIs } from "ai"
-import { z } from "zod/v4"
+import { z } from "zod"
 import { store } from "@/lib/store"
 
 export const maxDuration = 60
