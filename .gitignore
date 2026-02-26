@@ -16,8 +16,10 @@ yarn-debug.log*
 yarn-error.log*
 .pnpm-debug.log*
 
-# env files
-.env*
+# env files (keep .env.example if you add one)
+.env
+.env.*
+!.env.example
 
 # vercel
 .vercel
@@ -25,3 +27,28 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+# OS and editors
+.DS_Store
+Thumbs.db
+*.swp
+*.swo
+.idea/
+.vscode/
+
+# local docs / secrets (optional)
+SUPABASE_SETUP.md
+
+# turbo
+.turbo
+
+# coverage and misc
+coverage/
+*.log
+.npm
+
+# Playwright
+/test-results/
+/playwright-report/
+/blob-report/
+/playwright/.cache/
