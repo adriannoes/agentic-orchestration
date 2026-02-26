@@ -1,30 +1,47 @@
 # AgentKit
 
-*Automatically synced with your [v0.app](https://v0.app) deployments*
+Platform for building, configuring, and running AI agents with tool execution, workflows, and integrations.
 
-[![Deployed on Vercel](https://img.shields.io/badge/Deployed%20on-Vercel-black?style=for-the-badge&logo=vercel)](https://vercel.com/esadrianno-gmailcoms-projects/v0-agent-kit)
-[![Built with v0](https://img.shields.io/badge/Built%20with-v0.app-black?style=for-the-badge)](https://v0.app/chat/bDfMRYyb4PE)
+## What it does
 
-## Overview
+- **Agents & runs** — Manage agents and view execution history
+- **Workflow builder** — Visual editor for workflow orchestration
+- **Connectors** — Central registry for data and tool connections (OAuth, APIs, MCP)
+- **MCP** — Model Context Protocol server and tool management
+- **Marketplace** — Discover and install integrations
+- **Playground** — Chat interface to test agents and tools
+- **Templates** — Reusable workflow and agent templates
 
-This repository will stay in sync with your deployed chats on [v0.app](https://v0.app).
-Any changes you make to your deployed app will be automatically pushed to this repository from [v0.app](https://v0.app).
+## Tech stack
 
-## Deployment
+- **Runtime:** Next.js 16 (App Router), React 19, TypeScript
+- **Styling:** Tailwind CSS 4
+- **Backend / auth:** Supabase (PostgreSQL, Auth, Realtime)
+- **AI:** Vercel AI SDK (`ai`, `@ai-sdk/react`)
+- **UI:** Radix UI, shadcn-style components, Lucide icons
+- **Forms / validation:** React Hook Form, Zod
+- **Data:** SWR, Recharts
 
-Your project is live at:
+## Getting started
 
-**[https://vercel.com/esadrianno-gmailcoms-projects/v0-agent-kit](https://vercel.com/esadrianno-gmailcoms-projects/v0-agent-kit)**
+1. Install dependencies: `npm install`
+2. Copy environment variables (see below) and configure a `.env` file.
+3. Run development server: `npm run dev`
 
-## Build your app
+Required env vars for Supabase (auth and database):
 
-Continue building your app on:
+- `NEXT_PUBLIC_SUPABASE_URL`
+- `NEXT_PUBLIC_SUPABASE_ANON_KEY`
 
-**[https://v0.app/chat/bDfMRYyb4PE](https://v0.app/chat/bDfMRYyb4PE)**
+Use the `/setup` route after starting the app to validate the connection and run migrations if needed.
 
-## How It Works
+## Scripts
 
-1. Create and modify your project using [v0.app](https://v0.app)
-2. Deploy your chats from the v0 interface
-3. Changes are automatically pushed to this repository
-4. Vercel deploys the latest version from this repository
+- `npm run dev` — Development server
+- `npm run build` — Production build
+- `npm run start` — Production server
+- `npm run lint` — ESLint
+- `npm run test` — Unit tests (Vitest, watch)
+- `npm run test:run` — Unit tests (single run)
+- `npm run test:e2e` — E2E tests (Playwright)
+- `npm run test:e2e:ui` — E2E tests with Playwright UI
