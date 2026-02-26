@@ -1,3 +1,4 @@
+import { Suspense } from "react"
 import { ConnectorRegistry } from "@/components/connector-registry"
 
 export default function ConnectorsPage() {
@@ -8,8 +9,9 @@ export default function ConnectorsPage() {
           <h1 className="text-3xl font-bold tracking-tight">Connector Registry</h1>
           <p className="text-muted-foreground mt-2">Manage all your data and tool connections in one place</p>
         </div>
-
-        <ConnectorRegistry />
+        <Suspense fallback={<div className="flex min-h-[200px] items-center justify-center text-muted-foreground">Loading…</div>}>
+          <ConnectorRegistry />
+        </Suspense>
       </div>
     </div>
   )
