@@ -2,15 +2,17 @@ import { type NextRequest, NextResponse } from "next/server"
 import { workflowStore } from "@/lib/workflow-store"
 import { versionStore } from "@/lib/version-store"
 
-export async function GET(request: NextRequest, { params }: { params: { id: string } }) {
-  const versions = versionStore.getVersions(params.id)
+export async function GET(request: NextRequest, { params }: { params: Promise<{ id: string }> }) {
+  const { id } = await params
+  const versions = versionStore.getVersions(id)
   return NextResponse.json(versions)
 }
 
-export async function POST(request: NextRequest, { params }: { params: { id: string } }) {
+export async function POST(request: NextRequest, { params }: { params: Promise<{ id: string }> }) {
   try {
+    const { id } = await params
     const { description } = await request.json()
-    const workflow = workflowStore.getWorkflow(params.id)
+    const workflow = workflowStore.getWorkflow(id)
 
     if (!workflow) {
       return NextResponse.json({ error: "Workflow not found" }, { status: 404 })
