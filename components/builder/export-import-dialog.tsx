@@ -6,10 +6,11 @@ import { Button } from "@/components/ui/button"
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog"
 import { Textarea } from "@/components/ui/textarea"
 import { useToast } from "@/hooks/use-toast"
+import type { Workflow } from "@/lib/workflow-types"
 
 interface ExportImportDialogProps {
   workflowId: string
-  onImportSuccess: () => void
+  onImportSuccess: (newWorkflow?: Workflow) => void
 }
 
 export function ExportImportDialog({ workflowId, onImportSuccess }: ExportImportDialogProps) {
@@ -42,10 +43,11 @@ export function ExportImportDialog({ workflowId, onImportSuccess }: ExportImport
     })
 
     if (response.ok) {
+      const newWorkflow = await response.json()
       toast({ title: "Workflow imported successfully" })
       setShowImport(false)
       setImportData("")
-      onImportSuccess()
+      onImportSuccess(newWorkflow)
     } else {
       toast({ title: "Failed to import workflow", variant: "destructive" })
     }
