@@ -1,25 +1,40 @@
 import { NextResponse } from "next/server"
-import { workflowStore } from "@/lib/workflow-store"
+import { withWorkspace } from "@/lib/api/with-workspace"
+import { updateWorkflowNode, deleteWorkflowNode } from "@/lib/db/workflows"
 
-export async function PATCH(request: Request, { params }: { params: Promise<{ id: string; nodeId: string }> }) {
+export async function PATCH(
+  request: Request,
+  { params }: { params: Promise<{ id: string; nodeId: string }> },
+) {
+  const result = await withWorkspace()
+  if (result.error) return result.error
+
   const { id, nodeId } = await params
   const updates = await request.json()
-  const node = workflowStore.updateNode(id, nodeId, updates)
 
-  if (!node) {
+  try {
+    const workflow = await updateWorkflowNode(id, nodeId, updates)
+    const node = workflow.nodes.find((n) => n.id === nodeId)
+    if (!node) return NextResponse.json({ error: "Node not found" }, { status: 404 })
+    return NextResponse.json(node)
+  } catch {
     return NextResponse.json({ error: "Node not found" }, { status: 404 })
   }
-
-  return NextResponse.json(node)
 }
 
-export async function DELETE(request: Request, { params }: { params: Promise<{ id: string; nodeId: string }> }) {
-  const { id, nodeId } = await params
-  const deleted = workflowStore.deleteNode(id, nodeId)
+export async function DELETE(
+  request: Request,
+  { params }: { params: Promise<{ id: string; nodeId: string }> },
+) {
+  const result = await withWorkspace()
+  if (result.error) return result.error
 
-  if (!deleted) {
+  const { id, nodeId } = await params
+
+  try {
+    await deleteWorkflowNode(id, nodeId)
+    return NextResponse.json({ success: true })
+  } catch {
     return NextResponse.json({ error: "Node not found" }, { status: 404 })
   }
-
-  return NextResponse.json({ success: true })
 }

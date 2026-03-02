@@ -1,19 +1,28 @@
 import { type NextRequest, NextResponse } from "next/server"
-import { workflowStore } from "@/lib/workflow-store"
-import { getClipboardManager } from "@/lib/clipboard-manager"
+import { withWorkspace } from "@/lib/api/with-workspace"
+import { getWorkflow } from "@/lib/db/workflows"
 
-export async function POST(request: NextRequest, { params }: { params: { id: string } }) {
-  const workflowId = params.id
+/**
+ * Copy selected nodes. Returns nodes in response for frontend to store in clipboard
+ * (serverless incompatible with server-side clipboard).
+ */
+export async function POST(request: NextRequest, { params }: { params: Promise<{ id: string }> }) {
+  const result = await withWorkspace()
+  if (result.error) return result.error
+
+  const { id: workflowId } = await params
   const { nodeIds } = await request.json()
 
-  const workflow = workflowStore.getWorkflow(workflowId)
+  const workflow = await getWorkflow(workflowId)
   if (!workflow) {
     return NextResponse.json({ error: "Workflow not found" }, { status: 404 })
   }
 
-  const nodesToCopy = workflow.nodes.filter((n) => nodeIds.includes(n.id))
-  const clipboardManager = getClipboardManager(workflowId)
-  clipboardManager.copy(nodesToCopy)
+  const nodeIdsSet = new Set((nodeIds as string[]) ?? [])
+  const nodes = workflow.nodes.filter((n) => nodeIdsSet.has(n.id))
+  const connections = workflow.connections.filter(
+    (c) => nodeIdsSet.has(c.sourceId) && nodeIdsSet.has(c.targetId),
+  )
 
-  return NextResponse.json({ success: true, count: nodesToCopy.length })
+  return NextResponse.json({ success: true, count: nodes.length, nodes, connections })
 }

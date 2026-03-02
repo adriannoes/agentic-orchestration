@@ -1,9 +1,13 @@
 import { NextResponse } from "next/server"
-import { workflowStore } from "@/lib/workflow-store"
+import { withWorkspace } from "@/lib/api/with-workspace"
+import { getWorkflow, updateWorkflow, deleteWorkflow } from "@/lib/db/workflows"
 
 export async function GET(request: Request, { params }: { params: Promise<{ id: string }> }) {
+  const result = await withWorkspace()
+  if (result.error) return result.error
+
   const { id } = await params
-  const workflow = workflowStore.getWorkflow(id)
+  const workflow = await getWorkflow(id)
 
   if (!workflow) {
     return NextResponse.json({ error: "Workflow not found" }, { status: 404 })
@@ -13,9 +17,12 @@ export async function GET(request: Request, { params }: { params: Promise<{ id: 
 }
 
 export async function PATCH(request: Request, { params }: { params: Promise<{ id: string }> }) {
+  const result = await withWorkspace()
+  if (result.error) return result.error
+
   const { id } = await params
   const updates = await request.json()
-  const workflow = workflowStore.updateWorkflow(id, updates)
+  const workflow = await updateWorkflow(id, updates)
 
   if (!workflow) {
     return NextResponse.json({ error: "Workflow not found" }, { status: 404 })
@@ -25,8 +32,11 @@ export async function PATCH(request: Request, { params }: { params: Promise<{ id
 }
 
 export async function DELETE(request: Request, { params }: { params: Promise<{ id: string }> }) {
+  const result = await withWorkspace()
+  if (result.error) return result.error
+
   const { id } = await params
-  const deleted = workflowStore.deleteWorkflow(id)
+  const deleted = await deleteWorkflow(id)
 
   if (!deleted) {
     return NextResponse.json({ error: "Workflow not found" }, { status: 404 })

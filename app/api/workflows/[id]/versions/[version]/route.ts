@@ -1,20 +1,29 @@
 import { type NextRequest, NextResponse } from "next/server"
+import { withWorkspace } from "@/lib/api/with-workspace"
 import { versionStore } from "@/lib/version-store"
 
-export async function GET(request: NextRequest, { params }: { params: { id: string; version: string } }) {
-  const versionNumber = Number.parseInt(params.version)
-  const version = versionStore.getVersion(params.id, versionNumber)
+export async function GET(request: NextRequest, { params }: { params: Promise<{ id: string; version: string }> }) {
+  const result = await withWorkspace()
+  if (result.error) return result.error
 
-  if (!version) {
+  const { id, version } = await params
+  const versionNumber = Number.parseInt(version)
+  const versionData = versionStore.getVersion(id, versionNumber)
+
+  if (!versionData) {
     return NextResponse.json({ error: "Version not found" }, { status: 404 })
   }
 
-  return NextResponse.json(version)
+  return NextResponse.json(versionData)
 }
 
-export async function DELETE(request: NextRequest, { params }: { params: { id: string; version: string } }) {
-  const versionNumber = Number.parseInt(params.version)
-  const success = versionStore.deleteVersion(params.id, versionNumber)
+export async function DELETE(request: NextRequest, { params }: { params: Promise<{ id: string; version: string }> }) {
+  const result = await withWorkspace()
+  if (result.error) return result.error
+
+  const { id, version } = await params
+  const versionNumber = Number.parseInt(version)
+  const success = versionStore.deleteVersion(id, versionNumber)
 
   if (!success) {
     return NextResponse.json({ error: "Version not found" }, { status: 404 })
@@ -23,11 +32,15 @@ export async function DELETE(request: NextRequest, { params }: { params: { id: s
   return NextResponse.json({ success: true })
 }
 
-export async function PATCH(request: NextRequest, { params }: { params: { id: string; version: string } }) {
+export async function PATCH(request: NextRequest, { params }: { params: Promise<{ id: string; version: string }> }) {
+  const result = await withWorkspace()
+  if (result.error) return result.error
+
   try {
+    const { id, version } = await params
     const { tag } = await request.json()
-    const versionNumber = Number.parseInt(params.version)
-    const success = versionStore.tagVersion(params.id, versionNumber, tag)
+    const versionNumber = Number.parseInt(version)
+    const success = versionStore.tagVersion(id, versionNumber, tag)
 
     if (!success) {
       return NextResponse.json({ error: "Version not found" }, { status: 404 })

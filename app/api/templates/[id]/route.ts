@@ -1,9 +1,11 @@
 import { type NextRequest, NextResponse } from "next/server"
 import { workflowTemplates } from "@/lib/workflow-templates"
-import { workflowStore } from "@/lib/workflow-store"
+import { withWorkspace } from "@/lib/api/with-workspace"
+import { createWorkflow } from "@/lib/db/workflows"
 
-export async function GET(request: NextRequest, { params }: { params: { id: string } }) {
-  const template = workflowTemplates.find((t) => t.id === params.id)
+export async function GET(request: NextRequest, { params }: { params: Promise<{ id: string }> }) {
+  const { id } = await params
+  const template = workflowTemplates.find((t) => t.id === id)
 
   if (!template) {
     return NextResponse.json({ error: "Template not found" }, { status: 404 })
@@ -12,16 +14,19 @@ export async function GET(request: NextRequest, { params }: { params: { id: stri
   return NextResponse.json(template)
 }
 
-export async function POST(request: NextRequest, { params }: { params: { id: string } }) {
+export async function POST(request: NextRequest, { params }: { params: Promise<{ id: string }> }) {
+  const result = await withWorkspace()
+  if (result.error) return result.error
+
   try {
+    const { id } = await params
     const { name } = await request.json()
-    const template = workflowTemplates.find((t) => t.id === params.id)
+    const template = workflowTemplates.find((t) => t.id === id)
 
     if (!template) {
       return NextResponse.json({ error: "Template not found" }, { status: 404 })
     }
 
-    // Create workflow from template
     const nodes = template.nodes.map((node, index) => ({
       ...node,
       id: `node-${index}`,
@@ -30,13 +35,11 @@ export async function POST(request: NextRequest, { params }: { params: { id: str
     const connections = template.connections.map((conn, index) => ({
       ...conn,
       id: `conn-${index}`,
-      sourceId: `node-${template.nodes.findIndex((n) => n === template.nodes[Number.parseInt(conn.sourceId.split("-")[1] || "0")])}`,
-      targetId: `node-${template.nodes.findIndex((n) => n === template.nodes[Number.parseInt(conn.targetId.split("-")[1] || "0")])}`,
     }))
 
-    const workflow = workflowStore.createWorkflow({
-      name: name || template.name,
-      description: template.description,
+    const workflow = await createWorkflow(result.workspace.id, {
+      name: name ?? template.name,
+      description: template.description ?? "",
       nodes,
       connections,
     })

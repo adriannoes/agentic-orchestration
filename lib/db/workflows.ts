@@ -1,5 +1,6 @@
 import { getSupabaseServerClient } from "@/lib/supabase/server"
 import type { Workflow, WorkflowNode, Connection } from "@/lib/workflow-types"
+import { mapWorkflowRow, mapWorkflowRows, type WorkflowRow } from "./workflow-mapper"
 
 export async function getWorkflows(workspaceId: string): Promise<Workflow[]> {
   const supabase = await getSupabaseServerClient()
@@ -10,15 +11,15 @@ export async function getWorkflows(workspaceId: string): Promise<Workflow[]> {
     .order("updated_at", { ascending: false })
 
   if (error) throw error
-  return data as Workflow[]
+  return mapWorkflowRows((data ?? []) as WorkflowRow[])
 }
 
 export async function getWorkflow(id: string): Promise<Workflow | null> {
   const supabase = await getSupabaseServerClient()
   const { data, error } = await supabase.from("workflows").select("*").eq("id", id).single()
 
-  if (error) return null
-  return data as Workflow
+  if (error || !data) return null
+  return mapWorkflowRow(data as WorkflowRow)
 }
 
 export async function createWorkflow(
@@ -39,25 +40,26 @@ export async function createWorkflow(
     .single()
 
   if (error) throw error
-  return data as Workflow
+  return mapWorkflowRow(data as WorkflowRow)
 }
 
 export async function updateWorkflow(id: string, updates: Partial<Workflow>): Promise<Workflow> {
   const supabase = await getSupabaseServerClient()
+  const payload: Record<string, unknown> = {}
+  if (updates.name !== undefined) payload.name = updates.name
+  if (updates.description !== undefined) payload.description = updates.description
+  if (updates.nodes !== undefined) payload.nodes = updates.nodes
+  if (updates.connections !== undefined) payload.connections = updates.connections
+
   const { data, error } = await supabase
     .from("workflows")
-    .update({
-      name: updates.name,
-      description: updates.description,
-      nodes: updates.nodes,
-      connections: updates.connections,
-    })
+    .update(payload)
     .eq("id", id)
     .select()
     .single()
 
   if (error) throw error
-  return data as Workflow
+  return mapWorkflowRow(data as WorkflowRow)
 }
 
 export async function deleteWorkflow(id: string): Promise<boolean> {

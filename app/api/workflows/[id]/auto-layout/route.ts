@@ -1,20 +1,21 @@
 import { type NextRequest, NextResponse } from "next/server"
-import { workflowStore } from "@/lib/workflow-store"
+import { withWorkspace } from "@/lib/api/with-workspace"
+import { getWorkflow, updateWorkflow } from "@/lib/db/workflows"
 import { autoLayout } from "@/lib/auto-layout"
 
-export async function POST(request: NextRequest, { params }: { params: { id: string } }) {
-  const workflowId = params.id
-  const workflow = workflowStore.getWorkflow(workflowId)
+export async function POST(request: NextRequest, { params }: { params: Promise<{ id: string }> }) {
+  const result = await withWorkspace()
+  if (result.error) return result.error
+
+  const { id: workflowId } = await params
+  const workflow = await getWorkflow(workflowId)
 
   if (!workflow) {
     return NextResponse.json({ error: "Workflow not found" }, { status: 404 })
   }
 
   const layoutedNodes = autoLayout.applyLayout(workflow.nodes, workflow.connections)
+  const updated = await updateWorkflow(workflowId, { nodes: layoutedNodes })
 
-  workflowStore.updateWorkflow(workflowId, {
-    nodes: layoutedNodes,
-  })
-
-  return NextResponse.json(workflowStore.getWorkflow(workflowId))
+  return NextResponse.json(updated)
 }

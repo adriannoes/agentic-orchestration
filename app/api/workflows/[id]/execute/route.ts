@@ -1,12 +1,18 @@
 import { type NextRequest, NextResponse } from "next/server"
-import { workflowStore } from "@/lib/workflow-store"
+import { withWorkspace } from "@/lib/api/with-workspace"
+import { getWorkflow } from "@/lib/db/workflows"
 import { WorkflowExecutor } from "@/lib/workflow-executor"
 import { executionStore } from "@/lib/execution-store"
 
-export async function POST(request: NextRequest, { params }: { params: { id: string } }) {
+export async function POST(request: NextRequest, { params }: { params: Promise<{ id: string }> }) {
+  const result = await withWorkspace()
+  if (result.error) return result.error
+
   try {
+    const { id } = await params
     const { input } = await request.json()
-    const workflow = workflowStore.getWorkflow(params.id)
+
+    const workflow = await getWorkflow(id)
 
     if (!workflow) {
       return NextResponse.json({ error: "Workflow not found" }, { status: 404 })

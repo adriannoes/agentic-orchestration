@@ -1,17 +1,24 @@
 import { type NextRequest, NextResponse } from "next/server"
-import { workflowStore } from "@/lib/workflow-store"
+import { withWorkspace } from "@/lib/api/with-workspace"
+import { createWorkflow } from "@/lib/db/workflows"
 
 export async function POST(request: NextRequest) {
+  const result = await withWorkspace()
+  if (result.error) return result.error
+
   try {
     const jsonData = await request.text()
-    const workflow = workflowStore.importWorkflow(jsonData)
+    const data = JSON.parse(jsonData)
 
-    if (!workflow) {
-      return NextResponse.json({ error: "Failed to import workflow" }, { status: 400 })
-    }
+    const workflow = await createWorkflow(result.workspace.id, {
+      name: data.name ?? "Imported Workflow",
+      description: data.description ?? "",
+      nodes: data.nodes ?? [],
+      connections: data.connections ?? [],
+    })
 
     return NextResponse.json(workflow)
-  } catch (error) {
-    return NextResponse.json({ error: "Invalid JSON data" }, { status: 400 })
+  } catch {
+    return NextResponse.json({ error: "Failed to import workflow" }, { status: 400 })
   }
 }
