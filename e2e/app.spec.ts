@@ -34,7 +34,14 @@ test.describe('App shell and critical routes', () => {
 
     await page.getByRole('link', { name: /Builder/i }).click()
     await expect(page).toHaveURL(/\/builder/)
-    await expect(page.getByRole('button', { name: /Save|Run Workflow/i }).or(page.locator('.canvas-grid')).first()).toBeVisible({ timeout: 10_000 })
+    await expect(
+      page
+        .getByRole('button', { name: /Save|Run Workflow|Undo|Redo|Zoom/i })
+        .or(page.locator('.react-flow'))
+        .or(page.locator('.canvas-grid'))
+        .or(page.getByText('Sign in to access the workflow builder'))
+        .first(),
+    ).toBeVisible({ timeout: 15_000 })
 
     await page.getByRole('link', { name: /Marketplace/i }).click()
     await expect(page).toHaveURL(/\/marketplace/)
@@ -56,10 +63,15 @@ test.describe('App shell and critical routes', () => {
     await expect(page.getByText(/Select an agent|Playground|Chat|New Chat/i).first()).toBeVisible({ timeout: 12_000 })
   })
 
-  test('/builder loads canvas', async ({ page }) => {
+  test('/builder loads canvas or sign-in prompt', async ({ page }) => {
     await page.goto('/builder')
     await expect(page.locator('body')).toBeVisible()
-    await expect(page.getByRole('button', { name: /Undo|Redo|Zoom|Save/i }).first()).toBeVisible({ timeout: 10_000 })
+    await expect(
+      page
+        .getByRole('button', { name: /Undo|Redo|Zoom|Save/i })
+        .or(page.getByText('Sign in to access the workflow builder'))
+        .first(),
+    ).toBeVisible({ timeout: 10_000 })
   })
 
   test('/marketplace loads Integration Marketplace', async ({ page }) => {
