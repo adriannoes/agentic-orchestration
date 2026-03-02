@@ -5,7 +5,7 @@ Platform for building, configuring, and running AI agents with tool execution, w
 ## What it does
 
 - **Agents & runs** — Manage agents and view execution history
-- **Workflow builder** — Visual editor for workflow orchestration
+- **Workflow builder** — Visual editor for workflow orchestration (React Flow)
 - **Connectors** — Central registry for data and tool connections (OAuth, APIs, MCP)
 - **MCP** — Model Context Protocol server and tool management
 - **Marketplace** — Discover and install integrations
@@ -21,6 +21,7 @@ Platform for building, configuring, and running AI agents with tool execution, w
 - **UI:** Radix UI, shadcn-style components, Lucide icons
 - **Forms / validation:** React Hook Form, Zod
 - **Data:** SWR, Recharts
+- **Workflow canvas:** React Flow (`@xyflow/react`)
 
 ## Getting started
 
@@ -37,11 +38,16 @@ Use the `/setup` route after starting the app to validate the connection and run
 
 ## Scripts
 
-- `npm run dev` — Development server
-- `npm run build` — Production build
-- `npm run start` — Production server
-- `npm run lint` — ESLint
-- `npm run test` — Unit tests (Vitest, watch)
-- `npm run test:run` — Unit tests (single run)
-- `npm run test:e2e` — E2E tests (Playwright)
-- `npm run test:e2e:ui` — E2E tests with Playwright UI
+| Script | Description |
+|--------|-------------|
+| `npm run dev` | Development server (port 3000) |
+| `npm run build` | Production build |
+| `npm run start` | Production server |
+| `npm run lint` | ESLint |
+| `npm run test` | Unit tests (Vitest, watch) |
+| `npm run test:run` | Unit tests (single run) |
+| `npm run test:e2e` | E2E tests (Playwright, starts dev on port 3099) |
+| `npm run test:e2e:ui` | E2E tests with Playwright UI |
+| `npm run test:e2e:reuse` | E2E tests reusing existing dev server on port 3000 |
+
+**E2E notes:** Stop any running `npm run dev` before `npm run test:e2e`, or use `npm run test:e2e:reuse` when dev is already running.
