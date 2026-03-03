@@ -51,4 +51,5 @@ coverage/
 /test-results/
 /playwright-report/
 /blob-report/
-/playwright/.cache/*.bak
+/playwright/.cache/
+*.bak

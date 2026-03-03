@@ -1,0 +1,39 @@
+name: CI
+
+on:
+  push:
+    branches: [main, feat/asap-integration]
+  pull_request:
+    branches: [main, feat/asap-integration]
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+          cache: "npm"
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Lint
+        run: npm run lint
+
+      - name: Type check
+        run: npx tsc --noEmit
+
+      - name: Unit tests
+        run: npm run test:run
+
+      - name: Build
+        run: npm run build
+        env:
+          AUTH_SECRET: "ci-build-placeholder-min-32-chars-long"
+          AUTH_GITHUB_ID: ""
+          AUTH_GITHUB_SECRET: ""
+          AUTH_URL: "http://localhost:3000"
