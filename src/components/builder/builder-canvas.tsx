@@ -65,6 +65,7 @@ const NODE_TYPES = [
 
 function BuilderCanvasInner() {
   const clipboardRef = useRef<{ nodes: WorkflowNode[]; connections: Connection[] } | null>(null)
+  const layoutTransitionTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null)
   const { toast } = useToast()
   const { screenToFlowPosition, getViewport } = useReactFlow()
 
@@ -484,18 +485,34 @@ function BuilderCanvasInner() {
 
   const handleAutoLayout = useCallback(async () => {
     if (!workflowId) return
+    if (layoutTransitionTimeoutRef.current) {
+      clearTimeout(layoutTransitionTimeoutRef.current)
+      layoutTransitionTimeoutRef.current = null
+    }
     saveToHistory()
     setIsLayoutTransitioning(true)
     const response = await fetch(`/api/workflows/${workflowId}/auto-layout`, { method: "POST" })
     if (response.ok) {
       mutate(`/api/workflows/${workflowId}`)
       toast({ title: "Layout applied successfully" })
-      setTimeout(() => setIsLayoutTransitioning(false), 450)
+      layoutTransitionTimeoutRef.current = setTimeout(() => {
+        layoutTransitionTimeoutRef.current = null
+        setIsLayoutTransitioning(false)
+      }, 450)
     } else {
       setIsLayoutTransitioning(false)
       toast({ title: "Failed to apply layout", variant: "destructive" })
     }
   }, [workflowId, saveToHistory, toast])
+
+  useEffect(() => {
+    return () => {
+      if (layoutTransitionTimeoutRef.current) {
+        clearTimeout(layoutTransitionTimeoutRef.current)
+        layoutTransitionTimeoutRef.current = null
+      }
+    }
+  }, [])
 
   const handleNodeDelete = useCallback(async () => {
     if (!selectedNodeId || !workflowId) return
@@ -568,7 +585,24 @@ function BuilderCanvasInner() {
   const handleResetView = useCallback(() => fitView({ padding: 0.2 }), [fitView])
 
   useEffect(() => {
+    const closeMenuOnResizeOrScroll = () => handleCloseMenu()
+    window.addEventListener("resize", closeMenuOnResizeOrScroll)
+    window.addEventListener("scroll", closeMenuOnResizeOrScroll, true)
+    return () => {
+      window.removeEventListener("resize", closeMenuOnResizeOrScroll)
+      window.removeEventListener("scroll", closeMenuOnResizeOrScroll, true)
+    }
+  }, [handleCloseMenu])
+
+  useEffect(() => {
     const handleCommandPaletteKey = (e: KeyboardEvent) => {
+      const activeTag = document.activeElement?.tagName.toLowerCase()
+      const isInput =
+        activeTag === "input" ||
+        activeTag === "textarea" ||
+        (document.activeElement as HTMLElement)?.isContentEditable
+      if (isInput) return
+
       if ((e.ctrlKey || e.metaKey) && e.key === "k") {
         e.preventDefault()
         setCommandPaletteOpen(true)
@@ -583,6 +617,13 @@ function BuilderCanvasInner() {
 
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
+      const activeTag = document.activeElement?.tagName.toLowerCase()
+      const isInput =
+        activeTag === "input" ||
+        activeTag === "textarea" ||
+        (document.activeElement as HTMLElement)?.isContentEditable
+      if (isInput) return
+
       if ((e.ctrlKey || e.metaKey) && e.key === "z" && !e.shiftKey) {
         e.preventDefault()
         handleUndo()
