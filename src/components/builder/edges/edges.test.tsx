@@ -3,15 +3,17 @@
  */
 import { describe, it, expect, vi, beforeEach } from "vitest"
 import { render } from "@testing-library/react"
+import { Position } from "@xyflow/react"
 import { GradientEdge } from "./gradient-edge"
 import { AnimatedFlowEdge } from "./animated-flow-edge"
 import { edgeTypes } from "./index"
 
 const mockPath = "M 0 0 L 100 100"
 
-vi.mock("@xyflow/react", () => ({
-  getBezierPath: vi.fn(() => [mockPath]),
-}))
+vi.mock("@xyflow/react", async (importOriginal) => {
+  const mod = await importOriginal<typeof import("@xyflow/react")>()
+  return { ...mod, getBezierPath: vi.fn(() => [mockPath]) }
+})
 
 const defaultEdgeProps = {
   id: "e1",
@@ -19,8 +21,8 @@ const defaultEdgeProps = {
   sourceY: 0,
   targetX: 100,
   targetY: 100,
-  sourcePosition: "right" as const,
-  targetPosition: "left" as const,
+  sourcePosition: Position.Right,
+  targetPosition: Position.Left,
   data: {},
   source: "n1",
   target: "n2",
