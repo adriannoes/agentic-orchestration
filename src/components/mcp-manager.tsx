@@ -108,14 +108,14 @@ export function MCPManager() {
                 <Card
                   key={server.id}
                   className={`p-4 cursor-pointer transition-colors ${
-                    isSelected ? "border-primary bg-accent" : "hover:border-primary/50"
+                    isSelected ? "border-primary/60 bg-accent/40" : "hover:border-primary/40"
                   }`}
                   onClick={() => setSelectedServer(server)}
                 >
                   <div className="flex items-start justify-between">
                     <div className="flex items-center gap-3">
-                      <div className="p-2 rounded-lg bg-primary/10">
-                        <Server className="w-5 h-5 text-primary" />
+                      <div className="rounded-lg border border-indigo-500/20 bg-indigo-500/10 p-2">
+                        <Server className="w-5 h-5 text-indigo-300" />
                       </div>
                       <div>
                         <h3 className="font-semibold">{server.name}</h3>
