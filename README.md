@@ -9,7 +9,6 @@ Platform for building, configuring, and running AI agents with tool execution, w
 - **Connectors** — Central registry for data and tool connections (OAuth, APIs, MCP)
 - **MCP** — Model Context Protocol server and tool management
 - **Marketplace** — Discover and install integrations
-- **Playground** — Chat interface to test agents and tools
 - **Templates** — Reusable workflow and agent templates
 
 ## Tech stack
