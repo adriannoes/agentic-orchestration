@@ -108,7 +108,7 @@ describe("lib/db/workflows", () => {
     })
 
     it("returns null when not found", async () => {
-      mockFrom.mockReturnValue(createMockChain<WorkflowRow>({ data: null, error: null }))
+      mockFrom.mockReturnValue(createMockChain<WorkflowRow>({ data: null as any, error: null }))
 
       const result = await getWorkflow("nonexistent")
 
@@ -218,7 +218,7 @@ describe("lib/db/workflows", () => {
     })
 
     it("throws when workflow not found", async () => {
-      mockFrom.mockReturnValue(createMockChain<WorkflowRow>({ data: null, error: null }))
+      mockFrom.mockReturnValue(createMockChain<WorkflowRow>({ data: null as any, error: null }))
 
       await expect(
         addWorkflowNode("nonexistent", {

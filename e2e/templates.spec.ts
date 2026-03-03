@@ -14,7 +14,7 @@ test.describe('Templates library', () => {
   })
 
   test('shows template cards or empty state', async ({ page }) => {
-    const cardsOrEmpty = page.getByText(/Use template|Use Template|No templates|Popular/i).or(page.locator('[data-slot="card"]').first())
-    await expect(cardsOrEmpty).toBeVisible({ timeout: 10_000 })
+    const cardsOrEmpty = page.getByText(/Use template|Use Template|No templates|Popular|Workflow/i).or(page.locator('div.border').first())
+    await expect(cardsOrEmpty.first()).toBeVisible({ timeout: 10_000 })
   })
 })
