@@ -4,6 +4,9 @@ import { defineConfig, devices } from '@playwright/test'
 const E2E_PORT = process.env.E2E_REUSE_SERVER ? 3000 : Number(process.env.E2E_PORT) || 3099
 const baseURL = `http://localhost:${E2E_PORT}`
 
+process.env.AUTH_URL = baseURL
+process.env.NEXT_PUBLIC_APP_URL = baseURL
+
 export default defineConfig({
   testDir: './e2e',
   fullyParallel: true,
@@ -18,9 +21,9 @@ export default defineConfig({
   },
   projects: [{ name: 'chromium', use: { ...devices['Desktop Chrome'] } }],
   webServer: {
-    command: `PORT=${E2E_PORT} npm run dev`,
+    command: `PORT=${E2E_PORT} AUTH_URL=${baseURL} NEXT_PUBLIC_APP_URL=${baseURL} npm start`,
     url: baseURL,
-    reuseExistingServer: !process.env.CI || !!process.env.E2E_REUSE_SERVER,
+    reuseExistingServer: process.env.CI ? false : !!process.env.E2E_REUSE_SERVER,
     timeout: 60_000,
   },
 })
