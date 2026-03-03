@@ -7,7 +7,6 @@ const ROUTES = [
     '/login',
     '/marketplace',
     '/mcp',
-    '/playground',
     '/runs',
     '/settings',
     '/setup',

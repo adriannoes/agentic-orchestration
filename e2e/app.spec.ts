@@ -1,10 +1,10 @@
 import { test, expect } from '@playwright/test'
 
 test.describe('App shell and critical routes', () => {
-  test('home page has title and AgentKit branding', async ({ page }) => {
+  test('home page has title and Agent Builder branding', async ({ page }) => {
     await page.goto('/')
-    await expect(page).toHaveTitle(/AgentKit/i)
-    await expect(page.getByText('AgentKit', { exact: true }).first()).toBeVisible()
+    await expect(page).toHaveTitle(/Agent Builder/i)
+    await expect(page.getByText('Agent Builder', { exact: true }).first()).toBeVisible()
   })
 
   test('sidebar shows all main nav links', async ({ page }) => {
@@ -15,7 +15,6 @@ test.describe('App shell and critical routes', () => {
     await expect(page.getByRole('link', { name: /Connectors/i })).toBeVisible()
     await expect(page.getByRole('link', { name: /MCP Servers/i })).toBeVisible()
     await expect(page.getByRole('link', { name: /Marketplace/i })).toBeVisible()
-    await expect(page.getByRole('link', { name: /Playground/i })).toBeVisible()
     await expect(page.getByRole('link', { name: /Runs/i })).toBeVisible()
     await expect(page.getByRole('link', { name: /Tools/i })).toBeVisible()
     await expect(page.getByRole('link', { name: /Settings/i })).toBeVisible()
@@ -27,10 +26,6 @@ test.describe('App shell and critical routes', () => {
     await page.getByRole('link', { name: /Connectors/i }).click()
     await expect(page).toHaveURL(/\/connectors/)
     await expect(page.getByRole('heading', { name: /Connector Registry/i })).toBeVisible()
-
-    await page.getByRole('link', { name: /Playground/i }).click()
-    await expect(page).toHaveURL(/\/playground/)
-    await expect(page.getByText(/Select an agent|Playground|Chat/i).first()).toBeVisible({ timeout: 10_000 })
 
     await page.getByRole('link', { name: /Builder/i }).click()
     await expect(page).toHaveURL(/\/builder/)
@@ -56,11 +51,6 @@ test.describe('App shell and critical routes', () => {
     await page.goto('/connectors')
     await expect(page.getByRole('heading', { name: /Connector Registry/i })).toBeVisible()
     await expect(page.getByPlaceholder(/Search connectors/i)).toBeVisible()
-  })
-
-  test('/playground loads chat interface', async ({ page }) => {
-    await page.goto('/playground')
-    await expect(page.getByText(/Select an agent|Playground|Chat|New Chat/i).first()).toBeVisible({ timeout: 12_000 })
   })
 
   test('/builder loads canvas or sign-in prompt', async ({ page }) => {

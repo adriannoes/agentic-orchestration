@@ -121,7 +121,12 @@ export async function updateWorkflowNode(
   const workflow = await getWorkflow(workflowId)
   if (!workflow) throw new Error("Workflow not found")
 
-  const updatedNodes = workflow.nodes.map((node) => (node.id === nodeId ? { ...node, ...updates } : node))
+  const updatedNodes = workflow.nodes.map((node) => {
+    if (node.id !== nodeId) return node
+    const merged = { ...node, ...updates }
+    if (updates.parentId === null) delete merged.parentId
+    return merged
+  })
 
   return await updateWorkflow(workflowId, { nodes: updatedNodes })
 }

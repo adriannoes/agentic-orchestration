@@ -11,6 +11,7 @@ import {
   FileSearch,
   Play,
   Square,
+  Frame,
   ChevronLeft,
   ChevronRight,
   Settings2,
@@ -41,6 +42,7 @@ const NODE_ICONS: Record<NodeType, React.ElementType> = {
   mcp: Plug,
   "user-approval": UserCheck,
   "file-search": FileSearch,
+  frame: Frame,
 }
 
 const MODELS = [

@@ -20,7 +20,7 @@ const geistMono = Geist_Mono({
 })
 
 export const metadata: Metadata = {
-  title: "AgentKit - AI Agent Platform",
+  title: "Agent Builder - AI Agent Platform",
   description: "Build, configure, and run AI agents with tool execution capabilities",
   generator: "v0.app",
   icons: {

@@ -6,7 +6,6 @@ import { useSession } from "next-auth/react"
 import { cn } from "@/lib/utils"
 import {
   Bot,
-  Play,
   History,
   Settings,
   Wrench,
@@ -29,7 +28,6 @@ const navItems = [
   { href: "/connectors", label: "Connectors", icon: Plug },
   { href: "/mcp", label: "MCP Servers", icon: Server },
   { href: "/marketplace", label: "Marketplace", icon: Store },
-  { href: "/playground", label: "Playground", icon: Play },
   { href: "/runs", label: "Runs", icon: History },
   { href: "/tools", label: "Tools", icon: Wrench },
   { href: "/settings", label: "Settings", icon: Settings },
@@ -54,7 +52,7 @@ export function Sidebar() {
             <div className="flex items-center justify-center w-8 h-8 rounded-lg bg-primary">
               <Bot className="w-5 h-5 text-primary-foreground" />
             </div>
-            <span className="font-semibold text-lg">AgentKit</span>
+            <span className="font-semibold text-lg">Agent Builder</span>
           </div>
         )}
         <Button
@@ -98,8 +96,7 @@ export function Sidebar() {
         ) : (
           !collapsed && (
             <div className="text-xs text-muted-foreground">
-              <p>AgentKit v1.0</p>
-              <p className="mt-1">Powered by AI SDK</p>
+              <p>Powered by ASAP protocol.</p>
             </div>
           )
         )}

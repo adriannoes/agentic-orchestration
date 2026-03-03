@@ -3,7 +3,7 @@
 import type React from "react"
 
 import { useState } from "react"
-import { Bot, Shield, GitBranch, Plug, UserCheck, FileSearch, Play, Square, Trash2, GripVertical } from "lucide-react"
+import { Bot, Shield, GitBranch, Plug, UserCheck, FileSearch, Play, Square, Frame, Trash2, GripVertical } from "lucide-react"
 import { Handle, Position, type NodeProps, type Node } from "@xyflow/react"
 import { cn } from "@/lib/utils"
 import type { NodeType, NodeData } from "@/lib/workflow-types"
@@ -21,6 +21,7 @@ const NODE_ICONS: Record<NodeType, React.ElementType> = {
   mcp: Plug,
   "user-approval": UserCheck,
   "file-search": FileSearch,
+  frame: Frame,
 }
 
 const NODE_COLORS: Record<NodeType, { bg: string; iconBg: string; border: string; icon: string; shadow: string; glow: string }> = {
@@ -87,6 +88,14 @@ const NODE_COLORS: Record<NodeType, { bg: string; iconBg: string; border: string
     icon: "text-teal-400",
     shadow: "shadow-[0_4px_24px_-8px_rgba(0,0,0,0.5)]",
     glow: "shadow-[0_0_20px_rgba(20,184,166,0.15)]"
+  },
+  frame: {
+    bg: "bg-background/40",
+    iconBg: "bg-zinc-500/10",
+    border: "border-white/5",
+    icon: "text-zinc-400",
+    shadow: "shadow-[0_4px_24px_-8px_rgba(0,0,0,0.5)]",
+    glow: "shadow-[0_0_20px_rgba(113,113,122,0.15)]",
   },
 }
 

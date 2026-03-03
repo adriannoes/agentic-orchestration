@@ -35,6 +35,7 @@ Thumbs.db
 *.swo
 .idea/
 .vscode/
+.cursor/   # Cursor IDE rules, commands, dev-planning, skills (local only)
 
 # local docs / secrets (optional)
 SUPABASE_SETUP.md

@@ -1,6 +1,15 @@
 // Workflow and Canvas Types for Visual Agent Builder
 
-export type NodeType = "agent" | "guardrail" | "condition" | "mcp" | "user-approval" | "file-search" | "start" | "end"
+export type NodeType =
+  | "agent"
+  | "guardrail"
+  | "condition"
+  | "mcp"
+  | "user-approval"
+  | "file-search"
+  | "start"
+  | "end"
+  | "frame"
 
 export interface Position {
   x: number
@@ -13,12 +22,18 @@ export interface WorkflowNode {
   position: Position
   data: NodeData
   selected?: boolean
+  parentId?: string
+  /** For React Flow parent nodes: width and height in px */
+  style?: { width?: number; height?: number }
 }
 
 export interface NodeData {
   [key: string]: unknown
   label: string
   description?: string
+  /** Frame-specific: width and height in px */
+  width?: number
+  height?: number
   // Agent-specific
   agentId?: string
   model?: string
@@ -75,6 +90,20 @@ export const NODE_COLORS: Record<NodeType, string> = {
   mcp: "cyan",
   "user-approval": "orange",
   "file-search": "teal",
+  frame: "zinc",
+}
+
+/** Hex colors for SVG gradients (edges) */
+export const NODE_COLORS_HEX: Record<NodeType, string> = {
+  start: "#10b981",
+  end: "#f43f5e",
+  agent: "#3b82f6",
+  guardrail: "#f59e0b",
+  condition: "#a855f7",
+  mcp: "#06b6d4",
+  "user-approval": "#f97316",
+  "file-search": "#14b8a6",
+  frame: "#71717a",
 }
 
 export const NODE_ICONS: Record<NodeType, string> = {
@@ -86,6 +115,7 @@ export const NODE_ICONS: Record<NodeType, string> = {
   mcp: "Plug",
   "user-approval": "UserCheck",
   "file-search": "FileSearch",
+  frame: "Frame",
 }
 
 export interface WorkflowExecution {

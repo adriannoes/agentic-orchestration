@@ -174,14 +174,23 @@ export function NodeSidebar({ isOpen, onToggle, onAddNode }: NodeSidebarProps) {
                     return (
                       <button
                         key={node.type}
+                        draggable
                         className={cn(
                           "w-full flex items-center gap-3 px-3.5 py-3 rounded-xl transition-all duration-300 ease-out",
                           "border border-white/5",
                           "bg-white/[0.02] hover:bg-white/[0.04]",
+                          "cursor-grab active:cursor-grabbing",
                           isHovered && "scale-[1.02] shadow-[0_8px_20px_-4px_rgba(0,0,0,0.5)]",
                           "active:scale-[0.98]",
                         )}
                         onClick={() => onAddNode(node.type)}
+                        onDragStart={(e) => {
+                          e.dataTransfer.setData(
+                            "application/json",
+                            JSON.stringify({ type: node.type, label: node.label }),
+                          )
+                          e.dataTransfer.effectAllowed = "move"
+                        }}
                         onMouseEnter={() => setHoveredNode(node.type)}
                         onMouseLeave={() => setHoveredNode(null)}
                       >
@@ -210,7 +219,7 @@ export function NodeSidebar({ isOpen, onToggle, onAddNode }: NodeSidebarProps) {
 
           <div className="p-5 border-t border-white/5 bg-black/20 backdrop-blur-md">
             <p className="text-[11px] text-muted-foreground/60 leading-relaxed font-light">
-              Click a node to add it to the center of the canvas. Connect nodes by dragging from output to input handles.
+              Click to add at center, or drag to drop at a specific position. Connect nodes by dragging from output to input handles.
             </p>
           </div>
         </div>

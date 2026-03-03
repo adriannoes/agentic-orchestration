@@ -134,6 +134,12 @@
   }
 }
 
+@keyframes flowDash {
+  to {
+    stroke-dashoffset: -12;
+  }
+}
+
 @layer utilities {
   /* Smooth node dragging */
   .node-drag-active {
@@ -160,5 +166,9 @@
 
   .handle-active {
     animation: handlePulse 1.5s ease-in-out infinite;
+  }
+
+  .animate-flow-dash {
+    animation: flowDash 0.5s linear infinite;
   }
 }
