@@ -42,7 +42,7 @@ export function Sidebar() {
   return (
     <aside
       className={cn(
-        "flex flex-col border-r border-border bg-card transition-all duration-300",
+        "flex flex-col border-r border-border/80 bg-card/80 backdrop-blur-sm transition-all duration-300",
         collapsed ? "w-16" : "w-64",
       )}
     >
@@ -76,8 +76,8 @@ export function Sidebar() {
               href={item.href}
               className={cn(
                 "flex items-center gap-3 px-3 py-2 rounded-lg transition-colors",
-                "hover:bg-accent hover:text-accent-foreground",
-                isActive && "bg-accent text-primary",
+                "hover:bg-accent/80 hover:text-accent-foreground",
+                isActive && "bg-accent text-foreground border border-border/80",
                 collapsed && "justify-center px-2",
               )}
             >
