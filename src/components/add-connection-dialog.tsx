@@ -131,11 +131,11 @@ export function AddConnectionDialog({ open, onOpenChange, connector, onSuccess }
                 <div className="flex items-center gap-2">
                   <ExternalLink className="w-4 h-4 text-muted-foreground" />
                   <p className="text-sm text-muted-foreground">
-                    You'll be redirected to {connector.name} to authorize access.
+                    You&apos;ll be redirected to {connector.name} to authorize access.
                   </p>
                 </div>
                 <div className="text-xs text-muted-foreground space-y-1">
-                  <p>This will grant AgentKit permission to:</p>
+                  <p>This will grant Agent Builder permission to:</p>
                   <ul className="list-disc list-inside pl-2">
                     <li>Read your data</li>
                     <li>Write to your account</li>
