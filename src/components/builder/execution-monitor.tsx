@@ -51,11 +51,11 @@ export function ExecutionMonitor({ workflowId, isOpen, onClose, onNodeHighlight 
       case "error":
         return <XCircle className="h-4 w-4 text-rose-500" />
       case "info":
-        return <ChevronRight className="h-4 w-4 text-blue-500" />
+        return <ChevronRight className="h-4 w-4 text-indigo-300" />
       case "tool-call":
-        return <Play className="h-4 w-4 text-amber-500" />
+        return <Play className="h-4 w-4 text-violet-300" />
       case "tool-result":
-        return <CheckCircle2 className="h-4 w-4 text-cyan-500" />
+        return <CheckCircle2 className="h-4 w-4 text-indigo-300" />
     }
   }
 
@@ -63,28 +63,28 @@ export function ExecutionMonitor({ workflowId, isOpen, onClose, onNodeHighlight 
     switch (status) {
       case "running":
         return (
-          <div className="flex items-center gap-1.5 px-2 py-1 bg-blue-500/10 text-blue-500 rounded text-xs font-medium">
+          <div className="flex items-center gap-1.5 rounded border border-violet-500/20 bg-violet-500/10 px-2 py-1 text-xs font-medium text-violet-300">
             <Loader2 className="h-3 w-3 animate-spin" />
             Running
           </div>
         )
       case "completed":
         return (
-          <div className="flex items-center gap-1.5 px-2 py-1 bg-emerald-500/10 text-emerald-500 rounded text-xs font-medium">
+          <div className="flex items-center gap-1.5 rounded border border-indigo-500/20 bg-indigo-500/10 px-2 py-1 text-xs font-medium text-indigo-300">
             <CheckCircle2 className="h-3 w-3" />
             Completed
           </div>
         )
       case "failed":
         return (
-          <div className="flex items-center gap-1.5 px-2 py-1 bg-rose-500/10 text-rose-500 rounded text-xs font-medium">
+          <div className="flex items-center gap-1.5 rounded border border-destructive/20 bg-destructive/10 px-2 py-1 text-xs font-medium text-destructive">
             <XCircle className="h-3 w-3" />
             Failed
           </div>
         )
       case "paused":
         return (
-          <div className="flex items-center gap-1.5 px-2 py-1 bg-amber-500/10 text-amber-500 rounded text-xs font-medium">
+          <div className="flex items-center gap-1.5 rounded border border-violet-500/20 bg-violet-500/10 px-2 py-1 text-xs font-medium text-violet-300">
             <Pause className="h-3 w-3" />
             Paused
           </div>

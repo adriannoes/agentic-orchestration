@@ -55,11 +55,11 @@ export function ExportImportDialog({ workflowId, onImportSuccess }: ExportImport
 
   return (
     <>
-      <Button variant="ghost" size="sm" className="h-8 gap-2" onClick={handleExport}>
+      <Button variant="ghost" size="sm" className="h-8 gap-2 hover:bg-accent" onClick={handleExport}>
         <Download className="h-3.5 w-3.5" />
         Export
       </Button>
-      <Button variant="ghost" size="sm" className="h-8 gap-2" onClick={() => setShowImport(true)}>
+      <Button variant="ghost" size="sm" className="h-8 gap-2 hover:bg-accent" onClick={() => setShowImport(true)}>
         <Upload className="h-3.5 w-3.5" />
         Import
       </Button>
@@ -72,7 +72,7 @@ export function ExportImportDialog({ workflowId, onImportSuccess }: ExportImport
           <div className="space-y-4">
             <Textarea
               placeholder="Paste your workflow JSON here..."
-              className="min-h-[300px] font-mono text-sm"
+              className="min-h-[300px] border-border/80 bg-background/70 font-mono text-sm"
               value={importData}
               onChange={(e) => setImportData(e.target.value)}
             />
