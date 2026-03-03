@@ -1,5 +1,12 @@
 "use client"
 
+/**
+ * Pane and node context menus use DropdownMenu (not Radix ContextMenu) because
+ * we need controlled open/onOpenChange to position the menu at click coordinates
+ * (clientX/clientY). Radix ContextMenu in this version does not support controlled
+ * mode; using it caused a runtime TDZ error. Menus are closed on window resize/scroll
+ * from builder-canvas to avoid orphaned overlays.
+ */
 import {
   DropdownMenu,
   DropdownMenuTrigger,

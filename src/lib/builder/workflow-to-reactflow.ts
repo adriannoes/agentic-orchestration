@@ -4,6 +4,23 @@ import { NODE_COLORS_HEX } from "@/lib/workflow-types"
 
 export type WorkflowNodeType = WorkflowNode["type"]
 
+const NODE_TYPES: NodeType[] = [
+  "agent",
+  "start",
+  "end",
+  "guardrail",
+  "condition",
+  "mcp",
+  "user-approval",
+  "file-search",
+  "frame",
+]
+
+function toNodeType(value: string | undefined): NodeType {
+  if (value != null && NODE_TYPES.includes(value as NodeType)) return value as NodeType
+  return "agent"
+}
+
 export function workflowNodesToReactFlow(nodes: WorkflowNode[]): Node<NodeData, WorkflowNodeType>[] {
   return (nodes || []).map((n) => {
     const base = {
@@ -38,10 +55,10 @@ export function workflowConnectionsToEdges(
   return (connections || []).map((c) => {
     const sourceNode = nodeMap.get(c.sourceId)
     const targetNode = nodeMap.get(c.targetId)
-    const sourceType = sourceNode?.type ?? "agent"
-    const targetType = targetNode?.type ?? "agent"
-    const sourceColor = NODE_COLORS_HEX[sourceType as NodeType] ?? "#3b82f6"
-    const targetColor = NODE_COLORS_HEX[targetType as NodeType] ?? "#94a3b8"
+    const sourceType = toNodeType(sourceNode?.type)
+    const targetType = toNodeType(targetNode?.type)
+    const sourceColor = NODE_COLORS_HEX[sourceType] ?? "#3b82f6"
+    const targetColor = NODE_COLORS_HEX[targetType] ?? "#94a3b8"
     const isRunning = runningEdgeIds.includes(c.id)
 
     return {

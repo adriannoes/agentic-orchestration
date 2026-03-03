@@ -9,6 +9,8 @@ const DEFAULT_WIDTH = 400
 const DEFAULT_HEIGHT = 300
 
 export type FrameNodeData = NodeData & {
+  width?: number
+  height?: number
   isHighlighted?: boolean
   customOnDelete?: () => void
   customOnLabelChange?: (newLabel: string) => void
@@ -18,8 +20,8 @@ export type FrameNodeType = Node<FrameNodeData, "frame">
 export function FrameNode({ data, selected }: NodeProps<FrameNodeType>) {
   const [isEditing, setIsEditing] = useState(false)
   const [label, setLabel] = useState(data?.label ?? "Frame")
-  const width = (data?.width as number) ?? DEFAULT_WIDTH
-  const height = (data?.height as number) ?? DEFAULT_HEIGHT
+  const width = data?.width ?? DEFAULT_WIDTH
+  const height = data?.height ?? DEFAULT_HEIGHT
 
   useEffect(() => {
     setLabel(data?.label ?? "Frame")
