@@ -17,10 +17,7 @@ test.describe('Builder Context Menu', () => {
         // Right click in the middle of the canvas using mouse coordinates
         await page.mouse.click(box.x + box.width / 2, box.y + box.height / 2, { button: 'right' });
 
-        // Wait a bit for potential animations
-        await page.waitForTimeout(500);
-
-        // Check if DropdownMenuContent is visible
+        // Wait for menu to be visible (no hardcoded timeout)
         const pasteItem = page.getByRole('menuitem', { name: /Paste/i });
         await expect(pasteItem).toBeVisible({ timeout: 5000 });
         await expect(page.getByRole('menuitem', { name: /Auto Layout/i })).toBeVisible();
