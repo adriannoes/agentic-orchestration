@@ -15,10 +15,10 @@ interface MarketplaceCardProps {
 
 export function MarketplaceCard({ integration, onViewDetails, onInstall, onUninstall }: MarketplaceCardProps) {
   return (
-    <Card className="p-6 hover:border-primary transition-colors relative overflow-hidden">
+    <Card className="relative overflow-hidden border-border/80 p-6 transition-colors hover:border-primary/40">
       {integration.isNew && (
         <div className="absolute top-3 right-3">
-          <Badge className="bg-gradient-to-r from-purple-500 to-pink-500">
+          <Badge className="border border-violet-500/20 bg-violet-500/10 text-violet-300">
             <Sparkles className="w-3 h-3 mr-1" />
             New
           </Badge>
@@ -49,7 +49,7 @@ export function MarketplaceCard({ integration, onViewDetails, onInstall, onUnins
 
       <div className="flex items-center gap-3 mb-4 text-sm">
         <div className="flex items-center gap-1">
-          <Star className="w-4 h-4 fill-amber-500 text-amber-500" />
+          <Star className="w-4 h-4 fill-violet-300 text-violet-300" />
           <span className="font-medium">{integration.stats.rating}</span>
           <span className="text-muted-foreground">({integration.stats.reviews})</span>
         </div>
@@ -64,10 +64,10 @@ export function MarketplaceCard({ integration, onViewDetails, onInstall, onUnins
           variant="outline"
           className={
             integration.pricing.type === "free"
-              ? "text-green-500 border-green-500"
+              ? "border-indigo-500/20 bg-indigo-500/10 text-indigo-300"
               : integration.pricing.type === "freemium"
-                ? "text-blue-500 border-blue-500"
-                : "text-amber-500 border-amber-500"
+                ? "border-violet-500/20 bg-violet-500/10 text-violet-300"
+                : "border-border/80 bg-muted/30 text-foreground"
           }
         >
           {integration.pricing.type === "free"
