@@ -1,7 +1,7 @@
 "use client"
 
 import { useState, useEffect } from "react"
-import { Plus, Bot, MoreHorizontal, Pencil, Trash2, Play } from "lucide-react"
+import { Plus, Bot, MoreHorizontal, Pencil, Trash2 } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu"
@@ -9,7 +9,6 @@ import { Badge } from "@/components/ui/badge"
 import type { Agent } from "@/lib/types"
 import { CreateAgentDialog } from "@/components/create-agent-dialog"
 import { EditAgentDialog } from "@/components/edit-agent-dialog"
-import { useRouter } from "next/navigation"
 import { formatDistanceToNow } from "date-fns"
 
 export function AgentsDashboard() {
@@ -17,7 +16,6 @@ export function AgentsDashboard() {
   const [loading, setLoading] = useState(true)
   const [createDialogOpen, setCreateDialogOpen] = useState(false)
   const [editingAgent, setEditingAgent] = useState<Agent | null>(null)
-  const router = useRouter()
 
   const fetchAgents = async () => {
     try {
@@ -42,10 +40,6 @@ export function AgentsDashboard() {
     } catch (error) {
       console.error("Failed to delete agent:", error)
     }
-  }
-
-  const handleRunAgent = (agentId: string) => {
-    router.push(`/playground?agent=${agentId}`)
   }
 
   if (loading) {
@@ -107,10 +101,6 @@ export function AgentsDashboard() {
                       </Button>
                     </DropdownMenuTrigger>
                     <DropdownMenuContent align="end">
-                      <DropdownMenuItem onClick={() => handleRunAgent(agent.id)}>
-                        <Play className="w-4 h-4 mr-2" />
-                        Run
-                      </DropdownMenuItem>
                       <DropdownMenuItem onClick={() => setEditingAgent(agent)}>
                         <Pencil className="w-4 h-4 mr-2" />
                         Edit
@@ -141,10 +131,6 @@ export function AgentsDashboard() {
                   <p className="text-xs text-muted-foreground">
                     Updated {formatDistanceToNow(new Date(agent.updatedAt), { addSuffix: true })}
                   </p>
-                  <Button size="sm" variant="outline" onClick={() => handleRunAgent(agent.id)}>
-                    <Play className="w-3 h-3 mr-1.5" />
-                    Run
-                  </Button>
                 </div>
               </CardContent>
             </Card>

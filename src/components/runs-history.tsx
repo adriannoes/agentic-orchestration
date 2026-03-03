@@ -168,7 +168,7 @@ export function RunsHistory() {
             <p className="text-muted-foreground text-center">
               {search || statusFilter !== "all"
                 ? "Try adjusting your filters"
-                : "Run an agent from the Playground to see history here"}
+                : "Run an agent to see history here"}
             </p>
           </CardContent>
         </Card>
