@@ -1,10 +1,10 @@
 import { test, expect } from '@playwright/test'
 
 test.describe('App shell and critical routes', () => {
-  test('home page has title and AgentKit branding', async ({ page }) => {
+  test('home page has title and Agent Builder branding', async ({ page }) => {
     await page.goto('/')
-    await expect(page).toHaveTitle(/AgentKit/i)
-    await expect(page.getByText('AgentKit', { exact: true }).first()).toBeVisible()
+    await expect(page).toHaveTitle(/Agent Builder/i)
+    await expect(page.getByText('Agent Builder', { exact: true }).first()).toBeVisible()
   })
 
   test('sidebar shows all main nav links', async ({ page }) => {
