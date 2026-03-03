@@ -1,36 +1,79 @@
 import type { Node, Edge } from "@xyflow/react"
-import type { WorkflowNode, Connection, NodeData } from "@/lib/workflow-types"
+import type { WorkflowNode, Connection, NodeData, NodeType } from "@/lib/workflow-types"
+import { NODE_COLORS_HEX } from "@/lib/workflow-types"
 
 export type WorkflowNodeType = WorkflowNode["type"]
 
 export function workflowNodesToReactFlow(nodes: WorkflowNode[]): Node<NodeData, WorkflowNodeType>[] {
-  return (nodes || []).map((n) => ({
-    id: n.id,
-    type: n.type,
-    position: n.position,
-    data: n.data,
-    selected: n.selected,
-  }))
+  return (nodes || []).map((n) => {
+    const base = {
+      id: n.id,
+      type: n.type,
+      position: n.position,
+      data: n.data,
+      selected: n.selected,
+    }
+    if (n.parentId) {
+      return { ...base, parentId: n.parentId, extent: "parent" as const }
+    }
+    if (n.type === "frame" && n.style) {
+      return { ...base, style: { width: n.style.width ?? 400, height: n.style.height ?? 300 } }
+    }
+    return base
+  })
 }
 
-export function workflowConnectionsToEdges(connections: Connection[]): Edge[] {
-  return (connections || []).map((c) => ({
-    id: c.id,
-    source: c.sourceId,
-    target: c.targetId,
-    sourceHandle: c.sourceHandle ?? "output",
-    targetHandle: c.targetHandle ?? "input",
-  }))
+export interface WorkflowConnectionsToEdgesOptions {
+  nodes?: WorkflowNode[]
+  runningEdgeIds?: string[]
+}
+
+export function workflowConnectionsToEdges(
+  connections: Connection[],
+  options: WorkflowConnectionsToEdgesOptions = {},
+): Edge[] {
+  const { nodes = [], runningEdgeIds = [] } = options
+  const nodeMap = new Map(nodes.map((n) => [n.id, n]))
+
+  return (connections || []).map((c) => {
+    const sourceNode = nodeMap.get(c.sourceId)
+    const targetNode = nodeMap.get(c.targetId)
+    const sourceType = sourceNode?.type ?? "agent"
+    const targetType = targetNode?.type ?? "agent"
+    const sourceColor = NODE_COLORS_HEX[sourceType as NodeType] ?? "#3b82f6"
+    const targetColor = NODE_COLORS_HEX[targetType as NodeType] ?? "#94a3b8"
+    const isRunning = runningEdgeIds.includes(c.id)
+
+    return {
+      id: c.id,
+      source: c.sourceId,
+      target: c.targetId,
+      sourceHandle: c.sourceHandle ?? "output",
+      targetHandle: c.targetHandle ?? "input",
+      type: isRunning ? "animatedFlow" : "gradient",
+      data: { sourceColor, targetColor, isRunning },
+    }
+  })
 }
 
 export function reactFlowNodesToWorkflow(nodes: Node<NodeData, WorkflowNodeType>[]): WorkflowNode[] {
-  return (nodes || []).map((n) => ({
-    id: n.id,
-    type: n.type as WorkflowNode["type"],
-    position: n.position,
-    data: n.data as NodeData,
-    selected: n.selected,
-  }))
+  return (nodes || []).map((n) => {
+    const base: WorkflowNode = {
+      id: n.id,
+      type: n.type as WorkflowNode["type"],
+      position: n.position,
+      data: n.data as NodeData,
+      selected: n.selected,
+    }
+    if (n.parentId) base.parentId = n.parentId
+    if (n.type === "frame" && n.style) {
+      base.style = {
+        width: typeof n.style.width === "number" ? n.style.width : undefined,
+        height: typeof n.style.height === "number" ? n.style.height : undefined,
+      }
+    }
+    return base
+  })
 }
 
 export function reactFlowEdgesToConnections(edges: Edge[]): Connection[] {
