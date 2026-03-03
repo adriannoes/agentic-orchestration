@@ -98,8 +98,8 @@ export function ConnectorRegistry() {
       <div className="grid gap-4 md:grid-cols-3">
         <Card className="p-6">
           <div className="flex items-center gap-3">
-            <div className="p-3 rounded-lg bg-green-500/10">
-              <CheckCircle2 className="w-6 h-6 text-green-500" />
+            <div className="rounded-lg border border-indigo-500/20 bg-indigo-500/10 p-3">
+              <CheckCircle2 className="w-6 h-6 text-indigo-300" />
             </div>
             <div>
               <p className="text-sm text-muted-foreground">Connected</p>
@@ -110,8 +110,8 @@ export function ConnectorRegistry() {
 
         <Card className="p-6">
           <div className="flex items-center gap-3">
-            <div className="p-3 rounded-lg bg-primary/10">
-              <Plug className="w-6 h-6 text-primary" />
+            <div className="rounded-lg border border-zinc-500/20 bg-zinc-500/10 p-3">
+              <Plug className="w-6 h-6 text-zinc-300" />
             </div>
             <div>
               <p className="text-sm text-muted-foreground">Available</p>
@@ -122,8 +122,8 @@ export function ConnectorRegistry() {
 
         <Card className="p-6">
           <div className="flex items-center gap-3">
-            <div className="p-3 rounded-lg bg-orange-500/10">
-              <AlertCircle className="w-6 h-6 text-orange-500" />
+            <div className="rounded-lg border border-violet-500/20 bg-violet-500/10 p-3">
+              <AlertCircle className="w-6 h-6 text-violet-300" />
             </div>
             <div>
               <p className="text-sm text-muted-foreground">Attention</p>
