@@ -2,11 +2,10 @@
 
 import type React from "react"
 
-import { useState, useCallback, useRef, useEffect } from "react"
+import { useState, useCallback, useRef, useEffect, useMemo } from "react"
 import {
   ReactFlow,
   ReactFlowProvider,
-  Controls,
   Background,
   useReactFlow,
   useNodesState,
@@ -16,6 +15,7 @@ import {
   type Connection as ReactFlowConnection,
   type Node,
   type Edge,
+  type NodeProps,
 } from "@xyflow/react"
 import "@xyflow/react/dist/style.css"
 import { Play, ZoomIn, ZoomOut, Maximize2, Save, Undo, Redo, History, ArrowDownUp, LogIn } from "lucide-react"
@@ -23,11 +23,14 @@ import { Button } from "@/components/ui/button"
 import type { WorkflowNode, Position, NodeType, Workflow, Connection } from "@/lib/workflow-types"
 import { NodeSidebar } from "./node-sidebar"
 import { CanvasNode } from "./canvas-node"
+import { FrameNode } from "./frame-node"
 import { NodePropertiesPanel } from "./node-properties-panel"
 import useSWR, { mutate } from "swr"
 import { ExecutionMonitor } from "./execution-monitor"
 import { VersionHistoryPanel } from "./version-history-panel"
 import { ExportImportDialog } from "./export-import-dialog"
+import { BuilderCommandPalette } from "./builder-command-palette"
+import { NodeContextMenu, PaneContextMenu } from "./builder-context-menu"
 import { getHistoryManager } from "@/lib/history-manager"
 import { useToast } from "@/hooks/use-toast"
 import {
@@ -36,7 +39,9 @@ import {
   reactFlowNodesToWorkflow,
   reactFlowEdgesToConnections,
 } from "@/lib/builder/workflow-to-reactflow"
-import type { WorkflowNodeData } from "./canvas-node"
+import { edgeTypes } from "./edges"
+import type { WorkflowNodeData, WorkflowNodeProps } from "./canvas-node"
+import type { FrameNodeData } from "./frame-node"
 
 const fetcher = async (url: string) => {
   const res = await fetch(url)
@@ -55,11 +60,8 @@ const NODE_TYPES = [
   "mcp",
   "user-approval",
   "file-search",
+  "frame",
 ] as const
-
-const nodeTypes = Object.fromEntries(
-  NODE_TYPES.map((t) => [t, CanvasNode]),
-) as any
 
 function BuilderCanvasInner() {
   const clipboardRef = useRef<{ nodes: WorkflowNode[]; connections: Connection[] } | null>(null)
@@ -113,7 +115,10 @@ function BuilderCanvasInner() {
   const [showProperties, setShowProperties] = useState(true)
   const [showVersionHistory, setShowVersionHistory] = useState(false)
   const [showExecutionMonitor, setShowExecutionMonitor] = useState(false)
+  const [commandPaletteOpen, setCommandPaletteOpen] = useState(false)
   const [highlightedNodeId, setHighlightedNodeId] = useState<string | null>(null)
+  const [highlightedEdgeIds, setHighlightedEdgeIds] = useState<string[]>([])
+  const [isLayoutTransitioning, setIsLayoutTransitioning] = useState(false)
 
   const saveToHistory = useCallback(() => {
     if (workflow && workflowId) {
@@ -121,6 +126,33 @@ function BuilderCanvasInner() {
       historyManager.saveState(workflow)
     }
   }, [workflow, workflowId])
+
+  const [menuType, setMenuType] = useState<'node' | 'pane' | null>(null)
+  const [menuPosition, setMenuPosition] = useState<{ x: number; y: number } | null>(null)
+  const [menuNodeId, setMenuNodeId] = useState<string | null>(null)
+
+  const handlePaneContextMenu = useCallback((event: React.MouseEvent | MouseEvent) => {
+    event.preventDefault()
+    setMenuType('pane')
+    if ('clientX' in event) {
+      setMenuPosition({ x: event.clientX, y: event.clientY })
+    }
+    setMenuNodeId(null)
+  }, [])
+
+  const handleNodeContextMenu = useCallback((event: React.MouseEvent, node: Node) => {
+    event.preventDefault()
+    event.stopPropagation()
+    setMenuType('node')
+    setMenuPosition({ x: event.clientX, y: event.clientY })
+    setMenuNodeId(node.id)
+  }, [])
+
+  const handleCloseMenu = useCallback(() => {
+    setMenuType(null)
+    setMenuPosition(null)
+    setMenuNodeId(null)
+  }, [])
 
   const handleNodeDeleteById = useCallback(
     async (nodeId: string) => {
@@ -130,6 +162,52 @@ function BuilderCanvasInner() {
       mutate(`/api/workflows/${workflowId}`)
     },
     [workflowId, saveToHistory],
+  )
+
+  const handleAssignToFrame = useCallback(
+    async (nodeId: string, frameId: string) => {
+      if (!workflowId) return
+      saveToHistory()
+      await fetch(`/api/workflows/${workflowId}/nodes/${nodeId}`, {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ parentId: frameId }),
+      })
+      mutate(`/api/workflows/${workflowId}`)
+      toast({ title: "Node added to frame" })
+    },
+    [workflowId, saveToHistory, toast],
+  )
+
+  const handleRemoveFromFrame = useCallback(
+    async (nodeId: string) => {
+      if (!workflowId) return
+      saveToHistory()
+      await fetch(`/api/workflows/${workflowId}/nodes/${nodeId}`, {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ parentId: null }),
+      })
+      mutate(`/api/workflows/${workflowId}`)
+      toast({ title: "Node removed from frame" })
+    },
+    [workflowId, saveToHistory, toast],
+  )
+
+  const handleFrameLabelChange = useCallback(
+    async (nodeId: string, newLabel: string) => {
+      if (!workflowId) return
+      const node = workflow?.nodes.find((n) => n.id === nodeId)
+      if (!node) return
+      saveToHistory()
+      await fetch(`/api/workflows/${workflowId}/nodes/${nodeId}`, {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ data: { ...node.data, label: newLabel } }),
+      })
+      mutate(`/api/workflows/${workflowId}`)
+    },
+    [workflowId, workflow?.nodes, saveToHistory],
   )
 
   const initialNodes = workflow
@@ -142,25 +220,56 @@ function BuilderCanvasInner() {
       } as WorkflowNodeData & { customOnDelete?: () => void },
     }))
     : []
-  const initialEdges = workflow ? workflowConnectionsToEdges(workflow.connections) : []
+  const initialEdges = workflow
+    ? workflowConnectionsToEdges(workflow.connections, {
+      nodes: workflow.nodes,
+      runningEdgeIds: highlightedEdgeIds,
+    })
+    : []
 
   const [nodes, setNodes, onNodesChange] = useNodesState(initialNodes)
   const [edges, setEdges, onEdgesChange] = useEdgesState(initialEdges)
 
   useEffect(() => {
     if (workflow) {
-      const flowNodes = workflowNodesToReactFlow(workflow.nodes).map((n) => ({
+      let flowNodes = workflowNodesToReactFlow(workflow.nodes).map((n) => ({
         ...n,
         data: {
           ...n.data,
           isHighlighted: n.id === highlightedNodeId,
           customOnDelete: () => handleNodeDeleteById(n.id),
-        } as WorkflowNodeData & { customOnDelete?: () => void },
+          ...(n.type === "frame" && {
+            customOnLabelChange: (newLabel: string) => handleFrameLabelChange(n.id, newLabel),
+          }),
+        } as WorkflowNodeData & { customOnDelete?: () => void; customOnLabelChange?: (l: string) => void },
       }))
+      if (isLayoutTransitioning) {
+        flowNodes = flowNodes.map((n) => ({
+          ...n,
+          style: {
+            ...n.style,
+            transition: "transform 0.4s cubic-bezier(0.4, 0, 0.2, 1)",
+          },
+        }))
+      }
       setNodes(flowNodes)
-      setEdges(workflowConnectionsToEdges(workflow.connections))
+      setEdges(
+        workflowConnectionsToEdges(workflow.connections, {
+          nodes: workflow.nodes,
+          runningEdgeIds: highlightedEdgeIds,
+        }),
+      )
     }
-  }, [workflow?.id, workflow?.nodes, workflow?.connections, highlightedNodeId, handleNodeDeleteById])
+  }, [
+    workflow,
+    highlightedNodeId,
+    highlightedEdgeIds,
+    isLayoutTransitioning,
+    handleNodeDeleteById,
+    handleFrameLabelChange,
+    setNodes,
+    setEdges,
+  ])
 
 
 
@@ -225,18 +334,26 @@ function BuilderCanvasInner() {
     [workflowId, saveToHistory],
   )
 
+
   const handleAddNode = useCallback(
-    async (type: NodeType) => {
+    async (type: NodeType, position?: Position) => {
       if (!workflowId) return
       saveToHistory()
 
-      const center = screenToFlowPosition({
-        x: typeof window !== "undefined" ? window.innerWidth / 2 : 400,
-        y: typeof window !== "undefined" ? window.innerHeight / 2 : 300,
-      })
+      let posX: number
+      let posY: number
 
-      let posX = Math.round(center.x / GRID_SIZE) * GRID_SIZE
-      let posY = Math.round(center.y / GRID_SIZE) * GRID_SIZE
+      if (position) {
+        posX = Math.round(position.x / GRID_SIZE) * GRID_SIZE
+        posY = Math.round(position.y / GRID_SIZE) * GRID_SIZE
+      } else {
+        const center = screenToFlowPosition({
+          x: typeof window !== "undefined" ? window.innerWidth / 2 : 400,
+          y: typeof window !== "undefined" ? window.innerHeight / 2 : 300,
+        })
+        posX = Math.round(center.x / GRID_SIZE) * GRID_SIZE
+        posY = Math.round(center.y / GRID_SIZE) * GRID_SIZE
+      }
 
       while (
         workflow?.nodes.some((n) => Math.abs(n.position.x - posX) < 10 && Math.abs(n.position.y - posY) < 10)
@@ -245,7 +362,7 @@ function BuilderCanvasInner() {
         posY += GRID_SIZE * 2
       }
 
-      const position = { x: posX, y: posY }
+      const finalPosition = { x: posX, y: posY }
       const labels: Record<NodeType, string> = {
         start: "Start",
         end: "End",
@@ -255,21 +372,32 @@ function BuilderCanvasInner() {
         mcp: "MCP Server",
         "user-approval": "User Approval",
         "file-search": "File Search",
+        frame: "New Frame",
+      }
+
+      const nodePayload: Record<string, unknown> = {
+        type,
+        position: finalPosition,
+        data: { label: labels[type] },
+      }
+      if (type === "frame") {
+        nodePayload.data = { label: labels[type], width: 400, height: 300 }
+        nodePayload.style = { width: 400, height: 300 }
       }
 
       await fetch(`/api/workflows/${workflowId}/nodes`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          type,
-          position,
-          data: { label: labels[type] },
-        }),
+        body: JSON.stringify(nodePayload),
       })
       mutate(`/api/workflows/${workflowId}`)
     },
     [workflowId, workflow?.nodes, saveToHistory, screenToFlowPosition],
   )
+
+  const handleAddFrame = useCallback(() => {
+    handleAddNode("frame")
+  }, [handleAddNode])
 
   const selectedNodeId = nodes.find((n) => n.selected)?.id ?? null
   const selectedNode = workflow?.nodes?.find((n) => n.id === selectedNodeId)
@@ -357,11 +485,14 @@ function BuilderCanvasInner() {
   const handleAutoLayout = useCallback(async () => {
     if (!workflowId) return
     saveToHistory()
+    setIsLayoutTransitioning(true)
     const response = await fetch(`/api/workflows/${workflowId}/auto-layout`, { method: "POST" })
     if (response.ok) {
       mutate(`/api/workflows/${workflowId}`)
       toast({ title: "Layout applied successfully" })
+      setTimeout(() => setIsLayoutTransitioning(false), 450)
     } else {
+      setIsLayoutTransitioning(false)
       toast({ title: "Failed to apply layout", variant: "destructive" })
     }
   }, [workflowId, saveToHistory, toast])
@@ -372,6 +503,54 @@ function BuilderCanvasInner() {
     await fetch(`/api/workflows/${workflowId}/nodes/${selectedNodeId}`, { method: "DELETE" })
     mutate(`/api/workflows/${workflowId}`)
   }, [selectedNodeId, workflowId, saveToHistory])
+
+  const handleDuplicateById = useCallback(
+    async (nodeId: string) => {
+      if (!workflowId) return
+      saveToHistory()
+      const copyRes = await fetch(`/api/workflows/${workflowId}/copy`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ nodeIds: [nodeId] }),
+      })
+      if (!copyRes.ok) return
+      const copyResult = await copyRes.json()
+      const pasteRes = await fetch(`/api/workflows/${workflowId}/paste`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ nodes: copyResult.nodes ?? [], connections: copyResult.connections ?? [] }),
+      })
+      if (pasteRes.ok) {
+        mutate(`/api/workflows/${workflowId}`)
+        toast({ title: "Node duplicated" })
+      }
+    },
+    [workflowId, saveToHistory, toast],
+  )
+
+  const handleCopyById = useCallback(
+    async (nodeId: string) => {
+      if (!workflowId) return
+      const response = await fetch(`/api/workflows/${workflowId}/copy`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ nodeIds: [nodeId] }),
+      })
+      if (response.ok) {
+        const result = await response.json()
+        clipboardRef.current = { nodes: result.nodes ?? [], connections: result.connections ?? [] }
+        toast({ title: "Node copied to clipboard" })
+      }
+    },
+    [workflowId, toast],
+  )
+
+  const nodeTypes = useMemo(() => {
+    return Object.fromEntries(NODE_TYPES.map((t) => [t, t === "frame" ? FrameNode : CanvasNode])) as Record<
+      (typeof NODE_TYPES)[number],
+      React.ComponentType<WorkflowNodeProps | NodeProps<Node<FrameNodeData, "frame">>>
+    >
+  }, [])
 
   const handleSaveVersion = useCallback(async () => {
     if (!workflowId) return
@@ -387,6 +566,20 @@ function BuilderCanvasInner() {
   const handleZoomIn = useCallback(() => zoomIn(), [zoomIn])
   const handleZoomOut = useCallback(() => zoomOut(), [zoomOut])
   const handleResetView = useCallback(() => fitView({ padding: 0.2 }), [fitView])
+
+  useEffect(() => {
+    const handleCommandPaletteKey = (e: KeyboardEvent) => {
+      if ((e.ctrlKey || e.metaKey) && e.key === "k") {
+        e.preventDefault()
+        setCommandPaletteOpen(true)
+      } else if (e.key === "?" && !e.ctrlKey && !e.metaKey && !e.altKey) {
+        e.preventDefault()
+        setCommandPaletteOpen(true)
+      }
+    }
+    window.addEventListener("keydown", handleCommandPaletteKey)
+    return () => window.removeEventListener("keydown", handleCommandPaletteKey)
+  }, [])
 
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
@@ -475,17 +668,17 @@ function BuilderCanvasInner() {
       <div className="flex-1 flex flex-col relative">
         {/* Floating Toolbar */}
         <div
-          className="absolute top-4 left-1/2 -translate-x-1/2 z-50 h-14 bg-background/60 backdrop-blur-2xl border border-white/10 rounded-full flex items-center justify-between px-6 shadow-[0_8px_32px_-8px_rgba(0,0,0,0.5)] min-w-[600px] w-auto"
+          className="absolute top-4 left-4 right-4 z-50 bg-background/70 backdrop-blur-2xl border border-white/10 rounded-2xl flex items-center gap-3 px-3 py-2 shadow-[0_8px_32px_-8px_rgba(0,0,0,0.5)]"
           data-testid="builder-toolbar"
         >
-          <div className="flex items-center gap-3">
-            <h1 className="font-semibold text-sm tracking-tight">{workflow?.name || "Untitled Workflow"}</h1>
+          <div className="flex items-center gap-3 min-w-0">
+            <h1 className="font-semibold text-sm tracking-tight truncate">{workflow?.name || "Untitled Workflow"}</h1>
             <span className="text-[10px] font-medium text-muted-foreground bg-white/5 border border-white/10 px-2 py-0.5 rounded-full">
               v{workflow?.version || 1}
             </span>
           </div>
 
-          <div className="flex items-center gap-1.5 bg-white/[0.02] p-1 rounded-full border border-white/5 ml-6">
+          <div className="ml-auto max-w-full flex items-center gap-1.5 bg-white/[0.02] p-1 rounded-full border border-white/5 overflow-x-auto">
             <ExportImportDialog
               workflowId={workflowId}
               onImportSuccess={(newWorkflow) => {
@@ -567,17 +760,42 @@ function BuilderCanvasInner() {
         <div
           className="flex-1 relative bg-[#0a0a0a]"
           data-testid="builder-canvas"
+          onDragOver={(e) => {
+            e.preventDefault()
+            e.dataTransfer.dropEffect = "move"
+          }}
+          onDrop={(e) => {
+            e.preventDefault()
+            const raw = e.dataTransfer.getData("application/json")
+            if (!raw) return
+            try {
+              const { type } = JSON.parse(raw) as { type: NodeType; label: string }
+              if (!type || !NODE_TYPES.includes(type)) return
+              const flowPos = screenToFlowPosition({ x: e.clientX, y: e.clientY })
+              const snapped = {
+                x: Math.round(flowPos.x / GRID_SIZE) * GRID_SIZE,
+                y: Math.round(flowPos.y / GRID_SIZE) * GRID_SIZE,
+              }
+              handleAddNode(type, snapped)
+            } catch {
+              // ignore invalid drop data
+            }
+          }}
         >
-          {/* Subtle radial ambient glow behind the grid */}
           <div className="absolute inset-0 pointer-events-none bg-[radial-gradient(circle_at_50%_50%,rgba(255,255,255,0.02)_0%,transparent_100%)] z-0" />
 
           <ReactFlow
             nodes={nodes}
             edges={edges}
+            edgeTypes={edgeTypes}
             onNodesChange={handleNodesChange}
             onEdgesChange={handleEdgesChange}
             onConnect={handleConnect}
             onNodeDragStop={handleNodeDragStop}
+            onPaneContextMenu={handlePaneContextMenu}
+            onNodeContextMenu={handleNodeContextMenu}
+            onPaneClick={handleCloseMenu}
+            onNodeClick={handleCloseMenu}
             nodeTypes={nodeTypes}
             snapToGrid
             snapGrid={[GRID_SIZE, GRID_SIZE]}
@@ -594,42 +812,56 @@ function BuilderCanvasInner() {
             proOptions={{ hideAttribution: true }}
           >
             <Background gap={GRID_SIZE} size={1} color="rgba(255,255,255,0.05)" />
-            <Controls showInteractive={false} />
+            <Button
+              variant="ghost"
+              size="sm"
+              className="absolute bottom-4 right-4 h-8 px-2.5 text-xs text-muted-foreground hover:text-foreground bg-card/60 backdrop-blur-sm border border-white/10 rounded-lg"
+              onClick={() => setCommandPaletteOpen(true)}
+              aria-label="Open command palette"
+            >
+              <kbd className="font-mono">⌘K</kbd>
+              <span className="ml-1.5">Commands</span>
+            </Button>
 
-            <div className="absolute bottom-4 right-4 w-48 h-32 bg-card/95 backdrop-blur-sm border border-border rounded-lg p-3 shadow-lg">
-              <div className="text-xs space-y-1.5">
-                <div className="font-semibold text-foreground mb-2 flex items-center gap-2">
-                  <span className="w-1.5 h-1.5 rounded-full bg-primary animate-pulse" />
-                  Keyboard Shortcuts
-                </div>
-                <div className="grid grid-cols-2 gap-x-4 gap-y-1.5 text-muted-foreground">
-                  <div>
-                    <kbd className="px-1.5 py-0.5 bg-muted rounded text-[10px] font-mono">Ctrl+Z</kbd> Undo
-                  </div>
-                  <div>
-                    <kbd className="px-1.5 py-0.5 bg-muted rounded text-[10px] font-mono">Ctrl+Y</kbd> Redo
-                  </div>
-                  <div>
-                    <kbd className="px-1.5 py-0.5 bg-muted rounded text-[10px] font-mono">Ctrl+C</kbd> Copy
-                  </div>
-                  <div>
-                    <kbd className="px-1.5 py-0.5 bg-muted rounded text-[10px] font-mono">Ctrl+V</kbd> Paste
-                  </div>
-                  <div>
-                    <kbd className="px-1.5 py-0.5 bg-muted rounded text-[10px] font-mono">Ctrl+D</kbd> Duplicate
-                  </div>
-                  <div>
-                    <kbd className="px-1.5 py-0.5 bg-muted rounded text-[10px] font-mono">Del</kbd> Delete
-                  </div>
-                  <div>
-                    <kbd className="px-1.5 py-0.5 bg-muted rounded text-[10px] font-mono">Ctrl+S</kbd> Save
-                  </div>
-                  <div>
-                    <kbd className="px-1.5 py-0.5 bg-muted rounded text-[10px] font-mono">Ctrl+Shift+L</kbd> Layout
-                  </div>
-                </div>
+            {menuType === 'pane' && menuPosition && (
+              <div
+                className="fixed z-[100] pointer-events-none"
+                style={{ top: menuPosition.y, left: menuPosition.x }}
+              >
+                <PaneContextMenu
+                  onPaste={() => { handlePaste(); handleCloseMenu(); }}
+                  onAutoLayout={() => { handleAutoLayout(); handleCloseMenu(); }}
+                  onAddFrame={() => { handleAddFrame(); handleCloseMenu(); }}
+                  open={true}
+                  onOpenChange={(open) => !open && handleCloseMenu()}
+                >
+                  <div className="w-px h-px" />
+                </PaneContextMenu>
               </div>
-            </div>
+            )}
+
+            {menuType === 'node' && menuPosition && menuNodeId && (
+              <div
+                className="fixed z-[100] pointer-events-none"
+                style={{ top: menuPosition.y, left: menuPosition.x }}
+              >
+                <NodeContextMenu
+                  nodeId={menuNodeId}
+                  nodeType={workflow?.nodes.find(n => n.id === menuNodeId)?.type}
+                  parentId={workflow?.nodes.find(n => n.id === menuNodeId)?.parentId || undefined}
+                  onDuplicate={() => { handleDuplicateById(menuNodeId); handleCloseMenu(); }}
+                  onCopy={() => { handleCopyById(menuNodeId); handleCloseMenu(); }}
+                  onDelete={() => { handleNodeDeleteById(menuNodeId); handleCloseMenu(); }}
+                  onAssignToFrame={(nodeId, frameId) => { handleAssignToFrame(nodeId, frameId); handleCloseMenu(); }}
+                  onRemoveFromFrame={(nodeId) => { handleRemoveFromFrame(nodeId); handleCloseMenu(); }}
+                  frames={workflow?.nodes.filter(n => n.type === 'frame')}
+                  open={true}
+                  onOpenChange={(open) => !open && handleCloseMenu()}
+                >
+                  <div className="w-px h-px" />
+                </NodeContextMenu>
+              </div>
+            )}
           </ReactFlow>
         </div>
       </div>
@@ -656,6 +888,22 @@ function BuilderCanvasInner() {
         isOpen={showExecutionMonitor}
         onClose={() => setShowExecutionMonitor(false)}
         onNodeHighlight={setHighlightedNodeId}
+      />
+
+      <BuilderCommandPalette
+        open={commandPaletteOpen}
+        onOpenChange={setCommandPaletteOpen}
+        onSave={handleSaveVersion}
+        onUndo={handleUndo}
+        onRedo={handleRedo}
+        onAutoLayout={handleAutoLayout}
+        onZoomIn={handleZoomIn}
+        onZoomOut={handleZoomOut}
+        onFitView={handleResetView}
+        onAddNode={handleAddNode}
+        onAddFrame={handleAddFrame}
+        canUndo={historyStatus?.canUndo}
+        canRedo={historyStatus?.canRedo}
       />
     </div>
   )
