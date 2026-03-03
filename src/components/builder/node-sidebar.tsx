@@ -88,33 +88,33 @@ const NODE_CATEGORIES = [
 
 const COLOR_CLASSES: Record<string, { bg: string; icon: string; hover: string; border: string }> = {
   emerald: {
-    bg: "bg-emerald-950/40",
-    icon: "text-emerald-400",
-    hover: "hover:bg-emerald-950/60",
-    border: "border-emerald-500/30",
+    bg: "bg-indigo-500/10",
+    icon: "text-indigo-300",
+    hover: "hover:bg-indigo-500/20",
+    border: "border-indigo-500/20",
   },
-  rose: { bg: "bg-rose-950/40", icon: "text-rose-400", hover: "hover:bg-rose-950/60", border: "border-rose-500/30" },
-  blue: { bg: "bg-blue-950/40", icon: "text-blue-400", hover: "hover:bg-blue-950/60", border: "border-blue-500/30" },
+  rose: { bg: "bg-violet-500/10", icon: "text-violet-300", hover: "hover:bg-violet-500/20", border: "border-violet-500/20" },
+  blue: { bg: "bg-indigo-500/10", icon: "text-indigo-300", hover: "hover:bg-indigo-500/20", border: "border-indigo-500/20" },
   purple: {
-    bg: "bg-purple-950/40",
-    icon: "text-purple-400",
-    hover: "hover:bg-purple-950/60",
-    border: "border-purple-500/30",
+    bg: "bg-violet-500/10",
+    icon: "text-violet-300",
+    hover: "hover:bg-violet-500/20",
+    border: "border-violet-500/20",
   },
   amber: {
-    bg: "bg-amber-950/40",
-    icon: "text-amber-400",
-    hover: "hover:bg-amber-950/60",
-    border: "border-amber-500/30",
+    bg: "bg-zinc-500/10",
+    icon: "text-zinc-300",
+    hover: "hover:bg-zinc-500/20",
+    border: "border-zinc-500/20",
   },
   orange: {
-    bg: "bg-orange-950/40",
-    icon: "text-orange-400",
-    hover: "hover:bg-orange-950/60",
-    border: "border-orange-500/30",
+    bg: "bg-zinc-500/10",
+    icon: "text-zinc-300",
+    hover: "hover:bg-zinc-500/20",
+    border: "border-zinc-500/20",
   },
-  cyan: { bg: "bg-cyan-950/40", icon: "text-cyan-400", hover: "hover:bg-cyan-950/60", border: "border-cyan-500/30" },
-  teal: { bg: "bg-teal-950/40", icon: "text-teal-400", hover: "hover:bg-teal-950/60", border: "border-teal-500/30" },
+  cyan: { bg: "bg-indigo-500/10", icon: "text-indigo-300", hover: "hover:bg-indigo-500/20", border: "border-indigo-500/20" },
+  teal: { bg: "bg-violet-500/10", icon: "text-violet-300", hover: "hover:bg-violet-500/20", border: "border-violet-500/20" },
 }
 
 export function NodeSidebar({ isOpen, onToggle, onAddNode }: NodeSidebarProps) {
@@ -130,6 +130,7 @@ export function NodeSidebar({ isOpen, onToggle, onAddNode }: NodeSidebarProps) {
     <div
       className={cn(
         "relative border-r border-white/5 bg-background/40 backdrop-blur-2xl transition-all duration-300 z-40",
+        "relative z-40 border-r border-border/80 bg-card/80 transition-all duration-300",
         isOpen ? "w-72" : "w-0",
       )}
     >
@@ -137,7 +138,7 @@ export function NodeSidebar({ isOpen, onToggle, onAddNode }: NodeSidebarProps) {
         variant="outline"
         size="icon"
         className={cn(
-          "absolute -right-4 top-4 z-50 h-8 w-8 rounded-full bg-background/80 backdrop-blur-xl border border-white/10 shadow-[0_0_15px_rgba(0,0,0,0.5)] text-muted-foreground",
+          "absolute -right-4 top-4 z-50 h-8 w-8 rounded-full border border-border/80 bg-card text-muted-foreground",
           "hover:scale-110 hover:text-foreground transition-all duration-300",
         )}
         onClick={onToggle}
@@ -147,13 +148,13 @@ export function NodeSidebar({ isOpen, onToggle, onAddNode }: NodeSidebarProps) {
 
       {isOpen && (
         <div className="flex flex-col h-full">
-          <div className="p-5 border-b border-white/5 bg-white/[0.02]">
+          <div className="border-b border-border/80 p-5">
             <h2 className="font-semibold text-lg mb-4 tracking-tight">Add Nodes</h2>
             <div className="relative group">
               <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground transition-colors group-focus-within:text-primary" />
               <Input
                 placeholder="Search nodes..."
-                className="pl-9 h-10 bg-black/20 border-white/5 focus-visible:ring-1 focus-visible:ring-white/20 focus-visible:bg-black/40 transition-all rounded-xl shadow-inner placeholder:text-muted-foreground/50 text-sm"
+                className="h-10 rounded-xl border-border/80 bg-background/70 pl-9 text-sm placeholder:text-muted-foreground/50"
                 value={search}
                 onChange={(e) => setSearch(e.target.value)}
                 aria-label="Search nodes"
@@ -161,7 +162,7 @@ export function NodeSidebar({ isOpen, onToggle, onAddNode }: NodeSidebarProps) {
             </div>
           </div>
 
-          <div className="flex-1 overflow-y-auto p-5 space-y-8 scrollbar-thin scrollbar-thumb-white/10 scrollbar-track-transparent">
+          <div className="flex-1 space-y-8 overflow-y-auto p-5">
             {filteredCategories.map((category) => (
               <div key={category.name}>
                 <h3 className="text-[11px] font-semibold text-muted-foreground/70 uppercase tracking-widest mb-3 pl-1">
@@ -177,10 +178,10 @@ export function NodeSidebar({ isOpen, onToggle, onAddNode }: NodeSidebarProps) {
                         draggable
                         className={cn(
                           "w-full flex items-center gap-3 px-3.5 py-3 rounded-xl transition-all duration-300 ease-out",
-                          "border border-white/5",
-                          "bg-white/[0.02] hover:bg-white/[0.04]",
+                          "border border-border/80",
+                          "bg-background/70 hover:bg-accent/40",
                           "cursor-grab active:cursor-grabbing",
-                          isHovered && "scale-[1.02] shadow-[0_8px_20px_-4px_rgba(0,0,0,0.5)]",
+                          isHovered && "scale-[1.02]",
                           "active:scale-[0.98]",
                         )}
                         onClick={() => onAddNode(node.type)}
@@ -196,9 +197,9 @@ export function NodeSidebar({ isOpen, onToggle, onAddNode }: NodeSidebarProps) {
                       >
                         <div
                           className={cn(
-                            "p-2 rounded-lg transition-all duration-500 ease-out ring-1 ring-inset ring-white/10 flex-shrink-0",
+                            "flex-shrink-0 rounded-lg p-2 transition-all duration-500 ease-out ring-1 ring-inset ring-border/80",
                             colors.bg,
-                            isHovered && "scale-110 shadow-lg",
+                            isHovered && "scale-110",
                           )}
                         >
                           <node.icon className={cn("h-4 w-4 transition-transform duration-500", colors.icon, isHovered && "scale-110")} />
@@ -217,7 +218,7 @@ export function NodeSidebar({ isOpen, onToggle, onAddNode }: NodeSidebarProps) {
             ))}
           </div>
 
-          <div className="p-5 border-t border-white/5 bg-black/20 backdrop-blur-md">
+          <div className="border-t border-border/80 bg-background/70 p-5">
             <p className="text-[11px] text-muted-foreground/60 leading-relaxed font-light">
               Click to add at center, or drag to drop at a specific position. Connect nodes by dragging from output to input handles.
             </p>
