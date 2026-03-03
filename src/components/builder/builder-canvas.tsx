@@ -709,17 +709,17 @@ function BuilderCanvasInner() {
       <div className="flex-1 flex flex-col relative">
         {/* Floating Toolbar */}
         <div
-          className="absolute top-4 left-4 right-4 z-50 bg-background/70 backdrop-blur-2xl border border-white/10 rounded-2xl flex items-center gap-3 px-3 py-2 shadow-[0_8px_32px_-8px_rgba(0,0,0,0.5)]"
+          className="absolute top-4 left-4 right-4 z-50 flex items-center gap-3 rounded-2xl border border-border/80 bg-card/90 px-3 py-2 shadow-none"
           data-testid="builder-toolbar"
         >
           <div className="flex items-center gap-3 min-w-0">
             <h1 className="font-semibold text-sm tracking-tight truncate">{workflow?.name || "Untitled Workflow"}</h1>
-            <span className="text-[10px] font-medium text-muted-foreground bg-white/5 border border-white/10 px-2 py-0.5 rounded-full">
+            <span className="rounded-full border border-border/80 bg-muted/40 px-2 py-0.5 text-[10px] font-medium text-muted-foreground">
               v{workflow?.version || 1}
             </span>
           </div>
 
-          <div className="ml-auto max-w-full flex items-center gap-1.5 bg-white/[0.02] p-1 rounded-full border border-white/5 overflow-x-auto">
+          <div className="ml-auto flex max-w-full items-center gap-1.5 overflow-x-auto rounded-full border border-border/80 bg-background/70 p-1">
             <ExportImportDialog
               workflowId={workflowId}
               onImportSuccess={(newWorkflow) => {
@@ -732,11 +732,11 @@ function BuilderCanvasInner() {
                 }
               }}
             />
-            <div className="w-px h-4 bg-white/10 mx-1" />
+            <div className="mx-1 h-4 w-px bg-border/80" />
             <Button
               variant="ghost"
               size="icon"
-              className="h-8 w-8 rounded-full hover:bg-white/10"
+              className="h-8 w-8 rounded-full hover:bg-accent"
               onClick={handleUndo}
               disabled={!historyStatus?.canUndo}
               aria-label="Undo"
@@ -747,7 +747,7 @@ function BuilderCanvasInner() {
             <Button
               variant="ghost"
               size="icon"
-              className="h-8 w-8 rounded-full hover:bg-white/10"
+              className="h-8 w-8 rounded-full hover:bg-accent"
               onClick={handleRedo}
               disabled={!historyStatus?.canRedo}
               aria-label="Redo"
@@ -755,27 +755,27 @@ function BuilderCanvasInner() {
             >
               <Redo className="h-4 w-4" />
             </Button>
-            <div className="w-px h-4 bg-white/10 mx-1" />
-            <Button variant="ghost" size="icon" className="h-8 w-8 rounded-full hover:bg-white/10" onClick={handleAutoLayout} title="Auto Layout" aria-label="Auto Layout">
+            <div className="mx-1 h-4 w-px bg-border/80" />
+            <Button variant="ghost" size="icon" className="h-8 w-8 rounded-full hover:bg-accent" onClick={handleAutoLayout} title="Auto Layout" aria-label="Auto Layout">
               <ArrowDownUp className="h-4 w-4" />
             </Button>
-            <Button variant="ghost" size="icon" className="h-8 w-8 rounded-full hover:bg-white/10" onClick={handleZoomOut} aria-label="Zoom out" title="Zoom out">
+            <Button variant="ghost" size="icon" className="h-8 w-8 rounded-full hover:bg-accent" onClick={handleZoomOut} aria-label="Zoom out" title="Zoom out">
               <ZoomOut className="h-4 w-4" />
             </Button>
             <span className="text-xs font-medium text-muted-foreground w-10 text-center select-none" aria-live="polite">
               {Math.round((viewport?.zoom ?? 1) * 100)}%
             </span>
-            <Button variant="ghost" size="icon" className="h-8 w-8 rounded-full hover:bg-white/10" onClick={handleZoomIn} aria-label="Zoom in" title="Zoom in">
+            <Button variant="ghost" size="icon" className="h-8 w-8 rounded-full hover:bg-accent" onClick={handleZoomIn} aria-label="Zoom in" title="Zoom in">
               <ZoomIn className="h-4 w-4" />
             </Button>
-            <Button variant="ghost" size="icon" className="h-8 w-8 rounded-full hover:bg-white/10" onClick={handleResetView} aria-label="Fit view" title="Fit view">
+            <Button variant="ghost" size="icon" className="h-8 w-8 rounded-full hover:bg-accent" onClick={handleResetView} aria-label="Fit view" title="Fit view">
               <Maximize2 className="h-4 w-4" />
             </Button>
-            <div className="w-px h-4 bg-white/10 mx-1" />
+            <div className="mx-1 h-4 w-px bg-border/80" />
             <Button
               variant="ghost"
               size="icon"
-              className="h-8 w-8 rounded-full hover:bg-white/10"
+              className="h-8 w-8 rounded-full hover:bg-accent"
               onClick={() => setShowVersionHistory(!showVersionHistory)}
               aria-label="Version history"
               title="Version history"
@@ -785,13 +785,13 @@ function BuilderCanvasInner() {
             <Button
               variant="outline"
               size="sm"
-              className="h-8 gap-2 ml-1 rounded-full bg-blue-500/10 border-blue-500/20 text-blue-400 hover:bg-blue-500/20 hover:text-blue-300 transition-colors"
+              className="ml-1 h-8 gap-2 rounded-full border-indigo-500/20 bg-indigo-500/10 text-indigo-300 hover:bg-indigo-500/20"
               onClick={() => setShowExecutionMonitor(!showExecutionMonitor)}
             >
               <Play className="h-3.5 w-3.5" />
               {showExecutionMonitor ? "Close" : "Run"}
             </Button>
-            <Button size="sm" className="h-8 gap-2 rounded-full bg-primary/90 hover:bg-primary shadow-[0_0_15px_rgba(255,255,255,0.1)] transition-colors" onClick={handleSaveVersion}>
+            <Button size="sm" className="h-8 gap-2 rounded-full" onClick={handleSaveVersion}>
               <Save className="h-3.5 w-3.5" />
               Save
             </Button>
@@ -799,7 +799,7 @@ function BuilderCanvasInner() {
         </div>
 
         <div
-          className="flex-1 relative bg-[#0a0a0a]"
+          className="relative flex-1 bg-background"
           data-testid="builder-canvas"
           onDragOver={(e) => {
             e.preventDefault()
@@ -823,7 +823,7 @@ function BuilderCanvasInner() {
             }
           }}
         >
-          <div className="absolute inset-0 pointer-events-none bg-[radial-gradient(circle_at_50%_50%,rgba(255,255,255,0.02)_0%,transparent_100%)] z-0" />
+          <div className="absolute inset-0 pointer-events-none bg-[radial-gradient(circle_at_50%_50%,rgba(99,102,241,0.04)_0%,transparent_75%)] z-0" />
 
           <ReactFlow
             nodes={nodes}
@@ -852,11 +852,11 @@ function BuilderCanvasInner() {
             deleteKeyCode={null}
             proOptions={{ hideAttribution: true }}
           >
-            <Background gap={GRID_SIZE} size={1} color="rgba(255,255,255,0.05)" />
+            <Background gap={GRID_SIZE} size={1} color="rgba(255,255,255,0.03)" />
             <Button
               variant="ghost"
               size="sm"
-              className="absolute bottom-4 right-4 h-8 px-2.5 text-xs text-muted-foreground hover:text-foreground bg-card/60 backdrop-blur-sm border border-white/10 rounded-lg"
+              className="absolute bottom-4 right-4 h-8 rounded-lg border border-border/80 bg-card/80 px-2.5 text-xs text-muted-foreground hover:text-foreground"
               onClick={() => setCommandPaletteOpen(true)}
               aria-label="Open command palette"
             >

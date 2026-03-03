@@ -46,14 +46,14 @@ export function FrameNode({ data, selected }: NodeProps<FrameNodeType>) {
   return (
     <div
       className={cn(
-        "rounded-lg border border-white/10 bg-white/5 backdrop-blur-xl",
+        "rounded-lg border border-border/80 bg-card/90",
         "transition-all duration-300 ease-out",
         "min-w-[120px] min-h-[80px]",
-        selected && "ring-2 ring-white/20 border-white/20",
+        selected && "border-primary/40 ring-2 ring-primary/40",
       )}
       style={{ width, height }}
     >
-      <div className="p-3 border-b border-white/10 flex items-center">
+      <div className="flex items-center border-b border-border/80 p-3">
         {isEditing ? (
           <input
             type="text"
