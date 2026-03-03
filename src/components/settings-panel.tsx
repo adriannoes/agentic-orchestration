@@ -1,6 +1,7 @@
 "use client"
 
 import { useState } from "react"
+import { useTheme } from "next-themes"
 import { Settings, Key, Palette, Bell, Shield, Save } from "lucide-react"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
@@ -13,6 +14,7 @@ import { Separator } from "@/components/ui/separator"
 import { toast } from "sonner"
 
 export function SettingsPanel() {
+  const { theme, setTheme } = useTheme()
   const [defaultModel, setDefaultModel] = useState("gpt-4o")
   const [maxTokens, setMaxTokens] = useState("4096")
   const [temperature, setTemperature] = useState("0.7")
@@ -28,7 +30,7 @@ export function SettingsPanel() {
     <div className="p-8 max-w-4xl">
       <div className="mb-8">
         <h1 className="text-3xl font-bold mb-2">Settings</h1>
-        <p className="text-muted-foreground">Configure your AgentKit preferences</p>
+        <p className="text-muted-foreground">Configure your Agent Builder preferences</p>
       </div>
 
       <Tabs defaultValue="general" className="space-y-6">
@@ -158,12 +160,12 @@ export function SettingsPanel() {
           <Card>
             <CardHeader>
               <CardTitle>Appearance</CardTitle>
-              <CardDescription>Customize how AgentKit looks</CardDescription>
+              <CardDescription>Customize how Agent Builder looks</CardDescription>
             </CardHeader>
             <CardContent className="space-y-6">
               <div className="space-y-2">
                 <Label>Theme</Label>
-                <Select defaultValue="dark">
+                <Select value={theme || "dark"} onValueChange={setTheme}>
                   <SelectTrigger className="max-w-md">
                     <SelectValue />
                   </SelectTrigger>
@@ -173,6 +175,9 @@ export function SettingsPanel() {
                     <SelectItem value="system">System</SelectItem>
                   </SelectContent>
                 </Select>
+                <p className="text-sm text-muted-foreground">
+                  Dark mode is the default for Clean Architect. Light mode is available here as an advanced option.
+                </p>
               </div>
               <div className="space-y-2">
                 <Label>Accent Color</Label>
