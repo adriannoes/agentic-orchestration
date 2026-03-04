@@ -14,11 +14,21 @@ import {
   type EdgeChange,
   type Connection as ReactFlowConnection,
   type Node,
-  type Edge,
   type NodeProps,
 } from "@xyflow/react"
 import "@xyflow/react/dist/style.css"
-import { Play, ZoomIn, ZoomOut, Maximize2, Save, Undo, Redo, History, ArrowDownUp, LogIn } from "lucide-react"
+import {
+  Play,
+  ZoomIn,
+  ZoomOut,
+  Maximize2,
+  Save,
+  Undo,
+  Redo,
+  History,
+  ArrowDownUp,
+  LogIn,
+} from "lucide-react"
 import { Button } from "@/components/ui/button"
 import type { WorkflowNode, Position, NodeType, Workflow, Connection } from "@/lib/workflow-types"
 import { NodeSidebar } from "./node-sidebar"
@@ -36,7 +46,6 @@ import { useToast } from "@/hooks/use-toast"
 import {
   workflowNodesToReactFlow,
   workflowConnectionsToEdges,
-  reactFlowNodesToWorkflow,
   reactFlowEdgesToConnections,
 } from "@/lib/builder/workflow-to-reactflow"
 import { edgeTypes } from "./edges"
@@ -71,14 +80,16 @@ function BuilderCanvasInner() {
 
   const [workflowId, setWorkflowId] = useState<string | null>(null)
 
-  const { data: workflows, isLoading: isLoadingWorkflows, error: workflowsError } = useSWR<Workflow[]>(
-    "/api/workflows",
-    fetcher,
-    { revalidateOnFocus: false },
-  )
+  const {
+    data: workflows,
+    isLoading: isLoadingWorkflows,
+    error: workflowsError,
+  } = useSWR<Workflow[]>("/api/workflows", fetcher, { revalidateOnFocus: false })
 
   const isUnauthorized = workflowsError?.message === "UNAUTHORIZED"
 
+
+  /* eslint-disable react-hooks/set-state-in-effect */
   useEffect(() => {
     if (isLoadingWorkflows || isUnauthorized) return
     if (workflows && Array.isArray(workflows)) {
@@ -86,7 +97,12 @@ function BuilderCanvasInner() {
         fetch("/api/workflows", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ name: "Untitled Workflow", description: "", nodes: [], connections: [] }),
+          body: JSON.stringify({
+            name: "Untitled Workflow",
+            description: "",
+            nodes: [],
+            connections: [],
+          }),
         })
           .then((res) => (res.ok ? res.json() : null))
           .then((created) => {
@@ -101,6 +117,7 @@ function BuilderCanvasInner() {
       }
     }
   }, [workflows, isLoadingWorkflows, isUnauthorized, workflowId])
+  /* eslint-enable react-hooks/set-state-in-effect */
 
   const { data: workflow, isLoading } = useSWR<Workflow | null>(
     workflowId ? `/api/workflows/${workflowId}` : null,
@@ -118,7 +135,7 @@ function BuilderCanvasInner() {
   const [showExecutionMonitor, setShowExecutionMonitor] = useState(false)
   const [commandPaletteOpen, setCommandPaletteOpen] = useState(false)
   const [highlightedNodeId, setHighlightedNodeId] = useState<string | null>(null)
-  const [highlightedEdgeIds, setHighlightedEdgeIds] = useState<string[]>([])
+  const [highlightedEdgeIds, _setHighlightedEdgeIds] = useState<string[]>([])
   const [isLayoutTransitioning, setIsLayoutTransitioning] = useState(false)
 
   const saveToHistory = useCallback(() => {
@@ -128,14 +145,14 @@ function BuilderCanvasInner() {
     }
   }, [workflow, workflowId])
 
-  const [menuType, setMenuType] = useState<'node' | 'pane' | null>(null)
+  const [menuType, setMenuType] = useState<"node" | "pane" | null>(null)
   const [menuPosition, setMenuPosition] = useState<{ x: number; y: number } | null>(null)
   const [menuNodeId, setMenuNodeId] = useState<string | null>(null)
 
   const handlePaneContextMenu = useCallback((event: React.MouseEvent | MouseEvent) => {
     event.preventDefault()
-    setMenuType('pane')
-    if ('clientX' in event) {
+    setMenuType("pane")
+    if ("clientX" in event) {
       setMenuPosition({ x: event.clientX, y: event.clientY })
     }
     setMenuNodeId(null)
@@ -144,7 +161,7 @@ function BuilderCanvasInner() {
   const handleNodeContextMenu = useCallback((event: React.MouseEvent, node: Node) => {
     event.preventDefault()
     event.stopPropagation()
-    setMenuType('node')
+    setMenuType("node")
     setMenuPosition({ x: event.clientX, y: event.clientY })
     setMenuNodeId(node.id)
   }, [])
@@ -242,7 +259,10 @@ function BuilderCanvasInner() {
           ...(n.type === "frame" && {
             customOnLabelChange: (newLabel: string) => handleFrameLabelChange(n.id, newLabel),
           }),
-        } as WorkflowNodeData & { customOnDelete?: () => void; customOnLabelChange?: (l: string) => void },
+        } as WorkflowNodeData & {
+          customOnDelete?: () => void
+          customOnLabelChange?: (l: string) => void
+        },
       }))
       if (isLayoutTransitioning) {
         flowNodes = flowNodes.map((n) => ({
@@ -271,8 +291,6 @@ function BuilderCanvasInner() {
     setNodes,
     setEdges,
   ])
-
-
 
   const handleNodesChange = useCallback(
     (changes: NodeChange<Node<WorkflowNodeData, NodeType>>[]) => {
@@ -335,7 +353,6 @@ function BuilderCanvasInner() {
     [workflowId, saveToHistory],
   )
 
-
   const handleAddNode = useCallback(
     async (type: NodeType, position?: Position) => {
       if (!workflowId) return
@@ -357,7 +374,9 @@ function BuilderCanvasInner() {
       }
 
       while (
-        workflow?.nodes.some((n) => Math.abs(n.position.x - posX) < 10 && Math.abs(n.position.y - posY) < 10)
+        workflow?.nodes.some(
+          (n) => Math.abs(n.position.x - posX) < 10 && Math.abs(n.position.y - posY) < 10,
+        )
       ) {
         posX += GRID_SIZE * 2
         posY += GRID_SIZE * 2
@@ -463,11 +482,17 @@ function BuilderCanvasInner() {
     })
     if (!copyRes.ok) return
     const copyResult = await copyRes.json()
-    clipboardRef.current = { nodes: copyResult.nodes ?? [], connections: copyResult.connections ?? [] }
+    clipboardRef.current = {
+      nodes: copyResult.nodes ?? [],
+      connections: copyResult.connections ?? [],
+    }
     const pasteRes = await fetch(`/api/workflows/${workflowId}/paste`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ nodes: copyResult.nodes ?? [], connections: copyResult.connections ?? [] }),
+      body: JSON.stringify({
+        nodes: copyResult.nodes ?? [],
+        connections: copyResult.connections ?? [],
+      }),
     })
     if (pasteRes.ok) {
       mutate(`/api/workflows/${workflowId}`)
@@ -477,9 +502,7 @@ function BuilderCanvasInner() {
 
   const handleSelectAll = useCallback(() => {
     if (workflow?.nodes.length) {
-      setNodes((nds) =>
-        nds.map((n) => ({ ...n, selected: n.id === workflow.nodes[0].id })),
-      )
+      setNodes((nds) => nds.map((n) => ({ ...n, selected: n.id === workflow.nodes[0].id })))
     }
   }, [workflow, setNodes])
 
@@ -535,7 +558,10 @@ function BuilderCanvasInner() {
       const pasteRes = await fetch(`/api/workflows/${workflowId}/paste`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ nodes: copyResult.nodes ?? [], connections: copyResult.connections ?? [] }),
+        body: JSON.stringify({
+          nodes: copyResult.nodes ?? [],
+          connections: copyResult.connections ?? [],
+        }),
       })
       if (pasteRes.ok) {
         mutate(`/api/workflows/${workflowId}`)
@@ -563,7 +589,9 @@ function BuilderCanvasInner() {
   )
 
   const nodeTypes = useMemo(() => {
-    return Object.fromEntries(NODE_TYPES.map((t) => [t, t === "frame" ? FrameNode : CanvasNode])) as Record<
+    return Object.fromEntries(
+      NODE_TYPES.map((t) => [t, t === "frame" ? FrameNode : CanvasNode]),
+    ) as Record<
       (typeof NODE_TYPES)[number],
       React.ComponentType<WorkflowNodeProps | NodeProps<Node<FrameNodeData, "frame">>>
     >
@@ -578,7 +606,7 @@ function BuilderCanvasInner() {
     })
   }, [workflowId])
 
-  const { setViewport, zoomIn, zoomOut, fitView } = useReactFlow()
+  const { zoomIn, zoomOut, fitView } = useReactFlow()
 
   const handleZoomIn = useCallback(() => zoomIn(), [zoomIn])
   const handleZoomOut = useCallback(() => zoomOut(), [zoomOut])
@@ -682,8 +710,8 @@ function BuilderCanvasInner() {
 
   if (isUnauthorized) {
     return (
-      <div className="flex flex-col items-center justify-center h-screen bg-background gap-4">
-        <LogIn className="h-12 w-12 text-muted-foreground" />
+      <div className="bg-background flex h-screen flex-col items-center justify-center gap-4">
+        <LogIn className="text-muted-foreground h-12 w-12" />
         <p className="text-muted-foreground">Sign in to access the workflow builder</p>
         <Button asChild>
           <a href="/login">Sign in</a>
@@ -694,7 +722,7 @@ function BuilderCanvasInner() {
 
   if (isLoadingWorkflows || !workflowId || isLoading) {
     return (
-      <div className="flex items-center justify-center h-screen bg-background">
+      <div className="bg-background flex h-screen items-center justify-center">
         <div className="text-muted-foreground">Loading workflow...</div>
       </div>
     )
@@ -703,23 +731,28 @@ function BuilderCanvasInner() {
   const viewport = getViewport()
 
   return (
-    <div className="flex h-screen bg-background overflow-hidden">
-      <NodeSidebar isOpen={showSidebar} onToggle={() => setShowSidebar(!showSidebar)} onAddNode={handleAddNode} />
+    <div className="bg-background flex h-screen overflow-hidden">
+      <NodeSidebar
+        isOpen={showSidebar}
+        onToggle={() => setShowSidebar(!showSidebar)}
+        onAddNode={handleAddNode}
+      />
 
-      <div className="flex-1 flex flex-col relative">
-        {/* Floating Toolbar */}
+      <div className="relative flex flex-1 flex-col">
         <div
-          className="absolute top-4 left-4 right-4 z-50 flex items-center gap-3 rounded-2xl border border-border/80 bg-card/90 px-3 py-2 shadow-none"
+          className="border-border/80 bg-card/90 absolute top-4 right-4 left-4 z-50 flex items-center gap-3 rounded-2xl border px-3 py-2 shadow-sm"
           data-testid="builder-toolbar"
         >
-          <div className="flex items-center gap-3 min-w-0">
-            <h1 className="font-semibold text-sm tracking-tight truncate">{workflow?.name || "Untitled Workflow"}</h1>
-            <span className="rounded-full border border-border/80 bg-muted/40 px-2 py-0.5 text-[10px] font-medium text-muted-foreground">
+          <div className="flex min-w-0 items-center gap-3">
+            <h1 className="truncate text-sm font-semibold tracking-tight">
+              {workflow?.name || "Untitled Workflow"}
+            </h1>
+            <span className="border-border/80 bg-muted/40 text-muted-foreground rounded-full border px-2 py-0.5 text-[10px] font-medium">
               v{workflow?.version || 1}
             </span>
           </div>
 
-          <div className="ml-auto flex max-w-full items-center gap-1.5 overflow-x-auto rounded-full border border-border/80 bg-background/70 p-1">
+          <div className="border-border/80 bg-background/70 ml-auto flex max-w-full items-center gap-1.5 overflow-x-auto rounded-full border p-1">
             <ExportImportDialog
               workflowId={workflowId}
               onImportSuccess={(newWorkflow) => {
@@ -732,11 +765,11 @@ function BuilderCanvasInner() {
                 }
               }}
             />
-            <div className="mx-1 h-4 w-px bg-border/80" />
+            <div className="bg-border/80 mx-1 h-4 w-px" />
             <Button
               variant="ghost"
               size="icon"
-              className="h-8 w-8 rounded-full hover:bg-accent"
+              className="hover:bg-accent h-8 w-8 rounded-full"
               onClick={handleUndo}
               disabled={!historyStatus?.canUndo}
               aria-label="Undo"
@@ -747,7 +780,7 @@ function BuilderCanvasInner() {
             <Button
               variant="ghost"
               size="icon"
-              className="h-8 w-8 rounded-full hover:bg-accent"
+              className="hover:bg-accent h-8 w-8 rounded-full"
               onClick={handleRedo}
               disabled={!historyStatus?.canRedo}
               aria-label="Redo"
@@ -755,27 +788,58 @@ function BuilderCanvasInner() {
             >
               <Redo className="h-4 w-4" />
             </Button>
-            <div className="mx-1 h-4 w-px bg-border/80" />
-            <Button variant="ghost" size="icon" className="h-8 w-8 rounded-full hover:bg-accent" onClick={handleAutoLayout} title="Auto Layout" aria-label="Auto Layout">
-              <ArrowDownUp className="h-4 w-4" />
-            </Button>
-            <Button variant="ghost" size="icon" className="h-8 w-8 rounded-full hover:bg-accent" onClick={handleZoomOut} aria-label="Zoom out" title="Zoom out">
-              <ZoomOut className="h-4 w-4" />
-            </Button>
-            <span className="text-xs font-medium text-muted-foreground w-10 text-center select-none" aria-live="polite">
-              {Math.round((viewport?.zoom ?? 1) * 100)}%
-            </span>
-            <Button variant="ghost" size="icon" className="h-8 w-8 rounded-full hover:bg-accent" onClick={handleZoomIn} aria-label="Zoom in" title="Zoom in">
-              <ZoomIn className="h-4 w-4" />
-            </Button>
-            <Button variant="ghost" size="icon" className="h-8 w-8 rounded-full hover:bg-accent" onClick={handleResetView} aria-label="Fit view" title="Fit view">
-              <Maximize2 className="h-4 w-4" />
-            </Button>
-            <div className="mx-1 h-4 w-px bg-border/80" />
+            <div className="bg-border/80 mx-1 h-4 w-px" />
             <Button
               variant="ghost"
               size="icon"
-              className="h-8 w-8 rounded-full hover:bg-accent"
+              className="hover:bg-accent h-8 w-8 rounded-full"
+              onClick={handleAutoLayout}
+              title="Auto Layout"
+              aria-label="Auto Layout"
+            >
+              <ArrowDownUp className="h-4 w-4" />
+            </Button>
+            <Button
+              variant="ghost"
+              size="icon"
+              className="hover:bg-accent h-8 w-8 rounded-full"
+              onClick={handleZoomOut}
+              aria-label="Zoom out"
+              title="Zoom out"
+            >
+              <ZoomOut className="h-4 w-4" />
+            </Button>
+            <span
+              className="text-muted-foreground w-10 text-center text-xs font-medium select-none"
+              aria-live="polite"
+            >
+              {Math.round((viewport?.zoom ?? 1) * 100)}%
+            </span>
+            <Button
+              variant="ghost"
+              size="icon"
+              className="hover:bg-accent h-8 w-8 rounded-full"
+              onClick={handleZoomIn}
+              aria-label="Zoom in"
+              title="Zoom in"
+            >
+              <ZoomIn className="h-4 w-4" />
+            </Button>
+            <Button
+              variant="ghost"
+              size="icon"
+              className="hover:bg-accent h-8 w-8 rounded-full"
+              onClick={handleResetView}
+              aria-label="Fit view"
+              title="Fit view"
+            >
+              <Maximize2 className="h-4 w-4" />
+            </Button>
+            <div className="bg-border/80 mx-1 h-4 w-px" />
+            <Button
+              variant="ghost"
+              size="icon"
+              className="hover:bg-accent h-8 w-8 rounded-full"
               onClick={() => setShowVersionHistory(!showVersionHistory)}
               aria-label="Version history"
               title="Version history"
@@ -799,7 +863,7 @@ function BuilderCanvasInner() {
         </div>
 
         <div
-          className="relative flex-1 bg-background"
+          className="bg-background relative flex-1"
           data-testid="builder-canvas"
           onDragOver={(e) => {
             e.preventDefault()
@@ -823,7 +887,7 @@ function BuilderCanvasInner() {
             }
           }}
         >
-          <div className="absolute inset-0 pointer-events-none bg-[radial-gradient(circle_at_50%_50%,rgba(99,102,241,0.04)_0%,transparent_75%)] z-0" />
+          <div className="pointer-events-none absolute inset-0 z-0 bg-[radial-gradient(circle_at_50%_50%,rgba(99,102,241,0.04)_0%,transparent_75%)]" />
 
           <ReactFlow
             nodes={nodes}
@@ -856,7 +920,7 @@ function BuilderCanvasInner() {
             <Button
               variant="ghost"
               size="sm"
-              className="absolute bottom-4 right-4 h-8 rounded-lg border border-border/80 bg-card/80 px-2.5 text-xs text-muted-foreground hover:text-foreground"
+              className="border-border/80 bg-card/80 text-muted-foreground hover:text-foreground absolute right-4 bottom-4 h-8 rounded-lg border px-2.5 text-xs"
               onClick={() => setCommandPaletteOpen(true)}
               aria-label="Open command palette"
             >
@@ -864,42 +928,66 @@ function BuilderCanvasInner() {
               <span className="ml-1.5">Commands</span>
             </Button>
 
-            {menuType === 'pane' && menuPosition && (
+            {menuType === "pane" && menuPosition && (
               <div
-                className="fixed z-[100] pointer-events-none"
+                className="pointer-events-none fixed z-[100]"
                 style={{ top: menuPosition.y, left: menuPosition.x }}
               >
                 <PaneContextMenu
-                  onPaste={() => { handlePaste(); handleCloseMenu(); }}
-                  onAutoLayout={() => { handleAutoLayout(); handleCloseMenu(); }}
-                  onAddFrame={() => { handleAddFrame(); handleCloseMenu(); }}
+                  onPaste={() => {
+                    handlePaste()
+                    handleCloseMenu()
+                  }}
+                  onAutoLayout={() => {
+                    handleAutoLayout()
+                    handleCloseMenu()
+                  }}
+                  onAddFrame={() => {
+                    handleAddFrame()
+                    handleCloseMenu()
+                  }}
                   open={true}
                   onOpenChange={(open) => !open && handleCloseMenu()}
                 >
-                  <div className="w-px h-px" />
+                  <div className="h-px w-px" />
                 </PaneContextMenu>
               </div>
             )}
 
-            {menuType === 'node' && menuPosition && menuNodeId && (
+            {menuType === "node" && menuPosition && menuNodeId && (
               <div
-                className="fixed z-[100] pointer-events-none"
+                className="pointer-events-none fixed z-[100]"
                 style={{ top: menuPosition.y, left: menuPosition.x }}
               >
                 <NodeContextMenu
                   nodeId={menuNodeId}
-                  nodeType={workflow?.nodes.find(n => n.id === menuNodeId)?.type}
-                  parentId={workflow?.nodes.find(n => n.id === menuNodeId)?.parentId || undefined}
-                  onDuplicate={() => { handleDuplicateById(menuNodeId); handleCloseMenu(); }}
-                  onCopy={() => { handleCopyById(menuNodeId); handleCloseMenu(); }}
-                  onDelete={() => { handleNodeDeleteById(menuNodeId); handleCloseMenu(); }}
-                  onAssignToFrame={(nodeId, frameId) => { handleAssignToFrame(nodeId, frameId); handleCloseMenu(); }}
-                  onRemoveFromFrame={(nodeId) => { handleRemoveFromFrame(nodeId); handleCloseMenu(); }}
-                  frames={workflow?.nodes.filter(n => n.type === 'frame')}
+                  nodeType={workflow?.nodes.find((n) => n.id === menuNodeId)?.type}
+                  parentId={workflow?.nodes.find((n) => n.id === menuNodeId)?.parentId || undefined}
+                  onDuplicate={() => {
+                    handleDuplicateById(menuNodeId)
+                    handleCloseMenu()
+                  }}
+                  onCopy={() => {
+                    handleCopyById(menuNodeId)
+                    handleCloseMenu()
+                  }}
+                  onDelete={() => {
+                    handleNodeDeleteById(menuNodeId)
+                    handleCloseMenu()
+                  }}
+                  onAssignToFrame={(nodeId, frameId) => {
+                    handleAssignToFrame(nodeId, frameId)
+                    handleCloseMenu()
+                  }}
+                  onRemoveFromFrame={(nodeId) => {
+                    handleRemoveFromFrame(nodeId)
+                    handleCloseMenu()
+                  }}
+                  frames={workflow?.nodes.filter((n) => n.type === "frame")}
                   open={true}
                   onOpenChange={(open) => !open && handleCloseMenu()}
                 >
-                  <div className="w-px h-px" />
+                  <div className="h-px w-px" />
                 </NodeContextMenu>
               </div>
             )}
