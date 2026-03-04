@@ -104,7 +104,6 @@ export class AutoLayout {
     const positioned: LayoutNode[] = []
 
     levels.forEach((level, levelIndex) => {
-      const levelWidth = level.length * this.NODE_WIDTH + (level.length - 1) * this.HORIZONTAL_SPACING
       const startX = this.START_X
 
       level.forEach((node, nodeIndex) => {

@@ -1,6 +1,6 @@
 "use client"
 
-import { useState, useEffect } from "react"
+import { useState, useEffect, useCallback, useMemo } from "react"
 import type { Connector, ConnectorCategory } from "@/lib/connector-types"
 import { Input } from "@/components/ui/input"
 import { Card } from "@/components/ui/card"
@@ -24,7 +24,6 @@ const categories: { value: ConnectorCategory | "all"; label: string }[] = [
 
 export function ConnectorRegistry() {
   const [connectors, setConnectors] = useState<Connector[]>([])
-  const [filteredConnectors, setFilteredConnectors] = useState<Connector[]>([])
   const [searchQuery, setSearchQuery] = useState("")
   const [selectedCategory, setSelectedCategory] = useState<string>("all")
   const [selectedConnector, setSelectedConnector] = useState<Connector | null>(null)
@@ -32,6 +31,13 @@ export function ConnectorRegistry() {
   const { toast } = useToast()
   const searchParams = useSearchParams()
 
+  const fetchConnectors = useCallback(async () => {
+    const res = await fetch("/api/connectors")
+    const data = await res.json()
+    setConnectors(data)
+  }, [])
+
+  /* eslint-disable react-hooks/set-state-in-effect */
   useEffect(() => {
     fetchConnectors()
 
@@ -50,19 +56,10 @@ export function ConnectorRegistry() {
         variant: "destructive",
       })
     }
-  }, [])
+  }, [fetchConnectors, searchParams, toast])
+  /* eslint-enable react-hooks/set-state-in-effect */
 
-  useEffect(() => {
-    filterConnectors()
-  }, [connectors, searchQuery, selectedCategory])
-
-  const fetchConnectors = async () => {
-    const res = await fetch("/api/connectors")
-    const data = await res.json()
-    setConnectors(data)
-  }
-
-  const filterConnectors = () => {
+  const filteredConnectors = useMemo(() => {
     let filtered = connectors
 
     if (selectedCategory !== "all") {
@@ -77,8 +74,8 @@ export function ConnectorRegistry() {
       )
     }
 
-    setFilteredConnectors(filtered)
-  }
+    return filtered
+  }, [connectors, searchQuery, selectedCategory])
 
   const handleConnect = (connector: Connector) => {
     setSelectedConnector(connector)

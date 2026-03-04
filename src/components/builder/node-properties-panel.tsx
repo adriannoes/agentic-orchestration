@@ -61,11 +61,13 @@ const GUARDRAIL_TYPES = [
 export function NodePropertiesPanel({ isOpen, onToggle, node, workflowId, onUpdate }: NodePropertiesPanelProps) {
   const [formData, setFormData] = useState<WorkflowNode["data"]>(node?.data || { label: "" })
 
+  /* eslint-disable react-hooks/set-state-in-effect */
   useEffect(() => {
     if (node) {
       setFormData(node.data)
     }
   }, [node])
+  /* eslint-enable react-hooks/set-state-in-effect */
 
   const handleSave = async () => {
     if (!node) return

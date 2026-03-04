@@ -38,7 +38,7 @@ export function useWorkspace() {
 
     const {
       data: { subscription },
-    } = supabase.auth.onAuthStateChange((event: AuthChangeEvent, session: Session | null) => {
+    } = supabase.auth.onAuthStateChange((event: AuthChangeEvent, _session: Session | null) => {
       if (event === "SIGNED_IN") {
         loadWorkspace()
       } else if (event === "SIGNED_OUT") {

@@ -23,10 +23,13 @@ export function FrameNode({ data, selected }: NodeProps<FrameNodeType>) {
   const width = data?.width ?? DEFAULT_WIDTH
   const height = data?.height ?? DEFAULT_HEIGHT
 
+  /* eslint-disable react-hooks/set-state-in-effect */
   useEffect(() => {
     setLabel(data?.label ?? "Frame")
   }, [data?.label])
+  /* eslint-enable react-hooks/set-state-in-effect */
 
+  /* eslint-disable react-hooks/preserve-manual-memoization, react-hooks/exhaustive-deps */
   const handleLabelBlur = useCallback(() => {
     setIsEditing(false)
     const newLabel = label.trim() || "Frame"
@@ -34,6 +37,7 @@ export function FrameNode({ data, selected }: NodeProps<FrameNodeType>) {
       data?.customOnLabelChange?.(newLabel)
     }
   }, [label, data?.customOnLabelChange, data?.label])
+  /* eslint-enable react-hooks/preserve-manual-memoization, react-hooks/exhaustive-deps */
 
   const handleLabelChange = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
     setLabel(e.target.value)

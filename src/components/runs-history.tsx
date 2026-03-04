@@ -99,7 +99,7 @@ const sampleRuns: Run[] = [
 ]
 
 export function RunsHistory() {
-  const [runs, setRuns] = useState<Run[]>(sampleRuns)
+  const [runs] = useState<Run[]>(sampleRuns)
   const [search, setSearch] = useState("")
   const [statusFilter, setStatusFilter] = useState<string>("all")
   const [selectedRun, setSelectedRun] = useState<Run | null>(null)

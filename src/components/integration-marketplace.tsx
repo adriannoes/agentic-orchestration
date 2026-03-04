@@ -1,6 +1,6 @@
 "use client"
 
-import { useState, useEffect } from "react"
+import { useState, useEffect, useCallback, useMemo } from "react"
 import type { MarketplaceIntegration } from "@/lib/marketplace-types"
 import { Input } from "@/components/ui/input"
 import { Button } from "@/components/ui/button"
@@ -23,21 +23,12 @@ const categories = [
 
 export function IntegrationMarketplace() {
   const [integrations, setIntegrations] = useState<MarketplaceIntegration[]>([])
-  const [filteredIntegrations, setFilteredIntegrations] = useState<MarketplaceIntegration[]>([])
   const [searchQuery, setSearchQuery] = useState("")
   const [selectedCategory, setSelectedCategory] = useState("all")
   const [selectedIntegration, setSelectedIntegration] = useState<MarketplaceIntegration | null>(null)
   const [detailDialogOpen, setDetailDialogOpen] = useState(false)
 
-  useEffect(() => {
-    fetchIntegrations()
-  }, [selectedCategory])
-
-  useEffect(() => {
-    filterIntegrations()
-  }, [integrations, searchQuery])
-
-  const fetchIntegrations = async () => {
+  const fetchIntegrations = useCallback(async () => {
     const params = new URLSearchParams()
     if (selectedCategory === "featured") {
       params.append("featured", "true")
@@ -48,23 +39,26 @@ export function IntegrationMarketplace() {
     const res = await fetch(`/api/marketplace/integrations?${params}`)
     const data = await res.json()
     setIntegrations(data)
-  }
+  }, [selectedCategory])
 
-  const filterIntegrations = () => {
-    if (!searchQuery) {
-      setFilteredIntegrations(integrations)
-      return
-    }
+
+  /* eslint-disable react-hooks/set-state-in-effect */
+  useEffect(() => {
+    fetchIntegrations()
+  }, [fetchIntegrations])
+  /* eslint-enable react-hooks/set-state-in-effect */
+
+  const filteredIntegrations = useMemo(() => {
+    if (!searchQuery) return integrations
 
     const lowerQuery = searchQuery.toLowerCase()
-    const filtered = integrations.filter(
+    return integrations.filter(
       (i) =>
         i.name.toLowerCase().includes(lowerQuery) ||
         i.description.toLowerCase().includes(lowerQuery) ||
         i.tags.some((tag) => tag.toLowerCase().includes(lowerQuery)),
     )
-    setFilteredIntegrations(filtered)
-  }
+  }, [integrations, searchQuery])
 
   const handleViewDetails = (integration: MarketplaceIntegration) => {
     setSelectedIntegration(integration)

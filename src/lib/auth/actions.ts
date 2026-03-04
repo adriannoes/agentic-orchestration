@@ -2,7 +2,6 @@
 
 import { auth, signOut as nextAuthSignOut } from "@/auth"
 import { revalidatePath } from "next/cache"
-import { redirect } from "next/navigation"
 import { getSupabaseServerClient } from "@/lib/supabase/server"
 
 export async function signOut() {

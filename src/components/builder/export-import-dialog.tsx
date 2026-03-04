@@ -14,7 +14,6 @@ interface ExportImportDialogProps {
 }
 
 export function ExportImportDialog({ workflowId, onImportSuccess }: ExportImportDialogProps) {
-  const [showExport, setShowExport] = useState(false)
   const [showImport, setShowImport] = useState(false)
   const [importData, setImportData] = useState("")
   const { toast } = useToast()
