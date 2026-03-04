@@ -53,9 +53,9 @@ export default function RootLayout({
         className={`${geistSans.variable} ${geistMono.variable} font-sans antialiased`}
         suppressHydrationWarning
       >
-        <ThemeProvider attribute="class" defaultTheme="dark" enableSystem storageKey="agent-builder-theme">
+        <ThemeProvider attribute="class" defaultTheme="dark" storageKey="agent-builder-theme">
           <AuthProvider>
-            <div className="flex h-screen bg-background text-foreground">
+            <div className="bg-background text-foreground flex h-screen">
               <Sidebar />
               <main className="flex-1 overflow-auto">{children}</main>
             </div>
