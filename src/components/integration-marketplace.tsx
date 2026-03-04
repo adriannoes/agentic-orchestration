@@ -1,6 +1,6 @@
 "use client"
 
-import { useState, useEffect } from "react"
+import { useState, useEffect, useCallback, useMemo } from "react"
 import type { MarketplaceIntegration } from "@/lib/marketplace-types"
 import { Input } from "@/components/ui/input"
 import { Button } from "@/components/ui/button"
@@ -23,21 +23,12 @@ const categories = [
 
 export function IntegrationMarketplace() {
   const [integrations, setIntegrations] = useState<MarketplaceIntegration[]>([])
-  const [filteredIntegrations, setFilteredIntegrations] = useState<MarketplaceIntegration[]>([])
   const [searchQuery, setSearchQuery] = useState("")
   const [selectedCategory, setSelectedCategory] = useState("all")
   const [selectedIntegration, setSelectedIntegration] = useState<MarketplaceIntegration | null>(null)
   const [detailDialogOpen, setDetailDialogOpen] = useState(false)
 
-  useEffect(() => {
-    fetchIntegrations()
-  }, [selectedCategory])
-
-  useEffect(() => {
-    filterIntegrations()
-  }, [integrations, searchQuery])
-
-  const fetchIntegrations = async () => {
+  const fetchIntegrations = useCallback(async () => {
     const params = new URLSearchParams()
     if (selectedCategory === "featured") {
       params.append("featured", "true")
@@ -48,23 +39,26 @@ export function IntegrationMarketplace() {
     const res = await fetch(`/api/marketplace/integrations?${params}`)
     const data = await res.json()
     setIntegrations(data)
-  }
+  }, [selectedCategory])
 
-  const filterIntegrations = () => {
-    if (!searchQuery) {
-      setFilteredIntegrations(integrations)
-      return
-    }
+
+  /* eslint-disable react-hooks/set-state-in-effect */
+  useEffect(() => {
+    fetchIntegrations()
+  }, [fetchIntegrations])
+  /* eslint-enable react-hooks/set-state-in-effect */
+
+  const filteredIntegrations = useMemo(() => {
+    if (!searchQuery) return integrations
 
     const lowerQuery = searchQuery.toLowerCase()
-    const filtered = integrations.filter(
+    return integrations.filter(
       (i) =>
         i.name.toLowerCase().includes(lowerQuery) ||
         i.description.toLowerCase().includes(lowerQuery) ||
         i.tags.some((tag) => tag.toLowerCase().includes(lowerQuery)),
     )
-    setFilteredIntegrations(filtered)
-  }
+  }, [integrations, searchQuery])
 
   const handleViewDetails = (integration: MarketplaceIntegration) => {
     setSelectedIntegration(integration)
@@ -88,8 +82,8 @@ export function IntegrationMarketplace() {
       <div className="grid gap-4 md:grid-cols-3">
         <Card className="p-6">
           <div className="flex items-center gap-3">
-            <div className="p-3 rounded-lg bg-primary/10">
-              <TrendingUp className="w-6 h-6 text-primary" />
+            <div className="rounded-lg border border-indigo-500/20 bg-indigo-500/10 p-3">
+              <TrendingUp className="w-6 h-6 text-indigo-300" />
             </div>
             <div>
               <p className="text-sm text-muted-foreground">Total Installs</p>
@@ -100,8 +94,8 @@ export function IntegrationMarketplace() {
 
         <Card className="p-6">
           <div className="flex items-center gap-3">
-            <div className="p-3 rounded-lg bg-amber-500/10">
-              <Star className="w-6 h-6 text-amber-500" />
+            <div className="rounded-lg border border-violet-500/20 bg-violet-500/10 p-3">
+              <Star className="w-6 h-6 text-violet-300" />
             </div>
             <div>
               <p className="text-sm text-muted-foreground">Avg Rating</p>
@@ -114,8 +108,8 @@ export function IntegrationMarketplace() {
 
         <Card className="p-6">
           <div className="flex items-center gap-3">
-            <div className="p-3 rounded-lg bg-green-500/10">
-              <Search className="w-6 h-6 text-green-500" />
+            <div className="rounded-lg border border-zinc-500/20 bg-zinc-500/10 p-3">
+              <Search className="w-6 h-6 text-zinc-300" />
             </div>
             <div>
               <p className="text-sm text-muted-foreground">Available</p>
@@ -135,7 +129,9 @@ export function IntegrationMarketplace() {
             className="pl-10"
           />
         </div>
-        <Button variant="outline">Filter</Button>
+        <Button variant="outline" className="border-border/80 bg-transparent">
+          Filter
+        </Button>
       </div>
 
       <Tabs value={selectedCategory} onValueChange={setSelectedCategory}>

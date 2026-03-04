@@ -180,7 +180,7 @@ class ConnectorStore {
     return true
   }
 
-  testConnection(id: string): Promise<{ success: boolean; message: string }> {
+  testConnection(_id: string): Promise<{ success: boolean; message: string }> {
     return new Promise((resolve) => {
       setTimeout(() => {
         resolve({

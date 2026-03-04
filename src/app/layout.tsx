@@ -5,7 +5,7 @@ import { Analytics } from "@vercel/analytics/next"
 import { SpeedInsights } from "@vercel/speed-insights/next"
 import "./globals.css"
 import { Sidebar } from "@/components/sidebar"
-import { Toaster } from "sonner"
+import { Toaster } from "@/components/ui/sonner"
 import { ThemeProvider } from "@/components/theme-provider"
 import { AuthProvider } from "@/components/auth-provider"
 
@@ -48,14 +48,14 @@ export default function RootLayout({
   children: React.ReactNode
 }>) {
   return (
-    <html lang="en" className="dark" suppressHydrationWarning>
+    <html lang="en" suppressHydrationWarning>
       <body
         className={`${geistSans.variable} ${geistMono.variable} font-sans antialiased`}
         suppressHydrationWarning
       >
-        <ThemeProvider attribute="class" defaultTheme="dark" enableSystem={false}>
+        <ThemeProvider attribute="class" defaultTheme="dark" storageKey="agent-builder-theme">
           <AuthProvider>
-            <div className="flex h-screen bg-background text-foreground">
+            <div className="bg-background text-foreground flex h-screen">
               <Sidebar />
               <main className="flex-1 overflow-auto">{children}</main>
             </div>

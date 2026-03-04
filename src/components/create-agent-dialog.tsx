@@ -82,7 +82,7 @@ export function CreateAgentDialog({ open, onOpenChange, onCreated }: CreateAgent
       setModel("gpt-4o")
       setSystemPrompt("")
       setSelectedTools([])
-    } catch (error) {
+    } catch (_error) {
       toast.error("Failed to create agent")
     } finally {
       setLoading(false)

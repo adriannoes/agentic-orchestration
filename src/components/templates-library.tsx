@@ -6,6 +6,7 @@ import { useState } from "react"
 import { Search, Sparkles, Users, BarChart3, FileText, Zap, TrendingUp, ArrowRight } from "lucide-react"
 import { Input } from "@/components/ui/input"
 import { Button } from "@/components/ui/button"
+import { Badge } from "@/components/ui/badge"
 import { cn } from "@/lib/utils"
 import type { WorkflowTemplate } from "@/lib/workflow-templates"
 import useSWR from "swr"
@@ -22,11 +23,11 @@ const categoryIcons: Record<string, React.ElementType> = {
 }
 
 const categoryColors: Record<string, string> = {
-  "customer-support": "text-blue-500 bg-blue-500/10",
-  "data-analysis": "text-purple-500 bg-purple-500/10",
-  "content-creation": "text-emerald-500 bg-emerald-500/10",
-  automation: "text-amber-500 bg-amber-500/10",
-  research: "text-cyan-500 bg-cyan-500/10",
+  "customer-support": "text-indigo-300 bg-indigo-500/10 border border-indigo-500/20",
+  "data-analysis": "text-violet-300 bg-violet-500/10 border border-violet-500/20",
+  "content-creation": "text-zinc-200 bg-zinc-500/10 border border-zinc-500/20",
+  automation: "text-indigo-300 bg-indigo-500/10 border border-indigo-500/20",
+  research: "text-violet-300 bg-violet-500/10 border border-violet-500/20",
 }
 
 export function TemplatesLibrary() {
@@ -75,7 +76,7 @@ export function TemplatesLibrary() {
   return (
     <div className="min-h-screen bg-background">
       {/* Header */}
-      <div className="border-b border-border bg-card">
+      <div className="border-b border-border/80 bg-card/60">
         <div className="max-w-7xl mx-auto px-6 py-8">
           <h1 className="text-3xl font-bold mb-2">Workflow Templates</h1>
           <p className="text-muted-foreground">Start with pre-built workflows and customize them for your needs</p>
@@ -135,7 +136,7 @@ export function TemplatesLibrary() {
                 return (
                   <div
                     key={template.id}
-                    className="group p-6 rounded-xl border border-border bg-card hover:shadow-lg transition-all cursor-pointer"
+                    className="group rounded-xl border border-border/80 bg-card p-6 transition-colors hover:border-primary/40"
                   >
                     <div className="flex items-start justify-between mb-4">
                       <div className={cn("p-3 rounded-lg", categoryColors[template.category])}>
@@ -145,15 +146,15 @@ export function TemplatesLibrary() {
                     </div>
                     <h3 className="font-semibold mb-2">{template.name}</h3>
                     <p className="text-sm text-muted-foreground mb-4 line-clamp-2">{template.description}</p>
-                    <div className="flex flex-wrap gap-1 mb-4">
+                    <div className="mb-4 flex flex-wrap gap-1.5">
                       {template.tags.slice(0, 3).map((tag) => (
-                        <span key={tag} className="px-2 py-0.5 bg-muted rounded text-xs">
+                        <Badge key={tag} variant="secondary" className="text-[11px]">
                           {tag}
-                        </span>
+                        </Badge>
                       ))}
                     </div>
                     <Button
-                      className="w-full group-hover:bg-primary group-hover:text-primary-foreground bg-transparent"
+                    className="w-full bg-transparent group-hover:border-primary/60"
                       variant="outline"
                       onClick={() => handleUseTemplate(template.id, template.name)}
                     >
@@ -178,7 +179,7 @@ export function TemplatesLibrary() {
               return (
                 <div
                   key={template.id}
-                  className="group p-6 rounded-xl border border-border bg-card hover:shadow-lg transition-all"
+                  className="group rounded-xl border border-border/80 bg-card p-6 transition-colors hover:border-primary/40"
                 >
                   <div className="flex items-start justify-between mb-4">
                     <div className={cn("p-3 rounded-lg", categoryColors[template.category])}>
@@ -188,11 +189,11 @@ export function TemplatesLibrary() {
                   </div>
                   <h3 className="font-semibold mb-2">{template.name}</h3>
                   <p className="text-sm text-muted-foreground mb-4 line-clamp-2">{template.description}</p>
-                  <div className="flex flex-wrap gap-1 mb-4">
+                  <div className="mb-4 flex flex-wrap gap-1.5">
                     {template.tags.slice(0, 3).map((tag) => (
-                      <span key={tag} className="px-2 py-0.5 bg-muted rounded text-xs">
+                      <Badge key={tag} variant="secondary" className="text-[11px]">
                         {tag}
-                      </span>
+                      </Badge>
                     ))}
                   </div>
                   <Button

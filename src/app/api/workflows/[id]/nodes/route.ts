@@ -13,7 +13,7 @@ export async function POST(request: Request, { params }: { params: Promise<{ id:
     const workflow = await addWorkflowNode(id, nodeData)
     const newNode = workflow.nodes[workflow.nodes.length - 1]
     return NextResponse.json(newNode)
-  } catch (err) {
+  } catch (_err) {
     return NextResponse.json({ error: "Failed to add node" }, { status: 400 })
   }
 }

@@ -147,7 +147,7 @@ class OAuthManager {
 
   async refreshAccessToken(
     connectorId: string,
-    refreshToken: string,
+    _refreshToken: string,
   ): Promise<{ accessToken: string; expiresIn?: number }> {
     const provider = this.providers.get(connectorId)
     if (!provider) {

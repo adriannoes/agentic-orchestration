@@ -18,10 +18,10 @@ const categoryIcons: Record<string, React.ReactNode> = {
 }
 
 const categoryColors: Record<string, string> = {
-  web: "bg-blue-500/10 text-blue-500",
-  data: "bg-green-500/10 text-green-500",
-  code: "bg-purple-500/10 text-purple-500",
-  utility: "bg-orange-500/10 text-orange-500",
+  web: "border border-indigo-500/20 bg-indigo-500/10 text-indigo-300",
+  data: "border border-zinc-500/20 bg-zinc-500/10 text-zinc-300",
+  code: "border border-violet-500/20 bg-violet-500/10 text-violet-300",
+  utility: "border border-indigo-500/20 bg-indigo-500/10 text-indigo-300",
 }
 
 export function ToolsLibrary() {
@@ -89,7 +89,7 @@ export function ToolsLibrary() {
               {filteredTools
                 .filter((tool) => cat === "all" || tool.category === cat)
                 .map((tool) => (
-                  <Card key={tool.id} className="hover:border-primary/50 transition-colors">
+                  <Card key={tool.id} className="border-border/80 transition-colors hover:border-primary/40">
                     <CardHeader className="pb-3">
                       <div className="flex items-start justify-between">
                         <div
@@ -107,7 +107,7 @@ export function ToolsLibrary() {
                     <CardContent>
                       <div className="space-y-2">
                         <p className="text-xs text-muted-foreground font-medium">Input Schema</p>
-                        <pre className="text-xs bg-muted p-2 rounded overflow-auto">
+                        <pre className="overflow-auto rounded border border-border/70 bg-muted/40 p-2 text-xs">
                           {JSON.stringify(tool.inputSchema, null, 2)}
                         </pre>
                       </div>

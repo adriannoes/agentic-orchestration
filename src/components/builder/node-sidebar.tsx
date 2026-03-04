@@ -17,7 +17,8 @@ import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { cn } from "@/lib/utils"
 import type { NodeType } from "@/lib/workflow-types"
-import { useState } from "react"
+import { useState, useMemo } from "react"
+import { motion, AnimatePresence } from "framer-motion"
 
 interface NodeSidebarProps {
   isOpen: boolean
@@ -36,13 +37,25 @@ const NODE_CATEGORIES = [
         color: "emerald",
         description: "Entry point of workflow",
       },
-      { type: "end" as NodeType, label: "End", icon: Square, color: "rose", description: "Terminal node" },
+      {
+        type: "end" as NodeType,
+        label: "End",
+        icon: Square,
+        color: "rose",
+        description: "Terminal node",
+      },
     ],
   },
   {
     name: "Core",
     nodes: [
-      { type: "agent" as NodeType, label: "Agent", icon: Bot, color: "blue", description: "AI agent with tools" },
+      {
+        type: "agent" as NodeType,
+        label: "Agent",
+        icon: Bot,
+        color: "blue",
+        description: "AI agent with tools",
+      },
       {
         type: "condition" as NodeType,
         label: "Condition",
@@ -74,7 +87,13 @@ const NODE_CATEGORIES = [
   {
     name: "Integrations",
     nodes: [
-      { type: "mcp" as NodeType, label: "MCP Server", icon: Plug, color: "cyan", description: "External tool server" },
+      {
+        type: "mcp" as NodeType,
+        label: "MCP Server",
+        icon: Plug,
+        color: "cyan",
+        description: "External tool server",
+      },
       {
         type: "file-search" as NodeType,
         label: "File Search",
@@ -86,50 +105,67 @@ const NODE_CATEGORIES = [
   },
 ]
 
-const COLOR_CLASSES: Record<string, { bg: string; icon: string; hover: string; border: string }> = {
+const COLOR_CLASSES: Record<string, { bg: string; icon: string; border: string }> = {
   emerald: {
-    bg: "bg-emerald-950/40",
-    icon: "text-emerald-400",
-    hover: "hover:bg-emerald-950/60",
-    border: "border-emerald-500/30",
+    bg: "bg-indigo-500/10",
+    icon: "text-indigo-300",
+    border: "border-indigo-500/20",
   },
-  rose: { bg: "bg-rose-950/40", icon: "text-rose-400", hover: "hover:bg-rose-950/60", border: "border-rose-500/30" },
-  blue: { bg: "bg-blue-950/40", icon: "text-blue-400", hover: "hover:bg-blue-950/60", border: "border-blue-500/30" },
+  rose: {
+    bg: "bg-violet-500/10",
+    icon: "text-violet-300",
+    border: "border-violet-500/20",
+  },
+  blue: {
+    bg: "bg-indigo-400/15",
+    icon: "text-indigo-200",
+    border: "border-indigo-400/20",
+  },
   purple: {
-    bg: "bg-purple-950/40",
-    icon: "text-purple-400",
-    hover: "hover:bg-purple-950/60",
-    border: "border-purple-500/30",
+    bg: "bg-violet-500/10",
+    icon: "text-violet-300",
+    border: "border-violet-500/20",
   },
   amber: {
-    bg: "bg-amber-950/40",
-    icon: "text-amber-400",
-    hover: "hover:bg-amber-950/60",
-    border: "border-amber-500/30",
+    bg: "bg-zinc-500/10",
+    icon: "text-zinc-300",
+    border: "border-zinc-500/20",
   },
   orange: {
-    bg: "bg-orange-950/40",
-    icon: "text-orange-400",
-    hover: "hover:bg-orange-950/60",
-    border: "border-orange-500/30",
+    bg: "bg-zinc-500/10",
+    icon: "text-zinc-300",
+    border: "border-zinc-500/20",
   },
-  cyan: { bg: "bg-cyan-950/40", icon: "text-cyan-400", hover: "hover:bg-cyan-950/60", border: "border-cyan-500/30" },
-  teal: { bg: "bg-teal-950/40", icon: "text-teal-400", hover: "hover:bg-teal-950/60", border: "border-teal-500/30" },
+  cyan: {
+    bg: "bg-violet-400/15",
+    icon: "text-violet-200",
+    border: "border-violet-400/20",
+  },
+  teal: {
+    bg: "bg-indigo-400/15",
+    icon: "text-indigo-200",
+    border: "border-indigo-400/20",
+  },
 }
 
 export function NodeSidebar({ isOpen, onToggle, onAddNode }: NodeSidebarProps) {
   const [search, setSearch] = useState("")
   const [hoveredNode, setHoveredNode] = useState<NodeType | null>(null)
 
-  const filteredCategories = NODE_CATEGORIES.map((category) => ({
-    ...category,
-    nodes: category.nodes.filter((node) => node.label.toLowerCase().includes(search.toLowerCase())),
-  })).filter((category) => category.nodes.length > 0)
+  const searchLower = search.toLowerCase()
+  const filteredCategories = useMemo(
+    () =>
+      NODE_CATEGORIES.map((category) => ({
+        ...category,
+        nodes: category.nodes.filter((node) => node.label.toLowerCase().includes(searchLower)),
+      })).filter((category) => category.nodes.length > 0),
+    [searchLower],
+  )
 
   return (
     <div
       className={cn(
-        "relative border-r border-white/5 bg-background/40 backdrop-blur-2xl transition-all duration-300 z-40",
+        "border-border/80 bg-card/80 relative z-40 border-r transition-all duration-300",
         isOpen ? "w-72" : "w-0",
       )}
     >
@@ -137,93 +173,118 @@ export function NodeSidebar({ isOpen, onToggle, onAddNode }: NodeSidebarProps) {
         variant="outline"
         size="icon"
         className={cn(
-          "absolute -right-4 top-4 z-50 h-8 w-8 rounded-full bg-background/80 backdrop-blur-xl border border-white/10 shadow-[0_0_15px_rgba(0,0,0,0.5)] text-muted-foreground",
-          "hover:scale-110 hover:text-foreground transition-all duration-300",
+          "border-border/80 bg-card text-muted-foreground absolute top-4 -right-4 z-50 h-8 w-8 rounded-full border",
+          "hover:text-foreground transition-all duration-300 hover:scale-110",
         )}
         onClick={onToggle}
       >
         {isOpen ? <ChevronLeft className="h-4 w-4" /> : <ChevronRight className="h-4 w-4" />}
       </Button>
 
-      {isOpen && (
-        <div className="flex flex-col h-full">
-          <div className="p-5 border-b border-white/5 bg-white/[0.02]">
-            <h2 className="font-semibold text-lg mb-4 tracking-tight">Add Nodes</h2>
-            <div className="relative group">
-              <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground transition-colors group-focus-within:text-primary" />
-              <Input
-                placeholder="Search nodes..."
-                className="pl-9 h-10 bg-black/20 border-white/5 focus-visible:ring-1 focus-visible:ring-white/20 focus-visible:bg-black/40 transition-all rounded-xl shadow-inner placeholder:text-muted-foreground/50 text-sm"
-                value={search}
-                onChange={(e) => setSearch(e.target.value)}
-                aria-label="Search nodes"
-              />
-            </div>
-          </div>
-
-          <div className="flex-1 overflow-y-auto p-5 space-y-8 scrollbar-thin scrollbar-thumb-white/10 scrollbar-track-transparent">
-            {filteredCategories.map((category) => (
-              <div key={category.name}>
-                <h3 className="text-[11px] font-semibold text-muted-foreground/70 uppercase tracking-widest mb-3 pl-1">
-                  {category.name}
-                </h3>
-                <div className="space-y-2.5">
-                  {category.nodes.map((node) => {
-                    const colors = COLOR_CLASSES[node.color]
-                    const isHovered = hoveredNode === node.type
-                    return (
-                      <button
-                        key={node.type}
-                        draggable
-                        className={cn(
-                          "w-full flex items-center gap-3 px-3.5 py-3 rounded-xl transition-all duration-300 ease-out",
-                          "border border-white/5",
-                          "bg-white/[0.02] hover:bg-white/[0.04]",
-                          "cursor-grab active:cursor-grabbing",
-                          isHovered && "scale-[1.02] shadow-[0_8px_20px_-4px_rgba(0,0,0,0.5)]",
-                          "active:scale-[0.98]",
-                        )}
-                        onClick={() => onAddNode(node.type)}
-                        onDragStart={(e) => {
-                          e.dataTransfer.setData(
-                            "application/json",
-                            JSON.stringify({ type: node.type, label: node.label }),
-                          )
-                          e.dataTransfer.effectAllowed = "move"
-                        }}
-                        onMouseEnter={() => setHoveredNode(node.type)}
-                        onMouseLeave={() => setHoveredNode(null)}
-                      >
-                        <div
-                          className={cn(
-                            "p-2 rounded-lg transition-all duration-500 ease-out ring-1 ring-inset ring-white/10 flex-shrink-0",
-                            colors.bg,
-                            isHovered && "scale-110 shadow-lg",
-                          )}
-                        >
-                          <node.icon className={cn("h-4 w-4 transition-transform duration-500", colors.icon, isHovered && "scale-110")} />
-                        </div>
-                        <div className="flex-1 text-left min-w-0">
-                          <span className="text-sm font-medium block text-foreground tracking-tight">{node.label}</span>
-                          {node.description && (
-                            <span className="text-[11px] text-muted-foreground/70 block mt-0.5 truncate">{node.description}</span>
-                          )}
-                        </div>
-                      </button>
-                    )
-                  })}
-                </div>
+      <AnimatePresence>
+        {isOpen && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.2 }}
+            className="flex h-full flex-col"
+          >
+            <div className="border-border/80 border-b p-5">
+              <h2 className="mb-4 text-lg font-semibold tracking-tight">Add Nodes</h2>
+              <div className="group relative">
+                <Search className="text-muted-foreground group-focus-within:text-primary absolute top-1/2 left-3 h-4 w-4 -translate-y-1/2 transition-colors" />
+                <Input
+                  placeholder="Search nodes..."
+                  className="border-border/80 bg-background/70 placeholder:text-muted-foreground/50 h-10 rounded-xl pl-9 text-sm"
+                  value={search}
+                  onChange={(e) => setSearch(e.target.value)}
+                  aria-label="Search nodes"
+                />
               </div>
-            ))}
-          </div>
+            </div>
 
-          <div className="p-5 border-t border-white/5 bg-black/20 backdrop-blur-md">
-            <p className="text-[11px] text-muted-foreground/60 leading-relaxed font-light">
-              Click to add at center, or drag to drop at a specific position. Connect nodes by dragging from output to input handles.
-            </p>
-          </div>
-        </div>
-      )}
+            <div className="flex-1 space-y-8 overflow-y-auto p-5">
+              {filteredCategories.map((category) => (
+                <div key={category.name}>
+                  <h3 className="text-muted-foreground/70 mb-3 pl-1 text-[11px] font-semibold tracking-widest uppercase">
+                    {category.name}
+                  </h3>
+                  <div className="space-y-2.5">
+                    {category.nodes.map((node, i) => {
+                      const colors = COLOR_CLASSES[node.color]
+                      const isHovered = hoveredNode === node.type
+                      return (
+                        <div
+                          key={node.type}
+                          draggable
+                          onDragStart={(e: React.DragEvent) => {
+                            e.dataTransfer.setData(
+                              "application/json",
+                              JSON.stringify({ type: node.type, label: node.label }),
+                            )
+                            e.dataTransfer.effectAllowed = "move"
+                          }}
+                        >
+                          <motion.button
+                            initial={{ opacity: 0, x: -10 }}
+                            animate={{ opacity: 1, x: 0 }}
+                            transition={{ delay: i * 0.05, type: "spring", stiffness: 300, damping: 24 }}
+                            className={cn(
+                              "flex w-full items-center gap-3 rounded-xl px-3.5 py-3 transition-colors duration-300 ease-out",
+                              "border-border/80 border",
+                              "bg-background/70 hover:bg-accent/40",
+                              "cursor-grab active:cursor-grabbing",
+                            )}
+                            whileHover={{ scale: 1.02 }}
+                            whileTap={{ scale: 0.98 }}
+                            onClick={() => onAddNode(node.type)}
+                            onMouseEnter={() => setHoveredNode(node.type)}
+                            onMouseLeave={() => setHoveredNode(null)}
+                          >
+                            <div
+                              className={cn(
+                                "ring-border/80 flex-shrink-0 rounded-lg p-2 ring-1 transition-all duration-500 ease-out ring-inset",
+                                colors.bg,
+                                isHovered && "scale-110",
+                              )}
+                            >
+                              <node.icon
+                                className={cn(
+                                  "h-4 w-4 transition-transform duration-500",
+                                  colors.icon,
+                                  isHovered && "scale-110",
+                                )}
+                              />
+                            </div>
+                            <div className="min-w-0 flex-1 text-left">
+                              <span className="text-foreground block text-sm font-medium tracking-tight">
+                                {node.label}
+                              </span>
+                              {node.description && (
+                                <span className="text-muted-foreground/70 mt-0.5 block truncate text-[11px]">
+                                  {node.description}
+                                </span>
+                              )}
+                            </div>
+                          </motion.button>
+                        </div>
+                      )
+                    })}
+                  </div>
+                </div>
+              ))}
+            </div>
+
+            <div className="border-border/80 bg-background/70 border-t p-5">
+              <p className="text-muted-foreground/60 text-[11px] leading-relaxed font-light">
+                Click to add at center, or drag to drop at a specific position. Connect nodes by
+                dragging from output to input handles.
+              </p>
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </div>
   )
 }

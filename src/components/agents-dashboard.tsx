@@ -78,12 +78,12 @@ export function AgentsDashboard() {
       ) : (
         <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
           {agents.map((agent) => (
-            <Card key={agent.id} className="group hover:border-primary/50 transition-colors">
+            <Card key={agent.id} className="group border-border/80 transition-colors hover:border-primary/40">
               <CardHeader className="pb-3">
                 <div className="flex items-start justify-between">
                   <div className="flex items-center gap-3">
-                    <div className="flex items-center justify-center w-10 h-10 rounded-lg bg-primary/10">
-                      <Bot className="w-5 h-5 text-primary" />
+                    <div className="flex h-10 w-10 items-center justify-center rounded-lg border border-indigo-500/20 bg-indigo-500/10">
+                      <Bot className="w-5 h-5 text-indigo-300" />
                     </div>
                     <div>
                       <CardTitle className="text-lg">{agent.name}</CardTitle>

@@ -20,8 +20,7 @@ import {
 import { Copy, Layers, Trash2, MessageSquare, ClipboardPaste, ArrowDownUp, Frame, CornerDownLeft } from "lucide-react"
 import type { WorkflowNode } from "@/lib/workflow-types"
 
-const GLASSMORPHIC_CONTENT =
-  "bg-card/95 backdrop-blur-xl border border-white/10 shadow-[0_8px_32px_-8px_rgba(0,0,0,0.5)]"
+const MENU_CONTENT = "border border-border/80 bg-popover text-popover-foreground shadow-none"
 
 export interface NodeContextMenuProps {
   onDuplicate: () => void
@@ -59,7 +58,7 @@ export function NodeContextMenu({
   return (
     <DropdownMenu open={open} onOpenChange={onOpenChange}>
       <DropdownMenuTrigger asChild>{children}</DropdownMenuTrigger>
-      <DropdownMenuContent className={GLASSMORPHIC_CONTENT} side="right" align="start">
+      <DropdownMenuContent className={MENU_CONTENT} side="right" align="start">
         <DropdownMenuItem onSelect={onDuplicate}>
           <Layers className="h-4 w-4" />
           Duplicate
@@ -74,7 +73,7 @@ export function NodeContextMenu({
               <Frame className="h-4 w-4" />
               Add to frame
             </DropdownMenuSubTrigger>
-            <DropdownMenuSubContent className={GLASSMORPHIC_CONTENT}>
+            <DropdownMenuSubContent className={MENU_CONTENT}>
               {availableFrames.map((frame) => (
                 <DropdownMenuItem
                   key={frame.id}
@@ -92,12 +91,12 @@ export function NodeContextMenu({
             Remove from frame
           </DropdownMenuItem>
         )}
-        <DropdownMenuSeparator className="bg-white/10" />
+        <DropdownMenuSeparator />
         <DropdownMenuItem onSelect={onDelete} variant="destructive">
           <Trash2 className="h-4 w-4" />
           Delete
         </DropdownMenuItem>
-        <DropdownMenuSeparator className="bg-white/10" />
+        <DropdownMenuSeparator />
         <DropdownMenuItem disabled>
           <MessageSquare className="h-4 w-4 opacity-50" />
           Add Comment
@@ -128,7 +127,7 @@ export function PaneContextMenu({
   return (
     <DropdownMenu open={open} onOpenChange={onOpenChange}>
       <DropdownMenuTrigger asChild>{children}</DropdownMenuTrigger>
-      <DropdownMenuContent className={GLASSMORPHIC_CONTENT} side="right" align="start">
+      <DropdownMenuContent className={MENU_CONTENT} side="right" align="start">
         <DropdownMenuItem onSelect={onPaste}>
           <ClipboardPaste className="h-4 w-4" />
           Paste
@@ -137,7 +136,7 @@ export function PaneContextMenu({
           <ArrowDownUp className="h-4 w-4" />
           Auto Layout
         </DropdownMenuItem>
-        <DropdownMenuSeparator className="bg-white/10" />
+        <DropdownMenuSeparator />
         <DropdownMenuItem onSelect={onAddFrame}>
           <Frame className="h-4 w-4" />
           Add Frame

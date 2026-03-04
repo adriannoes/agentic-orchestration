@@ -1,6 +1,6 @@
 "use client"
 
-import { useState, useEffect } from "react"
+import { useState, useEffect, useCallback, useMemo } from "react"
 import type { Connector, ConnectorCategory } from "@/lib/connector-types"
 import { Input } from "@/components/ui/input"
 import { Card } from "@/components/ui/card"
@@ -24,7 +24,6 @@ const categories: { value: ConnectorCategory | "all"; label: string }[] = [
 
 export function ConnectorRegistry() {
   const [connectors, setConnectors] = useState<Connector[]>([])
-  const [filteredConnectors, setFilteredConnectors] = useState<Connector[]>([])
   const [searchQuery, setSearchQuery] = useState("")
   const [selectedCategory, setSelectedCategory] = useState<string>("all")
   const [selectedConnector, setSelectedConnector] = useState<Connector | null>(null)
@@ -32,6 +31,13 @@ export function ConnectorRegistry() {
   const { toast } = useToast()
   const searchParams = useSearchParams()
 
+  const fetchConnectors = useCallback(async () => {
+    const res = await fetch("/api/connectors")
+    const data = await res.json()
+    setConnectors(data)
+  }, [])
+
+  /* eslint-disable react-hooks/set-state-in-effect */
   useEffect(() => {
     fetchConnectors()
 
@@ -50,19 +56,10 @@ export function ConnectorRegistry() {
         variant: "destructive",
       })
     }
-  }, [])
+  }, [fetchConnectors, searchParams, toast])
+  /* eslint-enable react-hooks/set-state-in-effect */
 
-  useEffect(() => {
-    filterConnectors()
-  }, [connectors, searchQuery, selectedCategory])
-
-  const fetchConnectors = async () => {
-    const res = await fetch("/api/connectors")
-    const data = await res.json()
-    setConnectors(data)
-  }
-
-  const filterConnectors = () => {
+  const filteredConnectors = useMemo(() => {
     let filtered = connectors
 
     if (selectedCategory !== "all") {
@@ -77,8 +74,8 @@ export function ConnectorRegistry() {
       )
     }
 
-    setFilteredConnectors(filtered)
-  }
+    return filtered
+  }, [connectors, searchQuery, selectedCategory])
 
   const handleConnect = (connector: Connector) => {
     setSelectedConnector(connector)
@@ -98,8 +95,8 @@ export function ConnectorRegistry() {
       <div className="grid gap-4 md:grid-cols-3">
         <Card className="p-6">
           <div className="flex items-center gap-3">
-            <div className="p-3 rounded-lg bg-green-500/10">
-              <CheckCircle2 className="w-6 h-6 text-green-500" />
+            <div className="rounded-lg border border-indigo-500/20 bg-indigo-500/10 p-3">
+              <CheckCircle2 className="w-6 h-6 text-indigo-300" />
             </div>
             <div>
               <p className="text-sm text-muted-foreground">Connected</p>
@@ -110,8 +107,8 @@ export function ConnectorRegistry() {
 
         <Card className="p-6">
           <div className="flex items-center gap-3">
-            <div className="p-3 rounded-lg bg-primary/10">
-              <Plug className="w-6 h-6 text-primary" />
+            <div className="rounded-lg border border-zinc-500/20 bg-zinc-500/10 p-3">
+              <Plug className="w-6 h-6 text-zinc-300" />
             </div>
             <div>
               <p className="text-sm text-muted-foreground">Available</p>
@@ -122,8 +119,8 @@ export function ConnectorRegistry() {
 
         <Card className="p-6">
           <div className="flex items-center gap-3">
-            <div className="p-3 rounded-lg bg-orange-500/10">
-              <AlertCircle className="w-6 h-6 text-orange-500" />
+            <div className="rounded-lg border border-violet-500/20 bg-violet-500/10 p-3">
+              <AlertCircle className="w-6 h-6 text-violet-300" />
             </div>
             <div>
               <p className="text-sm text-muted-foreground">Attention</p>

@@ -38,7 +38,7 @@ export function IntegrationDetailDialog({
               <p className="text-sm text-muted-foreground mt-1">by {integration.developer.name}</p>
               <div className="flex items-center gap-3 mt-2">
                 <div className="flex items-center gap-1">
-                  <Star className="w-4 h-4 fill-amber-500 text-amber-500" />
+                  <Star className="h-4 w-4 fill-violet-300 text-violet-300" />
                   <span className="font-medium">{integration.stats.rating}</span>
                   <span className="text-sm text-muted-foreground">({integration.stats.reviews} reviews)</span>
                 </div>
@@ -77,10 +77,10 @@ export function IntegrationDetailDialog({
               variant="outline"
               className={`${
                 integration.pricing.type === "free"
-                  ? "text-green-500 border-green-500"
+                  ? "border-indigo-500/20 bg-indigo-500/10 text-indigo-300"
                   : integration.pricing.type === "freemium"
-                    ? "text-blue-500 border-blue-500"
-                    : "text-amber-500 border-amber-500"
+                    ? "border-violet-500/20 bg-violet-500/10 text-violet-300"
+                    : "border-border/80 bg-muted/30 text-foreground"
               }`}
             >
               {integration.pricing.type === "free"

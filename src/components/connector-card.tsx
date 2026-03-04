@@ -13,17 +13,17 @@ interface ConnectorCardProps {
 
 export function ConnectorCard({ connector, onConnect }: ConnectorCardProps) {
   const statusConfig = {
-    connected: { icon: CheckCircle2, color: "text-green-500", label: "Connected" },
+    connected: { icon: CheckCircle2, color: "text-indigo-300", label: "Connected" },
     disconnected: { icon: XCircle, color: "text-muted-foreground", label: "Not connected" },
-    error: { icon: XCircle, color: "text-red-500", label: "Error" },
-    pending: { icon: Plug, color: "text-orange-500", label: "Pending" },
+    error: { icon: XCircle, color: "text-destructive", label: "Error" },
+    pending: { icon: Plug, color: "text-violet-300", label: "Pending" },
   }
 
   const status = statusConfig[connector.status]
   const StatusIcon = status.icon
 
   return (
-    <Card className="p-6 hover:border-primary transition-colors">
+    <Card className="border-border/80 p-6 transition-colors hover:border-primary/40">
       <div className="flex items-start justify-between mb-4">
         <div className="flex items-center gap-3">
           <div
@@ -57,7 +57,7 @@ export function ConnectorCard({ connector, onConnect }: ConnectorCardProps) {
           </Badge>
         )}
         {connector.isPremium && (
-          <Badge variant="default" className="text-xs bg-amber-500">
+          <Badge variant="default" className="border border-violet-500/20 bg-violet-500/10 text-xs text-violet-300">
             Premium
           </Badge>
         )}

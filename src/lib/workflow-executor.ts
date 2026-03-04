@@ -225,7 +225,7 @@ export class WorkflowExecutor {
     try {
       // Very basic evaluation - in production use a proper expression parser
       result = condition.toLowerCase() === "true"
-    } catch (error) {
+    } catch (_error) {
       logs.push({
         id: crypto.randomUUID(),
         nodeId: node.id,

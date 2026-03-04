@@ -2,12 +2,25 @@
 
 import type React from "react"
 
-import { useState } from "react"
-import { Bot, Shield, GitBranch, Plug, UserCheck, FileSearch, Play, Square, Frame, Trash2, GripVertical } from "lucide-react"
+import { useState, useEffect } from "react"
+import {
+  Bot,
+  Shield,
+  GitBranch,
+  Plug,
+  UserCheck,
+  FileSearch,
+  Play,
+  Square,
+  Frame,
+  Trash2,
+  GripVertical,
+} from "lucide-react"
 import { Handle, Position, type NodeProps, type Node } from "@xyflow/react"
 import { cn } from "@/lib/utils"
 import type { NodeType, NodeData } from "@/lib/workflow-types"
 import { Button } from "@/components/ui/button"
+import { motion } from "framer-motion"
 
 export type WorkflowNodeData = NodeData & { isHighlighted?: boolean; customOnDelete?: () => void }
 export type WorkflowNodeType = Node<WorkflowNodeData, NodeType>
@@ -24,85 +37,74 @@ const NODE_ICONS: Record<NodeType, React.ElementType> = {
   frame: Frame,
 }
 
-const NODE_COLORS: Record<NodeType, { bg: string; iconBg: string; border: string; icon: string; shadow: string; glow: string }> = {
+const NODE_COLORS: Record<NodeType, { bg: string; iconBg: string; border: string; icon: string }> =
+{
   start: {
-    bg: "bg-background/40",
-    iconBg: "bg-emerald-500/10",
-    border: "border-white/5",
-    icon: "text-emerald-400",
-    shadow: "shadow-[0_4px_24px_-8px_rgba(0,0,0,0.5)]",
-    glow: "shadow-[0_0_20px_rgba(16,185,129,0.15)]",
+    bg: "bg-card/95",
+    iconBg: "bg-indigo-500/10",
+    border: "border-border/80",
+    icon: "text-indigo-300",
   },
   end: {
-    bg: "bg-background/40",
-    iconBg: "bg-rose-500/10",
-    border: "border-white/5",
-    icon: "text-rose-400",
-    shadow: "shadow-[0_4px_24px_-8px_rgba(0,0,0,0.5)]",
-    glow: "shadow-[0_0_20px_rgba(244,63,94,0.15)]"
+    bg: "bg-card/95",
+    iconBg: "bg-violet-500/10",
+    border: "border-border/80",
+    icon: "text-violet-300",
   },
   agent: {
-    bg: "bg-background/40",
-    iconBg: "bg-blue-500/10",
-    border: "border-white/5",
-    icon: "text-blue-400",
-    shadow: "shadow-[0_4px_24px_-8px_rgba(0,0,0,0.5)]",
-    glow: "shadow-[0_0_20px_rgba(59,130,246,0.15)]"
+    bg: "bg-card/95",
+    iconBg: "bg-indigo-400/15",
+    border: "border-border/80",
+    icon: "text-indigo-200",
   },
   guardrail: {
-    bg: "bg-background/40",
-    iconBg: "bg-amber-500/10",
-    border: "border-white/5",
-    icon: "text-amber-400",
-    shadow: "shadow-[0_4px_24px_-8px_rgba(0,0,0,0.5)]",
-    glow: "shadow-[0_0_20px_rgba(245,158,11,0.15)]"
+    bg: "bg-card/95",
+    iconBg: "bg-zinc-500/10",
+    border: "border-border/80",
+    icon: "text-zinc-300",
   },
   condition: {
-    bg: "bg-background/40",
-    iconBg: "bg-purple-500/10",
-    border: "border-white/5",
-    icon: "text-purple-400",
-    shadow: "shadow-[0_4px_24px_-8px_rgba(0,0,0,0.5)]",
-    glow: "shadow-[0_0_20px_rgba(168,85,247,0.15)]",
+    bg: "bg-card/95",
+    iconBg: "bg-violet-500/10",
+    border: "border-border/80",
+    icon: "text-violet-300",
   },
   mcp: {
-    bg: "bg-background/40",
-    iconBg: "bg-cyan-500/10",
-    border: "border-white/5",
-    icon: "text-cyan-400",
-    shadow: "shadow-[0_4px_24px_-8px_rgba(0,0,0,0.5)]",
-    glow: "shadow-[0_0_20px_rgba(6,182,212,0.15)]"
+    bg: "bg-card/95",
+    iconBg: "bg-violet-400/15",
+    border: "border-border/80",
+    icon: "text-violet-200",
   },
   "user-approval": {
-    bg: "bg-background/40",
-    iconBg: "bg-orange-500/10",
-    border: "border-white/5",
-    icon: "text-orange-400",
-    shadow: "shadow-[0_4px_24px_-8px_rgba(0,0,0,0.5)]",
-    glow: "shadow-[0_0_20px_rgba(249,115,22,0.15)]",
+    bg: "bg-card/95",
+    iconBg: "bg-zinc-500/10",
+    border: "border-border/80",
+    icon: "text-zinc-300",
   },
   "file-search": {
-    bg: "bg-background/40",
-    iconBg: "bg-teal-500/10",
-    border: "border-white/5",
-    icon: "text-teal-400",
-    shadow: "shadow-[0_4px_24px_-8px_rgba(0,0,0,0.5)]",
-    glow: "shadow-[0_0_20px_rgba(20,184,166,0.15)]"
+    bg: "bg-card/95",
+    iconBg: "bg-indigo-400/15",
+    border: "border-border/80",
+    icon: "text-indigo-200",
   },
   frame: {
-    bg: "bg-background/40",
+    bg: "bg-card/95",
     iconBg: "bg-zinc-500/10",
-    border: "border-white/5",
-    icon: "text-zinc-400",
-    shadow: "shadow-[0_4px_24px_-8px_rgba(0,0,0,0.5)]",
-    glow: "shadow-[0_0_20px_rgba(113,113,122,0.15)]",
+    border: "border-border/80",
+    icon: "text-zinc-300",
   },
 }
 
 export type WorkflowNodeProps = NodeProps<WorkflowNodeType>
 
-export function CanvasNode({ data, selected, id, type: nodeTypeProp }: WorkflowNodeProps) {
+export function CanvasNode({ data, selected, type: nodeTypeProp }: WorkflowNodeProps) {
   const [isHovered, setIsHovered] = useState(false)
+  const [hasMounted, setHasMounted] = useState(false)
+  /* eslint-disable react-hooks/set-state-in-effect */
+  useEffect(() => {
+    setHasMounted(true)
+  }, [])
+  /* eslint-enable react-hooks/set-state-in-effect */
   const nodeType = (nodeTypeProp ?? "agent") as NodeType
 
   const handleDelete = () => data?.customOnDelete?.()
@@ -111,79 +113,77 @@ export function CanvasNode({ data, selected, id, type: nodeTypeProp }: WorkflowN
   const isHighlighted = data?.isHighlighted ?? false
 
   return (
-    <div
+    <motion.div
+      initial={hasMounted ? false : { opacity: 0, y: 10, scale: 0.95 }}
+      animate={{ opacity: 1, y: 0, scale: 1 }}
+      whileHover={{ y: -2 }}
+      transition={{ type: "spring", stiffness: 300, damping: 24 }}
       className={cn(
-        "w-[320px] rounded-2xl transition-all duration-300 ease-out",
-        "border ring-1 ring-inset ring-white/5",
+        "w-[320px] rounded-2xl transition-shadow duration-300 ease-out",
+        "border",
         colors.bg,
         colors.border,
-        colors.shadow,
-        "backdrop-blur-xl backdrop-saturate-150",
-        "hover:-translate-y-1 hover:shadow-[0_8px_30px_-8px_rgba(0,0,0,0.6)]",
-        selected ? `ring-2 ring-white/20 ${colors.glow} scale-[1.02] z-10 border-transparent` : "hover:border-white/10",
-        isHighlighted && "ring-2 ring-blue-500/50 animate-pulse shadow-[0_0_30px_rgba(59,130,246,0.3)]",
+        "hover:border-primary/40",
+        selected ? "ring-primary/40 z-10 ring-2" : "",
+        isHighlighted && "ring-primary/60 ring-2",
         "cursor-grab active:cursor-grabbing",
       )}
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
     >
-      {/* Input Handle */}
       {nodeType !== "start" && (
         <Handle
           type="target"
           position={Position.Left}
           id="input"
           className={cn(
-            "!w-5 !h-5 !-left-2.5 !rounded-full !border-[3px] !bg-background !transition-all !duration-300 !z-30",
-            selected || isHovered ? "!border-primary !scale-110 !shadow-[0_0_10px_rgba(255,255,255,0.2)]" : "!border-muted-foreground/40",
+            "!bg-background !-left-2.5 !z-30 !h-5 !w-5 !rounded-full !border-[3px] !transition-all !duration-300",
+            selected || isHovered ? "!border-primary !scale-110" : "!border-muted-foreground/40",
           )}
         />
       )}
 
-      {/* Node Content */}
-      <div className="p-4 relative overflow-hidden rounded-2xl">
-        {/* Subtle top glare effect */}
-        <div className="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-white/10 to-transparent" />
-
-        <div className="flex items-start gap-4 group">
-          {/* Icon Container with glowing background */}
+      <div className="relative overflow-hidden rounded-2xl p-4">
+        <div className="group flex items-start gap-4">
           <div
             className={cn(
-              "p-2.5 rounded-xl transition-all duration-500 ease-out relative flex-shrink-0",
+              "relative flex-shrink-0 rounded-xl p-2.5 transition-all duration-500 ease-out",
               colors.iconBg,
-              "ring-1 ring-inset ring-white/10",
-              selected ? "scale-110 shadow-lg" : "group-hover:scale-105",
+              "ring-border/80 ring-1 ring-inset",
+              selected ? "scale-105" : "group-hover:scale-105",
             )}
           >
             <Icon
               className={cn(
-                "w-5 h-5 transition-transform duration-500",
+                "h-5 w-5 transition-transform duration-500",
                 colors.icon,
                 selected ? "scale-110" : "group-hover:scale-110",
               )}
             />
           </div>
 
-          {/* Text Content */}
-          <div className="flex-1 min-w-0 pt-0.5">
-            <div className="flex items-center justify-between gap-2 mb-1">
-              <h3 className="font-medium text-sm tracking-tight text-foreground truncate">{data?.label ?? "Node"}</h3>
-              {isHovered && <GripVertical className="h-4 w-4 text-muted-foreground/40 transition-colors hover:text-foreground/80 flex-shrink-0" />}
+          <div className="min-w-0 flex-1 pt-0.5">
+            <div className="mb-1 flex items-center justify-between gap-2">
+              <h3 className="text-foreground truncate text-sm font-medium tracking-tight">
+                {data?.label ?? "Node"}
+              </h3>
+              {isHovered && (
+                <GripVertical className="text-muted-foreground/40 hover:text-foreground/80 h-4 w-4 flex-shrink-0 transition-colors" />
+              )}
             </div>
             {data?.description && (
-              <p className="text-[13px] text-muted-foreground/80 mt-1 line-clamp-2 leading-relaxed font-light">
+              <p className="text-muted-foreground/80 mt-1 line-clamp-2 text-[13px] leading-relaxed font-light">
                 {data.description}
               </p>
             )}
           </div>
 
-          {/* Delete Button */}
-          <div className="absolute right-3 top-3 opacity-0 group-hover:opacity-100 transition-opacity duration-200">
+          <div className="absolute top-3 right-3 opacity-0 transition-opacity duration-200 group-hover:opacity-100">
             {(selected || isHovered) && (
               <Button
                 variant="ghost"
                 size="icon"
-                className="h-7 w-7 rounded-full bg-background/50 hover:bg-destructive/80 text-muted-foreground hover:text-white transition-all duration-200 nodrag nopan backdrop-blur-md border border-white/5 hover:border-destructive hover:scale-105"
+                className="nodrag nopan border-border/80 bg-background/80 text-muted-foreground hover:border-destructive hover:bg-destructive/80 h-7 w-7 rounded-full border transition-all duration-200 hover:scale-105 hover:text-white"
                 onClick={(e) => {
                   e.stopPropagation()
                   handleDelete()
@@ -197,15 +197,14 @@ export function CanvasNode({ data, selected, id, type: nodeTypeProp }: WorkflowN
           </div>
         </div>
 
-        {/* Node-specific details */}
         {nodeType === "agent" && data?.model && (
           <div className="mt-4 flex items-center gap-2 pt-1">
-            <span className="px-2.5 py-1 rounded-full bg-blue-500/10 text-blue-400/90 text-[11px] font-medium border border-blue-500/20 shadow-sm backdrop-blur-md">
+            <span className="rounded-full border border-indigo-500/20 bg-indigo-500/10 px-2.5 py-1 text-[11px] font-medium text-indigo-300">
               {data.model}
             </span>
             {data.tools && data.tools.length > 0 && (
-              <span className="px-2.5 py-1 rounded-full bg-white/5 text-muted-foreground/80 text-[11px] font-medium border border-white/5 shadow-sm">
-                {data.tools.length} tool{data.tools.length !== 1 ? 's' : ''}
+              <span className="border-border/80 bg-muted/30 text-muted-foreground/80 rounded-full border px-2.5 py-1 text-[11px] font-medium">
+                {data.tools.length} tool{data.tools.length !== 1 ? "s" : ""}
               </span>
             )}
           </div>
@@ -213,7 +212,7 @@ export function CanvasNode({ data, selected, id, type: nodeTypeProp }: WorkflowN
 
         {nodeType === "guardrail" && data?.guardrailType && (
           <div className="mt-4 pt-1">
-            <span className="px-2.5 py-1 rounded-full bg-amber-500/10 text-amber-400/90 text-[11px] font-medium border border-amber-500/20 shadow-sm backdrop-blur-md inline-block">
+            <span className="inline-block rounded-full border border-zinc-500/20 bg-zinc-500/10 px-2.5 py-1 text-[11px] font-medium text-zinc-300">
               {data.guardrailType}
             </span>
           </div>
@@ -221,26 +220,25 @@ export function CanvasNode({ data, selected, id, type: nodeTypeProp }: WorkflowN
 
         {nodeType === "condition" && data?.condition && (
           <div className="mt-4 pt-1">
-            <div className="px-3 py-2 rounded-xl bg-black/40 text-muted-foreground/90 font-mono text-[11px] border border-white/5 shadow-inner">
+            <div className="border-border/80 bg-muted/30 text-muted-foreground/90 rounded-xl border px-3 py-2 font-mono text-[11px]">
               {data.condition}
             </div>
           </div>
         )}
       </div>
 
-      {/* Output Handle */}
       {nodeType !== "end" && (
         <Handle
           type="source"
           position={Position.Right}
           id="output"
           className={cn(
-            "!w-5 !h-5 !-right-2.5 !rounded-full !border-[3px] !bg-background !transition-all !duration-300 !z-30",
-            selected || isHovered ? "!border-primary !scale-110 !shadow-[0_0_10px_rgba(255,255,255,0.2)]" : "!border-muted-foreground/40",
+            "!bg-background !-right-2.5 !z-30 !h-5 !w-5 !rounded-full !border-[3px] !transition-all !duration-300",
+            selected || isHovered ? "!border-primary !scale-110" : "!border-muted-foreground/40",
             "cursor-crosshair",
           )}
         />
       )}
-    </div>
+    </motion.div>
   )
 }

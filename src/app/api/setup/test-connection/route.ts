@@ -61,9 +61,9 @@ export async function POST(request: NextRequest) {
     // Check if auth is enabled
     let authEnabled = false
     try {
-      const { data } = await supabase.auth.getSession()
+      const { data: _data } = await supabase.auth.getSession()
       authEnabled = true
-    } catch {
+    } catch (_e) {
       authEnabled = false
     }
 

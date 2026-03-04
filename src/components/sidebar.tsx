@@ -42,17 +42,17 @@ export function Sidebar() {
   return (
     <aside
       className={cn(
-        "flex flex-col border-r border-border bg-card transition-all duration-300",
+        "border-border/80 bg-card/80 flex flex-col border-r backdrop-blur-sm transition-all duration-300",
         collapsed ? "w-16" : "w-64",
       )}
     >
-      <div className="flex items-center justify-between p-4 border-b border-border">
+      <div className="border-border/80 flex items-center justify-between border-b p-4">
         {!collapsed && (
           <div className="flex items-center gap-2">
-            <div className="flex items-center justify-center w-8 h-8 rounded-lg bg-primary">
-              <Bot className="w-5 h-5 text-primary-foreground" />
+            <div className="bg-primary flex h-8 w-8 items-center justify-center rounded-lg">
+              <Bot className="text-primary-foreground h-5 w-5" />
             </div>
-            <span className="font-semibold text-lg">Agent Builder</span>
+            <span className="text-lg font-semibold">Agent Builder</span>
           </div>
         )}
         <Button
@@ -62,40 +62,41 @@ export function Sidebar() {
           className={cn(collapsed && "mx-auto")}
           aria-label={collapsed ? "Expand sidebar" : "Collapse sidebar"}
         >
-          {collapsed ? <ChevronRight className="w-4 h-4" /> : <ChevronLeft className="w-4 h-4" />}
+          {collapsed ? <ChevronRight className="h-4 w-4" /> : <ChevronLeft className="h-4 w-4" />}
         </Button>
       </div>
 
-      <nav className="flex-1 p-2 space-y-1">
+      <nav className="flex-1 space-y-1 p-2">
         {navItems.map((item) => {
-          const isActive = pathname === item.href || (item.href !== "/" && pathname.startsWith(item.href))
+          const isActive =
+            pathname === item.href || (item.href !== "/" && pathname.startsWith(item.href))
 
           return (
             <Link
               key={item.href}
               href={item.href}
               className={cn(
-                "flex items-center gap-3 px-3 py-2 rounded-lg transition-colors",
-                "hover:bg-accent hover:text-accent-foreground",
-                isActive && "bg-accent text-primary",
+                "flex items-center gap-3 rounded-lg px-3 py-2 transition-colors",
+                "hover:bg-accent/80 hover:text-accent-foreground",
+                isActive && "bg-accent text-foreground border-border/80 border",
                 collapsed && "justify-center px-2",
               )}
             >
-              <item.icon className="w-5 h-5 shrink-0" />
+              <item.icon className="h-5 w-5 shrink-0" />
               {!collapsed && <span>{item.label}</span>}
             </Link>
           )
         })}
       </nav>
 
-      <div className="p-4 border-t border-border">
+      <div className="border-border/80 border-t p-4">
         {status === "authenticated" && user ? (
           <div className={cn(collapsed && "flex justify-center")}>
             <UserMenu user={user} />
           </div>
         ) : (
           !collapsed && (
-            <div className="text-xs text-muted-foreground">
+            <div className="text-muted-foreground text-xs">
               <p>Powered by ASAP protocol.</p>
             </div>
           )

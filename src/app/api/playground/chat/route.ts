@@ -1,4 +1,4 @@
-import { streamText, tool, convertToModelMessages, type UIMessage, stepCountIs } from "ai"
+import { streamText, tool, convertToModelMessages, type UIMessage } from "ai"
 import { z } from "zod"
 import { store } from "@/lib/store"
 

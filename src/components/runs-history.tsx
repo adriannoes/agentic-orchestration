@@ -99,7 +99,7 @@ const sampleRuns: Run[] = [
 ]
 
 export function RunsHistory() {
-  const [runs, setRuns] = useState<Run[]>(sampleRuns)
+  const [runs] = useState<Run[]>(sampleRuns)
   const [search, setSearch] = useState("")
   const [statusFilter, setStatusFilter] = useState<string>("all")
   const [selectedRun, setSelectedRun] = useState<Run | null>(null)
@@ -123,9 +123,9 @@ export function RunsHistory() {
 
   const getStatusBadge = (status: Run["status"]) => {
     const variants: Record<Run["status"], string> = {
-      completed: "bg-green-500/10 text-green-500 border-green-500/20",
-      failed: "bg-red-500/10 text-red-500 border-red-500/20",
-      running: "bg-blue-500/10 text-blue-500 border-blue-500/20",
+      completed: "border-indigo-500/20 bg-indigo-500/10 text-indigo-300",
+      failed: "border-destructive/20 bg-destructive/10 text-destructive",
+      running: "border-violet-500/20 bg-violet-500/10 text-violet-300",
     }
     return variants[status]
   }

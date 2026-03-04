@@ -61,11 +61,13 @@ const GUARDRAIL_TYPES = [
 export function NodePropertiesPanel({ isOpen, onToggle, node, workflowId, onUpdate }: NodePropertiesPanelProps) {
   const [formData, setFormData] = useState<WorkflowNode["data"]>(node?.data || { label: "" })
 
+  /* eslint-disable react-hooks/set-state-in-effect */
   useEffect(() => {
     if (node) {
       setFormData(node.data)
     }
   }, [node])
+  /* eslint-enable react-hooks/set-state-in-effect */
 
   const handleSave = async () => {
     if (!node) return
@@ -82,7 +84,7 @@ export function NodePropertiesPanel({ isOpen, onToggle, node, workflowId, onUpda
 
   return (
     <div className={cn(
-      "relative border-l border-white/5 bg-background/40 backdrop-blur-2xl transition-all duration-300 z-40",
+      "relative z-40 border-l border-border/80 bg-card/80 transition-all duration-300",
       isOpen ? "w-80" : "w-0"
     )}>
       {/* Toggle Button */}
@@ -90,7 +92,7 @@ export function NodePropertiesPanel({ isOpen, onToggle, node, workflowId, onUpda
         variant="outline"
         size="icon"
         className={cn(
-          "absolute -left-4 top-4 z-50 h-8 w-8 rounded-full bg-background/80 backdrop-blur-xl border border-white/10 shadow-[0_0_15px_rgba(0,0,0,0.5)] text-muted-foreground",
+          "absolute -left-4 top-4 z-50 h-8 w-8 rounded-full border border-border/80 bg-card text-muted-foreground",
           "hover:scale-110 hover:text-foreground transition-all duration-300"
         )}
         onClick={onToggle}
@@ -103,9 +105,9 @@ export function NodePropertiesPanel({ isOpen, onToggle, node, workflowId, onUpda
           {node ? (
             <>
               {/* Header */}
-              <div className="p-5 border-b border-white/5 bg-white/[0.02]">
+              <div className="border-b border-border/80 p-5">
                 <div className="flex items-center gap-3">
-                  <div className="p-2.5 rounded-xl bg-white/[0.05] ring-1 ring-inset ring-white/10">
+                  <div className="rounded-xl bg-muted/40 p-2.5 ring-1 ring-inset ring-border/80">
                     <Icon className="h-5 w-5 text-foreground" />
                   </div>
                   <div>
@@ -116,14 +118,14 @@ export function NodePropertiesPanel({ isOpen, onToggle, node, workflowId, onUpda
               </div>
 
               {/* Properties Form */}
-              <div className="flex-1 overflow-y-auto p-5 space-y-5 scrollbar-thin scrollbar-thumb-white/10 scrollbar-track-transparent">
+              <div className="flex-1 space-y-5 overflow-y-auto p-5">
                 {/* Label (all nodes) */}
                 <div className="space-y-2">
                   <Label htmlFor="label" className="text-xs font-semibold text-muted-foreground/80 uppercase tracking-wider">Label</Label>
                   <Input
                     id="label"
                     value={formData.label}
-                    className="bg-black/20 border-white/5 focus-visible:ring-1 focus-visible:ring-white/20 focus-visible:bg-black/40 transition-all rounded-xl shadow-inner text-sm"
+                    className="rounded-xl border-border/80 bg-background/70 text-sm"
                     onChange={(e) => setFormData({ ...formData, label: e.target.value })}
                   />
                 </div>
@@ -136,7 +138,7 @@ export function NodePropertiesPanel({ isOpen, onToggle, node, workflowId, onUpda
                     value={formData.description || ""}
                     onChange={(e) => setFormData({ ...formData, description: e.target.value })}
                     rows={2}
-                    className="bg-black/20 border-white/5 focus-visible:ring-1 focus-visible:ring-white/20 focus-visible:bg-black/40 transition-all rounded-xl shadow-inner text-sm resize-none"
+                    className="resize-none rounded-xl border-border/80 bg-background/70 text-sm"
                   />
                 </div>
 
@@ -149,12 +151,12 @@ export function NodePropertiesPanel({ isOpen, onToggle, node, workflowId, onUpda
                         value={formData.model || "gpt-4o"}
                         onValueChange={(value) => setFormData({ ...formData, model: value })}
                       >
-                        <SelectTrigger id="model" aria-labelledby="model-label" className="bg-black/20 border-white/5 focus-visible:ring-1 focus-visible:ring-white/20 focus-visible:bg-black/40 transition-all rounded-xl shadow-inner text-sm">
+                        <SelectTrigger id="model" aria-labelledby="model-label" className="rounded-xl border-border/80 bg-background/70 text-sm">
                           <SelectValue />
                         </SelectTrigger>
-                        <SelectContent className="bg-background/95 backdrop-blur-xl border-white/10 rounded-xl">
+                        <SelectContent className="rounded-xl border-border/80 bg-popover">
                           {MODELS.map((model) => (
-                            <SelectItem key={model.value} value={model.value} className="rounded-lg focus:bg-white/5 cursor-pointer">
+                            <SelectItem key={model.value} value={model.value} className="cursor-pointer rounded-lg">
                               {model.label}
                             </SelectItem>
                           ))}
@@ -170,7 +172,7 @@ export function NodePropertiesPanel({ isOpen, onToggle, node, workflowId, onUpda
                         onChange={(e) => setFormData({ ...formData, systemPrompt: e.target.value })}
                         rows={4}
                         placeholder="You are a helpful assistant..."
-                        className="bg-black/20 border-white/5 focus-visible:ring-1 focus-visible:ring-white/20 focus-visible:bg-black/40 transition-all rounded-xl shadow-inner text-sm resize-none"
+                        className="resize-none rounded-xl border-border/80 bg-background/70 text-sm"
                       />
                     </div>
                   </>
@@ -186,12 +188,12 @@ export function NodePropertiesPanel({ isOpen, onToggle, node, workflowId, onUpda
                         setFormData({ ...formData, guardrailType: value as "jailbreak" | "pii" | "custom" })
                       }
                     >
-                      <SelectTrigger className="bg-black/20 border-white/5 focus-visible:ring-1 focus-visible:ring-white/20 focus-visible:bg-black/40 transition-all rounded-xl shadow-inner text-sm">
+                      <SelectTrigger className="rounded-xl border-border/80 bg-background/70 text-sm">
                         <SelectValue />
                       </SelectTrigger>
-                      <SelectContent className="bg-background/95 backdrop-blur-xl border-white/10 rounded-xl">
+                      <SelectContent className="rounded-xl border-border/80 bg-popover">
                         {GUARDRAIL_TYPES.map((type) => (
-                          <SelectItem key={type.value} value={type.value} className="rounded-lg focus:bg-white/5 cursor-pointer">
+                          <SelectItem key={type.value} value={type.value} className="cursor-pointer rounded-lg">
                             {type.label}
                           </SelectItem>
                         ))}
@@ -210,7 +212,7 @@ export function NodePropertiesPanel({ isOpen, onToggle, node, workflowId, onUpda
                       onChange={(e) => setFormData({ ...formData, condition: e.target.value })}
                       rows={3}
                       placeholder="e.g., intent === 'support'"
-                      className="bg-black/40 border-white/5 focus-visible:ring-1 focus-visible:ring-white/20 focus-visible:bg-black/60 transition-all rounded-xl shadow-inner text-sm font-mono text-muted-foreground/90 resize-none"
+                      className="resize-none rounded-xl border-border/80 bg-muted/30 font-mono text-sm text-muted-foreground/90"
                     />
                   </div>
                 )}
@@ -224,22 +226,22 @@ export function NodePropertiesPanel({ isOpen, onToggle, node, workflowId, onUpda
                       value={formData.mcpServer || ""}
                       onChange={(e) => setFormData({ ...formData, mcpServer: e.target.value })}
                       placeholder="https://mcp.example.com"
-                      className="bg-black/20 border-white/5 focus-visible:ring-1 focus-visible:ring-white/20 focus-visible:bg-black/40 transition-all rounded-xl shadow-inner text-sm"
+                      className="rounded-xl border-border/80 bg-background/70 text-sm"
                     />
                   </div>
                 )}
               </div>
 
               {/* Footer */}
-              <div className="p-5 border-t border-white/5 bg-black/20 backdrop-blur-md">
-                <Button className="w-full rounded-xl bg-primary/90 hover:bg-primary shadow-[0_0_15px_rgba(255,255,255,0.1)] transition-colors" onClick={handleSave}>
+              <div className="border-t border-border/80 bg-background/70 p-5">
+                <Button className="w-full rounded-xl" onClick={handleSave}>
                   Save Changes
                 </Button>
               </div>
             </>
           ) : (
             <div className="flex-1 flex flex-col items-center justify-center p-6 text-center">
-              <div className="p-4 rounded-full bg-white/[0.02] border border-white/5 mb-4">
+              <div className="mb-4 rounded-full border border-border/80 bg-muted/30 p-4">
                 <Settings2 className="h-8 w-8 text-muted-foreground/40" />
               </div>
               <h3 className="font-medium text-foreground tracking-tight mb-1">No Node Selected</h3>

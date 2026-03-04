@@ -51,6 +51,7 @@ export function EditAgentDialog({ agent, open, onOpenChange, onUpdated }: EditAg
     }
   }, [open])
 
+   
   useEffect(() => {
     setName(agent.name)
     setDescription(agent.description)
@@ -84,7 +85,7 @@ export function EditAgentDialog({ agent, open, onOpenChange, onUpdated }: EditAg
       toast.success("Agent updated successfully")
       onOpenChange(false)
       onUpdated()
-    } catch (error) {
+    } catch (_error) {
       toast.error("Failed to update agent")
     } finally {
       setLoading(false)

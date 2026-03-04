@@ -65,6 +65,7 @@ export function BuilderCommandPalette({
       onOpenChange={onOpenChange}
       title="Command Palette"
       description="Search for a command to run..."
+      className="border-border/80"
     >
       <CommandInput placeholder="Search commands..." />
       <CommandList>
