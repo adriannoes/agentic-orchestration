@@ -9,10 +9,13 @@ const REVOKED_URL =
   process.env.NEXT_PUBLIC_REVOKED_URL ??
   "https://raw.githubusercontent.com/adriannoes/asap-protocol/main/revoked_agents.json"
 
+const FETCH_TIMEOUT_MS = 5000
+
 export async function fetchRegistryAgents(): Promise<FetchRegistryResult> {
   try {
     const registryRes = await fetch(REGISTRY_URL, {
       next: { revalidate: 60 },
+      signal: AbortSignal.timeout(FETCH_TIMEOUT_MS),
     })
 
     if (!registryRes.ok) {
@@ -32,6 +35,7 @@ export async function fetchRegistryAgents(): Promise<FetchRegistryResult> {
     try {
       const revokedRes = await fetch(REVOKED_URL, {
         next: { revalidate: 60 },
+        signal: AbortSignal.timeout(FETCH_TIMEOUT_MS),
       })
       if (revokedRes.ok) {
         const revokedJson = await revokedRes.json()
