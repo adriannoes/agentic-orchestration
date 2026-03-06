@@ -1,4 +1,5 @@
 import { describe, it, expect, vi, beforeEach } from "vitest"
+import type { RegistryAgent } from "@/types/registry"
 import { fetchRegistryAgents, getRegistryCategories } from "@/lib/registry"
 
 const mockAgent1 = {
@@ -121,7 +122,7 @@ describe("fetchRegistryAgents", () => {
     expect(result.error).toBeDefined()
   })
 
-  it("returns all agents when revoked list fetch fails", async () => {
+  it("returns empty agents with error when revoked list fetch fails (fail closed)", async () => {
     let callCount = 0
     vi.stubGlobal(
       "fetch",
@@ -139,8 +140,8 @@ describe("fetchRegistryAgents", () => {
 
     const result = await fetchRegistryAgents()
 
-    expect(result.agents).toHaveLength(1)
-    expect(result.error).toBeUndefined()
+    expect(result.agents).toEqual([])
+    expect(result.error).toBe("Security restriction: Unable to verify revocation list.")
   })
 
   it("returns empty agents for empty registry", async () => {
@@ -163,7 +164,7 @@ describe("getRegistryCategories", () => {
       mockAgent1,
       mockAgent2,
       { ...mockAgent1, id: "dup", category: "automation" },
-    ] as any)
+    ] as unknown as RegistryAgent[])
 
     expect(categories).toEqual(["analytics", "automation"])
   })
@@ -173,7 +174,7 @@ describe("getRegistryCategories", () => {
       mockAgent1,
       { ...mockAgent2, category: null },
       { ...mockAgent1, id: "no-cat", category: undefined },
-    ] as any)
+    ] as unknown as RegistryAgent[])
 
     expect(categories).toEqual(["automation"])
   })
