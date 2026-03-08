@@ -55,3 +55,4 @@ test-output.txt
 /blob-report/
 /playwright/.cache/
 *.bak
+.env*.local
