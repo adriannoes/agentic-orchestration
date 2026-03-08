@@ -79,4 +79,23 @@ describe("LoginForm", () => {
       expect(toast.error).toHaveBeenCalledWith("Failed to sign in with GitHub")
     })
   })
+
+  it("calls toast.error when signIn returns ok: false", async () => {
+    vi.mocked(signIn).mockResolvedValue({
+      ok: false,
+      error: "OAuthError",
+      status: 403,
+      url: null,
+      code: undefined,
+    } as import("next-auth/react").SignInResponse)
+
+    const user = userEvent.setup()
+    render(<LoginForm />)
+
+    await user.click(screen.getByRole("button", { name: /sign in with github/i }))
+
+    await waitFor(() => {
+      expect(toast.error).toHaveBeenCalledWith("Failed to sign in with GitHub")
+    })
+  })
 })

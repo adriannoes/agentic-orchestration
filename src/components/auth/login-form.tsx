@@ -14,6 +14,11 @@ import {
 import { toast } from "sonner"
 import { Github } from "lucide-react"
 
+const SIGN_IN_MESSAGES = {
+  fromAsap: "Continue with GitHub to access Agent Builder from ASAP Protocol.",
+  default: "Sign in with GitHub to access your account",
+} as const
+
 interface LoginFormProps {
   fromAsap?: boolean
 }
@@ -24,7 +29,13 @@ export function LoginForm({ fromAsap }: LoginFormProps) {
   async function handleGitHubSignIn() {
     setIsLoading(true)
     try {
-      await signIn("github", { callbackUrl: "/" })
+      const result = await signIn("github", { callbackUrl: "/", redirect: false })
+      if (result && !result.ok) {
+        toast.error("Failed to sign in with GitHub")
+        setIsLoading(false)
+      } else if (result?.url) {
+        window.location.href = result.url
+      }
     } catch {
       toast.error("Failed to sign in with GitHub")
       setIsLoading(false)
@@ -36,9 +47,7 @@ export function LoginForm({ fromAsap }: LoginFormProps) {
       <CardHeader>
         <CardTitle className="text-2xl">Sign In</CardTitle>
         <CardDescription>
-          {fromAsap
-            ? "Continue with GitHub to access Agent Builder from ASAP Protocol."
-            : "Sign in with GitHub to access your account"}
+          {fromAsap ? SIGN_IN_MESSAGES.fromAsap : SIGN_IN_MESSAGES.default}
         </CardDescription>
       </CardHeader>
       <form
