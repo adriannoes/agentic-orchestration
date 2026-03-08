@@ -1,6 +1,7 @@
 "use client"
 
 import { useState, useEffect } from "react"
+import Link from "next/link"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
@@ -399,13 +400,13 @@ export default function SetupPage() {
               <p className="text-sm font-medium">Next Steps:</p>
               <div className="space-y-2">
                 <Button variant="default" className="w-full" asChild>
-                  <a href="/signup">Create Your Account</a>
+                  <Link href="/signup">Create Your Account</Link>
                 </Button>
                 <Button variant="outline" className="w-full bg-transparent" asChild>
-                  <a href="/login">Login to Existing Account</a>
+                  <Link href="/login">Login to Existing Account</Link>
                 </Button>
                 <Button variant="ghost" className="w-full" asChild>
-                  <a href="/">Go to Dashboard</a>
+                  <Link href="/">Go to Dashboard</Link>
                 </Button>
               </div>
             </CardContent>
