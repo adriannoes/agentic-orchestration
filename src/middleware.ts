@@ -28,7 +28,8 @@ export async function middleware(request: NextRequest) {
   if (request.nextUrl.pathname.startsWith("/api")) {
     // Enforce API Rate Limit if configured
     if (ratelimit) {
-      const ip = request.ip ?? request.headers.get("x-forwarded-for") ?? "anonymous"
+      const forwarded = request.headers.get("x-forwarded-for")
+      const ip = forwarded?.split(",")[0]?.trim() ?? request.headers.get("x-real-ip") ?? "anonymous"
       const { success, limit, reset, remaining } = await ratelimit.limit(ip)
 
       if (!success) {
