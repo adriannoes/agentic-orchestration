@@ -34,7 +34,11 @@ export function useRealtimeAgents(workspaceId: string, initialAgents: Agent[] = 
           filter: `workspace_id=eq.${workspaceId}`,
         },
         (payload: RealtimePostgresChangesPayload<Agent>) => {
-          setAgents((current) => current.map((agent) => (agent.id === (payload.new as Agent).id ? (payload.new as Agent) : agent)))
+          setAgents((current) =>
+            current.map((agent) =>
+              agent.id === (payload.new as Agent).id ? (payload.new as Agent) : agent,
+            ),
+          )
         },
       )
       .on(
@@ -46,7 +50,9 @@ export function useRealtimeAgents(workspaceId: string, initialAgents: Agent[] = 
           filter: `workspace_id=eq.${workspaceId}`,
         },
         (payload: RealtimePostgresChangesPayload<Agent>) => {
-          setAgents((current) => current.filter((agent) => agent.id !== (payload.old as Partial<Agent>).id))
+          setAgents((current) =>
+            current.filter((agent) => agent.id !== (payload.old as Partial<Agent>).id),
+          )
         },
       )
       .subscribe()

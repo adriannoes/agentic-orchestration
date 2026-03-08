@@ -148,7 +148,9 @@
 
   /* Connection line animations */
   .connection-line {
-    transition: stroke 0.2s ease, stroke-width 0.2s ease;
+    transition:
+      stroke 0.2s ease,
+      stroke-width 0.2s ease;
   }
 
   /* Handle pulse animation */

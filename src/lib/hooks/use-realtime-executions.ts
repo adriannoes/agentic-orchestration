@@ -5,7 +5,10 @@ import { getSupabaseBrowserClient } from "@/lib/supabase/client"
 import type { WorkflowExecution } from "@/lib/workflow-types"
 import type { RealtimePostgresChangesPayload } from "@supabase/supabase-js"
 
-export function useRealtimeExecutions(workspaceId: string, initialExecutions: WorkflowExecution[] = []) {
+export function useRealtimeExecutions(
+  workspaceId: string,
+  initialExecutions: WorkflowExecution[] = [],
+) {
   const [executions, setExecutions] = useState<WorkflowExecution[]>(initialExecutions)
 
   useEffect(() => {
@@ -36,7 +39,9 @@ export function useRealtimeExecutions(workspaceId: string, initialExecutions: Wo
         (payload: RealtimePostgresChangesPayload<WorkflowExecution>) => {
           setExecutions((current) =>
             current.map((execution) =>
-              execution.id === (payload.new as WorkflowExecution).id ? (payload.new as WorkflowExecution) : execution,
+              execution.id === (payload.new as WorkflowExecution).id
+                ? (payload.new as WorkflowExecution)
+                : execution,
             ),
           )
         },

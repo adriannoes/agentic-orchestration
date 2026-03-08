@@ -10,7 +10,9 @@ export async function GET(request: Request) {
 
   // Handle OAuth errors
   if (error) {
-    return NextResponse.redirect(new URL(`/connectors?error=${encodeURIComponent(error)}`, request.url))
+    return NextResponse.redirect(
+      new URL(`/connectors?error=${encodeURIComponent(error)}`, request.url),
+    )
   }
 
   if (!code || !state) {

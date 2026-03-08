@@ -37,16 +37,16 @@ Use the `/setup` route after starting the app to validate the connection and run
 
 ## Scripts
 
-| Script | Description |
-|--------|-------------|
-| `npm run dev` | Development server (port 3000) |
-| `npm run build` | Production build |
-| `npm run start` | Production server |
-| `npm run lint` | ESLint |
-| `npm run test` | Unit tests (Vitest, watch) |
-| `npm run test:run` | Unit tests (single run) |
-| `npm run test:e2e` | E2E tests (Playwright, starts dev on port 3099) |
-| `npm run test:e2e:ui` | E2E tests with Playwright UI |
+| Script                   | Description                                        |
+| ------------------------ | -------------------------------------------------- |
+| `npm run dev`            | Development server (port 3000)                     |
+| `npm run build`          | Production build                                   |
+| `npm run start`          | Production server                                  |
+| `npm run lint`           | ESLint                                             |
+| `npm run test`           | Unit tests (Vitest, watch)                         |
+| `npm run test:run`       | Unit tests (single run)                            |
+| `npm run test:e2e`       | E2E tests (Playwright, starts dev on port 3099)    |
+| `npm run test:e2e:ui`    | E2E tests with Playwright UI                       |
 | `npm run test:e2e:reuse` | E2E tests reusing existing dev server on port 3000 |
 
 **E2E notes:** Stop any running `npm run dev` before `npm run test:e2e`, or use `npm run test:e2e:reuse` when dev is already running.

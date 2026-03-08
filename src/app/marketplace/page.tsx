@@ -10,15 +10,15 @@ export default async function MarketplacePage() {
       <div className="container mx-auto max-w-7xl p-6">
         <div className="mb-8">
           <h1 className="text-3xl font-bold tracking-tight">ASAP Agent Registry</h1>
-          <p className="mt-2 text-muted-foreground">
+          <p className="text-muted-foreground mt-2">
             Discover agents registered on the ASAP Protocol network
           </p>
         </div>
 
         {error ? (
           <div className="flex flex-col items-center justify-center py-16 text-center">
-            <p className="mb-4 text-muted-foreground">{error}</p>
-            <a href="/marketplace" className="text-sm text-primary hover:underline">
+            <p className="text-muted-foreground mb-4">{error}</p>
+            <a href="/marketplace" className="text-primary text-sm hover:underline">
               Try again
             </a>
           </div>

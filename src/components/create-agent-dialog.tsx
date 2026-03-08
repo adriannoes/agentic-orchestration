@@ -13,7 +13,13 @@ import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Textarea } from "@/components/ui/textarea"
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select"
 import { Checkbox } from "@/components/ui/checkbox"
 import type { Tool } from "@/lib/types"
 import { toast } from "sonner"
@@ -90,12 +96,14 @@ export function CreateAgentDialog({ open, onOpenChange, onCreated }: CreateAgent
   }
 
   const toggleTool = (toolId: string) => {
-    setSelectedTools((prev) => (prev.includes(toolId) ? prev.filter((id) => id !== toolId) : [...prev, toolId]))
+    setSelectedTools((prev) =>
+      prev.includes(toolId) ? prev.filter((id) => id !== toolId) : [...prev, toolId],
+    )
   }
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
+      <DialogContent className="max-h-[90vh] max-w-2xl overflow-y-auto">
         <DialogHeader>
           <DialogTitle>Create New Agent</DialogTitle>
           <DialogDescription>Configure your AI agent with a model and tools</DialogDescription>
@@ -104,7 +112,12 @@ export function CreateAgentDialog({ open, onOpenChange, onCreated }: CreateAgent
         <div className="space-y-6 py-4">
           <div className="space-y-2">
             <Label htmlFor="name">Name</Label>
-            <Input id="name" placeholder="My Agent" value={name} onChange={(e) => setName(e.target.value)} />
+            <Input
+              id="name"
+              placeholder="My Agent"
+              value={name}
+              onChange={(e) => setName(e.target.value)}
+            />
           </div>
 
           <div className="space-y-2">
@@ -150,13 +163,16 @@ export function CreateAgentDialog({ open, onOpenChange, onCreated }: CreateAgent
               {tools.map((tool) => (
                 <div
                   key={tool.id}
-                  className="flex items-start space-x-3 p-3 rounded-lg border border-border hover:border-primary/50 transition-colors cursor-pointer"
+                  className="border-border hover:border-primary/50 flex cursor-pointer items-start space-x-3 rounded-lg border p-3 transition-colors"
                   onClick={() => toggleTool(tool.id)}
                 >
-                  <Checkbox checked={selectedTools.includes(tool.id)} onCheckedChange={() => toggleTool(tool.id)} />
+                  <Checkbox
+                    checked={selectedTools.includes(tool.id)}
+                    onCheckedChange={() => toggleTool(tool.id)}
+                  />
                   <div className="space-y-1">
-                    <p className="text-sm font-medium leading-none">{tool.name}</p>
-                    <p className="text-xs text-muted-foreground">{tool.description}</p>
+                    <p className="text-sm leading-none font-medium">{tool.name}</p>
+                    <p className="text-muted-foreground text-xs">{tool.description}</p>
                   </div>
                 </div>
               ))}

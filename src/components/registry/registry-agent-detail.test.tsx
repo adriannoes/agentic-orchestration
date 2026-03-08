@@ -31,15 +31,13 @@ const mockAgent: RegistryAgent = {
 describe("RegistryAgentDetail", () => {
   it("returns null when agent is null", () => {
     const { container } = render(
-      <RegistryAgentDetail agent={null} open={true} onOpenChange={vi.fn()} />
+      <RegistryAgentDetail agent={null} open={true} onOpenChange={vi.fn()} />,
     )
     expect(container.firstChild).toBeNull()
   })
 
   it("renders agent name, version, and description when open", () => {
-    render(
-      <RegistryAgentDetail agent={mockAgent} open={true} onOpenChange={vi.fn()} />
-    )
+    render(<RegistryAgentDetail agent={mockAgent} open={true} onOpenChange={vi.fn()} />)
 
     expect(screen.getByText("Test Agent")).toBeInTheDocument()
     expect(screen.getByText("v1.0.0")).toBeInTheDocument()
@@ -47,9 +45,7 @@ describe("RegistryAgentDetail", () => {
   })
 
   it("renders capabilities section when agent has skills", () => {
-    render(
-      <RegistryAgentDetail agent={mockAgent} open={true} onOpenChange={vi.fn()} />
-    )
+    render(<RegistryAgentDetail agent={mockAgent} open={true} onOpenChange={vi.fn()} />)
 
     expect(screen.getByText("Capabilities")).toBeInTheDocument()
     expect(screen.getByText("skill-1")).toBeInTheDocument()
@@ -58,9 +54,7 @@ describe("RegistryAgentDetail", () => {
   })
 
   it("renders endpoints section", () => {
-    render(
-      <RegistryAgentDetail agent={mockAgent} open={true} onOpenChange={vi.fn()} />
-    )
+    render(<RegistryAgentDetail agent={mockAgent} open={true} onOpenChange={vi.fn()} />)
 
     expect(screen.getByText("Endpoints")).toBeInTheDocument()
     expect(screen.getByText(/HTTP:/)).toBeInTheDocument()
@@ -68,27 +62,21 @@ describe("RegistryAgentDetail", () => {
   })
 
   it("renders authentication section when agent has auth", () => {
-    render(
-      <RegistryAgentDetail agent={mockAgent} open={true} onOpenChange={vi.fn()} />
-    )
+    render(<RegistryAgentDetail agent={mockAgent} open={true} onOpenChange={vi.fn()} />)
 
     expect(screen.getByText("Authentication")).toBeInTheDocument()
     expect(screen.getByText("bearer")).toBeInTheDocument()
   })
 
   it("renders SLA section when agent has sla", () => {
-    render(
-      <RegistryAgentDetail agent={mockAgent} open={true} onOpenChange={vi.fn()} />
-    )
+    render(<RegistryAgentDetail agent={mockAgent} open={true} onOpenChange={vi.fn()} />)
 
     expect(screen.getByText("SLA")).toBeInTheDocument()
     expect(screen.getByText(/Max response time/)).toBeInTheDocument()
   })
 
   it("renders repository and documentation links", () => {
-    render(
-      <RegistryAgentDetail agent={mockAgent} open={true} onOpenChange={vi.fn()} />
-    )
+    render(<RegistryAgentDetail agent={mockAgent} open={true} onOpenChange={vi.fn()} />)
 
     const repoLink = screen.getByRole("link", { name: /repository/i })
     const docLink = screen.getByRole("link", { name: /documentation/i })
@@ -99,9 +87,7 @@ describe("RegistryAgentDetail", () => {
 
   it("calls onOpenChange when dialog is closed", () => {
     const onOpenChange = vi.fn()
-    render(
-      <RegistryAgentDetail agent={mockAgent} open={true} onOpenChange={onOpenChange} />
-    )
+    render(<RegistryAgentDetail agent={mockAgent} open={true} onOpenChange={onOpenChange} />)
 
     const closeButton = screen.getByRole("button", { name: /close/i })
     fireEvent.click(closeButton)

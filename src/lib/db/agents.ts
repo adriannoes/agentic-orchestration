@@ -28,7 +28,13 @@ export async function createAgent(
   agent: Omit<Agent, "id" | "createdAt" | "updatedAt">,
 ): Promise<Agent> {
   const supabase = await getSupabaseServerClient()
-  if (!supabase) return { ...agent, id: crypto.randomUUID(), createdAt: new Date().toISOString(), updatedAt: new Date().toISOString() } as unknown as Agent
+  if (!supabase)
+    return {
+      ...agent,
+      id: crypto.randomUUID(),
+      createdAt: new Date().toISOString(),
+      updatedAt: new Date().toISOString(),
+    } as unknown as Agent
   const { data, error } = await supabase
     .from("agents")
     .insert({

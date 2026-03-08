@@ -64,7 +64,10 @@ export class AutoLayout {
       (node) => node.node.type === "start" || !connections.some((c) => c.targetId === node.id),
     )
 
-    const queue: Array<{ node: LayoutNode; level: number }> = startNodes.map((node) => ({ node, level: 0 }))
+    const queue: Array<{ node: LayoutNode; level: number }> = startNodes.map((node) => ({
+      node,
+      level: 0,
+    }))
 
     while (queue.length > 0) {
       const { node, level } = queue.shift()!

@@ -15,7 +15,12 @@ interface ExecutionMonitorProps {
   onNodeHighlight?: (nodeId: string | null) => void
 }
 
-export function ExecutionMonitor({ workflowId, isOpen, onClose, onNodeHighlight }: ExecutionMonitorProps) {
+export function ExecutionMonitor({
+  workflowId,
+  isOpen,
+  onClose,
+  onNodeHighlight,
+}: ExecutionMonitorProps) {
   const [input, setInput] = useState("")
   const [execution, setExecution] = useState<WorkflowExecution | null>(null)
   const [isExecuting, setIsExecuting] = useState(false)
@@ -77,7 +82,7 @@ export function ExecutionMonitor({ workflowId, isOpen, onClose, onNodeHighlight 
         )
       case "failed":
         return (
-          <div className="flex items-center gap-1.5 rounded border border-destructive/20 bg-destructive/10 px-2 py-1 text-xs font-medium text-destructive">
+          <div className="border-destructive/20 bg-destructive/10 text-destructive flex items-center gap-1.5 rounded border px-2 py-1 text-xs font-medium">
             <XCircle className="h-3 w-3" />
             Failed
           </div>
@@ -95,9 +100,9 @@ export function ExecutionMonitor({ workflowId, isOpen, onClose, onNodeHighlight 
   if (!isOpen) return null
 
   return (
-    <div className="fixed inset-y-0 right-0 w-96 bg-card border-l border-border shadow-xl flex flex-col z-50">
+    <div className="bg-card border-border fixed inset-y-0 right-0 z-50 flex w-96 flex-col border-l shadow-xl">
       {/* Header */}
-      <div className="h-14 border-b border-border flex items-center justify-between px-4">
+      <div className="border-border flex h-14 items-center justify-between border-b px-4">
         <h2 className="font-semibold">Execution Monitor</h2>
         <Button variant="ghost" size="icon" className="h-8 w-8" onClick={onClose}>
           <X className="h-4 w-4" />
@@ -105,7 +110,7 @@ export function ExecutionMonitor({ workflowId, isOpen, onClose, onNodeHighlight 
       </div>
 
       {/* Input Section */}
-      <div className="p-4 border-b border-border space-y-3">
+      <div className="border-border space-y-3 border-b p-4">
         <div className="space-y-2">
           <label className="text-sm font-medium">Input Message</label>
           <Input
@@ -118,12 +123,12 @@ export function ExecutionMonitor({ workflowId, isOpen, onClose, onNodeHighlight 
         <Button className="w-full" onClick={handleRun} disabled={isExecuting || !input.trim()}>
           {isExecuting ? (
             <>
-              <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+              <Loader2 className="mr-2 h-4 w-4 animate-spin" />
               Running...
             </>
           ) : (
             <>
-              <Play className="h-4 w-4 mr-2" />
+              <Play className="mr-2 h-4 w-4" />
               Run Workflow
             </>
           )}
@@ -132,14 +137,14 @@ export function ExecutionMonitor({ workflowId, isOpen, onClose, onNodeHighlight 
 
       {/* Execution Results */}
       {execution && (
-        <div className="flex-1 flex flex-col overflow-hidden">
+        <div className="flex flex-1 flex-col overflow-hidden">
           {/* Status Bar */}
-          <div className="p-4 border-b border-border space-y-2">
+          <div className="border-border space-y-2 border-b p-4">
             <div className="flex items-center justify-between">
-              <span className="text-sm text-muted-foreground">Status</span>
+              <span className="text-muted-foreground text-sm">Status</span>
               {getStatusBadge(execution.status)}
             </div>
-            <div className="flex items-center gap-4 text-xs text-muted-foreground">
+            <div className="text-muted-foreground flex items-center gap-4 text-xs">
               <div className="flex items-center gap-1">
                 <Clock className="h-3 w-3" />
                 {execution.completedAt
@@ -152,26 +157,26 @@ export function ExecutionMonitor({ workflowId, isOpen, onClose, onNodeHighlight 
 
           {/* Logs */}
           <ScrollArea className="flex-1">
-            <div className="p-4 space-y-2">
+            <div className="space-y-2 p-4">
               {execution.logs.map((log) => (
                 <div
                   key={log.id}
                   className={cn(
-                    "p-3 rounded-lg border border-border space-y-1 cursor-pointer hover:bg-accent/50 transition-colors",
-                    execution.currentNodeId === log.nodeId && "ring-2 ring-primary",
+                    "border-border hover:bg-accent/50 cursor-pointer space-y-1 rounded-lg border p-3 transition-colors",
+                    execution.currentNodeId === log.nodeId && "ring-primary ring-2",
                   )}
                   onClick={() => onNodeHighlight?.(log.nodeId)}
                 >
                   <div className="flex items-start gap-2">
                     {getLogIcon(log.type)}
-                    <div className="flex-1 min-w-0">
+                    <div className="min-w-0 flex-1">
                       <p className="text-sm font-medium">{log.message}</p>
-                      <div className="flex items-center gap-2 mt-1 text-xs text-muted-foreground">
+                      <div className="text-muted-foreground mt-1 flex items-center gap-2 text-xs">
                         <span>{log.nodeId}</span>
                         {log.duration && <span>• {log.duration}ms</span>}
                       </div>
                       {log.data ? (
-                        <pre className="mt-2 p-2 bg-muted rounded text-xs overflow-x-auto">
+                        <pre className="bg-muted mt-2 overflow-x-auto rounded p-2 text-xs">
                           {JSON.stringify(log.data, null, 2)}
                         </pre>
                       ) : null}
@@ -185,7 +190,7 @@ export function ExecutionMonitor({ workflowId, isOpen, onClose, onNodeHighlight 
       )}
 
       {!execution && !isExecuting && (
-        <div className="flex-1 flex items-center justify-center text-muted-foreground text-sm">
+        <div className="text-muted-foreground flex flex-1 items-center justify-center text-sm">
           Enter a message and click Run to start
         </div>
       )}

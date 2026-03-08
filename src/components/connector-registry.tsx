@@ -96,10 +96,10 @@ export function ConnectorRegistry() {
         <Card className="p-6">
           <div className="flex items-center gap-3">
             <div className="rounded-lg border border-indigo-500/20 bg-indigo-500/10 p-3">
-              <CheckCircle2 className="w-6 h-6 text-indigo-300" />
+              <CheckCircle2 className="h-6 w-6 text-indigo-300" />
             </div>
             <div>
-              <p className="text-sm text-muted-foreground">Connected</p>
+              <p className="text-muted-foreground text-sm">Connected</p>
               <p className="text-2xl font-bold">{connectedCount}</p>
             </div>
           </div>
@@ -108,10 +108,10 @@ export function ConnectorRegistry() {
         <Card className="p-6">
           <div className="flex items-center gap-3">
             <div className="rounded-lg border border-zinc-500/20 bg-zinc-500/10 p-3">
-              <Plug className="w-6 h-6 text-zinc-300" />
+              <Plug className="h-6 w-6 text-zinc-300" />
             </div>
             <div>
-              <p className="text-sm text-muted-foreground">Available</p>
+              <p className="text-muted-foreground text-sm">Available</p>
               <p className="text-2xl font-bold">{totalCount}</p>
             </div>
           </div>
@@ -120,10 +120,10 @@ export function ConnectorRegistry() {
         <Card className="p-6">
           <div className="flex items-center gap-3">
             <div className="rounded-lg border border-violet-500/20 bg-violet-500/10 p-3">
-              <AlertCircle className="w-6 h-6 text-violet-300" />
+              <AlertCircle className="h-6 w-6 text-violet-300" />
             </div>
             <div>
-              <p className="text-sm text-muted-foreground">Attention</p>
+              <p className="text-muted-foreground text-sm">Attention</p>
               <p className="text-2xl font-bold">0</p>
             </div>
           </div>
@@ -132,7 +132,7 @@ export function ConnectorRegistry() {
 
       <div className="flex items-center gap-4">
         <div className="relative flex-1">
-          <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
+          <Search className="text-muted-foreground absolute top-1/2 left-3 h-4 w-4 -translate-y-1/2" />
           <Input
             placeholder="Search connectors..."
             value={searchQuery}

@@ -13,7 +13,13 @@ import {
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select"
 import { Loader2 } from "lucide-react"
 
 interface AddMCPServerDialogProps {
@@ -23,7 +29,12 @@ interface AddMCPServerDialogProps {
   loading: boolean
 }
 
-export function AddMCPServerDialog({ open, onOpenChange, onAdd, loading }: AddMCPServerDialogProps) {
+export function AddMCPServerDialog({
+  open,
+  onOpenChange,
+  onAdd,
+  loading,
+}: AddMCPServerDialogProps) {
   const [name, setName] = useState("")
   const [url, setUrl] = useState("")
   const [protocol, setProtocol] = useState<"stdio" | "http">("http")
@@ -85,11 +96,16 @@ export function AddMCPServerDialog({ open, onOpenChange, onAdd, loading }: AddMC
           </div>
 
           <DialogFooter>
-            <Button type="button" variant="outline" onClick={() => onOpenChange(false)} disabled={loading}>
+            <Button
+              type="button"
+              variant="outline"
+              onClick={() => onOpenChange(false)}
+              disabled={loading}
+            >
               Cancel
             </Button>
             <Button type="submit" disabled={loading}>
-              {loading && <Loader2 className="w-4 h-4 mr-2 animate-spin" />}
+              {loading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
               Connect Server
             </Button>
           </DialogFooter>

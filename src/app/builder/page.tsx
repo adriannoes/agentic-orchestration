@@ -7,7 +7,7 @@ const BuilderCanvas = dynamic(
   {
     ssr: false,
     loading: () => (
-      <div className="flex items-center justify-center h-screen bg-background">
+      <div className="bg-background flex h-screen items-center justify-center">
         <div className="text-muted-foreground">Loading workflow builder...</div>
       </div>
     ),

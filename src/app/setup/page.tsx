@@ -87,11 +87,13 @@ export default function SetupPage() {
   ]
 
   return (
-    <div className="min-h-screen bg-background p-8">
+    <div className="bg-background min-h-screen p-8">
       <div className="mx-auto max-w-4xl space-y-8">
         <div>
           <h1 className="text-4xl font-bold">Supabase Setup & Validation</h1>
-          <p className="mt-2 text-muted-foreground">Configure and test your Supabase database connection</p>
+          <p className="text-muted-foreground mt-2">
+            Configure and test your Supabase database connection
+          </p>
         </div>
 
         {/* Status Cards */}
@@ -180,7 +182,7 @@ export default function SetupPage() {
           <CardContent className="space-y-4">
             <div className="space-y-2">
               <h3 className="font-semibold">Step 1: Create Supabase Project</h3>
-              <p className="text-sm text-muted-foreground">
+              <p className="text-muted-foreground text-sm">
                 Go to{" "}
                 <a
                   href="https://supabase.com/dashboard"
@@ -196,25 +198,26 @@ export default function SetupPage() {
 
             <div className="space-y-2">
               <h3 className="font-semibold">Step 2: Execute SQL Script</h3>
-              <p className="text-sm text-muted-foreground">
+              <p className="text-muted-foreground text-sm">
                 Copy the consolidated SQL script from <strong>SUPABASE_SETUP.md</strong>
               </p>
-              <p className="text-sm text-muted-foreground">
+              <p className="text-muted-foreground text-sm">
                 In your Supabase dashboard: <strong>SQL Editor → New Query → Paste → Run</strong>
               </p>
               <Alert>
                 <AlertDescription className="text-xs">
-                  The script will create {requiredTables.length} tables with RLS policies, triggers, and seed data.
+                  The script will create {requiredTables.length} tables with RLS policies, triggers,
+                  and seed data.
                 </AlertDescription>
               </Alert>
             </div>
 
             <div className="space-y-2">
               <h3 className="font-semibold">Step 3: Get API Credentials</h3>
-              <p className="text-sm text-muted-foreground">
+              <p className="text-muted-foreground text-sm">
                 In Supabase: <strong>Settings → API</strong>
               </p>
-              <ul className="ml-4 list-disc text-sm text-muted-foreground">
+              <ul className="text-muted-foreground ml-4 list-disc text-sm">
                 <li>
                   Copy <strong>Project URL</strong>
                 </li>
@@ -226,14 +229,14 @@ export default function SetupPage() {
 
             <div className="space-y-2">
               <h3 className="font-semibold">Step 4: Add Environment Variables in v0</h3>
-              <p className="text-sm text-muted-foreground">
+              <p className="text-muted-foreground text-sm">
                 Click <strong>Vars</strong> in the v0 sidebar and add:
               </p>
               <div className="space-y-1">
-                <code className="block rounded bg-muted px-2 py-1 text-xs">
+                <code className="bg-muted block rounded px-2 py-1 text-xs">
                   NEXT_PUBLIC_SUPABASE_URL = https://xxxxx.supabase.co
                 </code>
-                <code className="block rounded bg-muted px-2 py-1 text-xs">
+                <code className="bg-muted block rounded px-2 py-1 text-xs">
                   NEXT_PUBLIC_SUPABASE_ANON_KEY = eyJhbGc...
                 </code>
               </div>
@@ -274,11 +277,17 @@ export default function SetupPage() {
 
             {envConfigured && (
               <Alert>
-                <AlertDescription>Environment variables detected. Click Test Connection to validate.</AlertDescription>
+                <AlertDescription>
+                  Environment variables detected. Click Test Connection to validate.
+                </AlertDescription>
               </Alert>
             )}
 
-            <Button onClick={testConnection} disabled={testing || (!supabaseUrl && !envConfigured)} className="w-full">
+            <Button
+              onClick={testConnection}
+              disabled={testing || (!supabaseUrl && !envConfigured)}
+              className="w-full"
+            >
               {testing ? (
                 <>
                   <Loader2 className="mr-2 h-4 w-4 animate-spin" />
@@ -311,7 +320,8 @@ export default function SetupPage() {
                     <CardHeader>
                       <CardTitle className="text-base">Database Schema Status</CardTitle>
                       <CardDescription>
-                        {testResult.details.tablesFound.length} of {requiredTables.length} required tables found
+                        {testResult.details.tablesFound.length} of {requiredTables.length} required
+                        tables found
                       </CardDescription>
                     </CardHeader>
                     <CardContent className="space-y-3">
@@ -344,7 +354,8 @@ export default function SetupPage() {
                           </div>
                           <Alert variant="destructive" className="mt-3">
                             <AlertDescription>
-                              Please execute the SQL script from SUPABASE_SETUP.md to create missing tables.
+                              Please execute the SQL script from SUPABASE_SETUP.md to create missing
+                              tables.
                             </AlertDescription>
                           </Alert>
                         </div>
@@ -354,7 +365,9 @@ export default function SetupPage() {
                       <div className="grid gap-2 pt-2">
                         <div className="flex items-center justify-between text-sm">
                           <span className="text-muted-foreground">Connection Valid:</span>
-                          <Badge variant={testResult.details.connectionValid ? "default" : "destructive"}>
+                          <Badge
+                            variant={testResult.details.connectionValid ? "default" : "destructive"}
+                          >
                             {testResult.details.connectionValid ? "Yes" : "No"}
                           </Badge>
                         </div>
@@ -378,7 +391,9 @@ export default function SetupPage() {
           <Card className="border-green-500 bg-green-50 dark:bg-green-950">
             <CardHeader>
               <CardTitle className="text-green-600">Setup Complete!</CardTitle>
-              <CardDescription>Your Supabase database is fully configured and ready to use</CardDescription>
+              <CardDescription>
+                Your Supabase database is fully configured and ready to use
+              </CardDescription>
             </CardHeader>
             <CardContent className="space-y-3">
               <p className="text-sm font-medium">Next Steps:</p>

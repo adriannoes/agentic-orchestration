@@ -277,9 +277,7 @@ describe("lib/db/workflows", () => {
           { id: nodeId, type: "agent", position: { x: 0, y: 0 }, data: { label: "A" } },
           { id: "n2", type: "end", position: { x: 100, y: 0 }, data: { label: "B" } },
         ],
-        connections: [
-          { id: "c1", sourceId: nodeId, targetId: "n2" },
-        ],
+        connections: [{ id: "c1", sourceId: nodeId, targetId: "n2" }],
       })
       const updatedRow = workflowRow({
         nodes: [{ id: "n2", type: "end", position: { x: 100, y: 0 }, data: { label: "B" } }],

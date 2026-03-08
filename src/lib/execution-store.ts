@@ -18,7 +18,9 @@ class ExecutionStore {
   }
 
   getAllExecutions(): WorkflowExecution[] {
-    return Array.from(this.executions.values()).sort((a, b) => b.startedAt.getTime() - a.startedAt.getTime())
+    return Array.from(this.executions.values()).sort(
+      (a, b) => b.startedAt.getTime() - a.startedAt.getTime(),
+    )
   }
 
   updateExecution(id: string, updates: Partial<WorkflowExecution>) {

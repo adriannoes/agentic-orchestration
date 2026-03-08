@@ -17,7 +17,11 @@ export async function getExecutions(workspaceId: string): Promise<WorkflowExecut
 export async function getExecution(id: string): Promise<WorkflowExecution | null> {
   const supabase = await getSupabaseServerClient()
   if (!supabase) return null
-  const { data, error } = await supabase.from("workflow_executions").select("*").eq("id", id).single()
+  const { data, error } = await supabase
+    .from("workflow_executions")
+    .select("*")
+    .eq("id", id)
+    .single()
 
   if (error) return null
   return data as WorkflowExecution
@@ -62,7 +66,10 @@ export async function createExecution(
   return data as WorkflowExecution
 }
 
-export async function updateExecution(id: string, updates: Partial<WorkflowExecution>): Promise<WorkflowExecution> {
+export async function updateExecution(
+  id: string,
+  updates: Partial<WorkflowExecution>,
+): Promise<WorkflowExecution> {
   const supabase = await getSupabaseServerClient()
   if (!supabase) return { id, ...updates } as WorkflowExecution
   const { data, error } = await supabase

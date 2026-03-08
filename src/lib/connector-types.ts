@@ -1,6 +1,13 @@
 export type ConnectionStatus = "connected" | "disconnected" | "error" | "pending"
 export type AuthType = "api_key" | "oauth2" | "basic" | "mcp"
-export type ConnectorCategory = "storage" | "ai" | "productivity" | "communication" | "analytics" | "database" | "mcp"
+export type ConnectorCategory =
+  | "storage"
+  | "ai"
+  | "productivity"
+  | "communication"
+  | "analytics"
+  | "database"
+  | "mcp"
 
 export interface Connector {
   id: string

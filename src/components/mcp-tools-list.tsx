@@ -13,7 +13,7 @@ export function MCPToolsList({ tools }: MCPToolsListProps) {
   if (tools.length === 0) {
     return (
       <Card className="p-12 text-center">
-        <Wrench className="w-12 h-12 mx-auto mb-4 text-muted-foreground" />
+        <Wrench className="text-muted-foreground mx-auto mb-4 h-12 w-12" />
         <p className="text-muted-foreground">No tools available</p>
       </Card>
     )
@@ -23,7 +23,7 @@ export function MCPToolsList({ tools }: MCPToolsListProps) {
     <div className="space-y-3">
       {tools.map((tool, index) => (
         <Card key={index} className="border-border/80 p-4">
-          <div className="flex items-start justify-between mb-2">
+          <div className="mb-2 flex items-start justify-between">
             <div className="flex items-center gap-2">
               <Wrench className="h-4 w-4 text-indigo-300" />
               <h4 className="font-semibold">{tool.name}</h4>
@@ -32,10 +32,10 @@ export function MCPToolsList({ tools }: MCPToolsListProps) {
               MCP Tool
             </Badge>
           </div>
-          <p className="text-sm text-muted-foreground leading-relaxed">{tool.description}</p>
+          <p className="text-muted-foreground text-sm leading-relaxed">{tool.description}</p>
           {tool.inputSchema && (
-            <div className="mt-3 rounded-lg border border-border/80 bg-muted/30 p-3">
-              <p className="text-xs font-mono text-muted-foreground">
+            <div className="border-border/80 bg-muted/30 mt-3 rounded-lg border p-3">
+              <p className="text-muted-foreground font-mono text-xs">
                 {JSON.stringify(tool.inputSchema, null, 2).slice(0, 150)}
                 {JSON.stringify(tool.inputSchema).length > 150 ? "..." : ""}
               </p>

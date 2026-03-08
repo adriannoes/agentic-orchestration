@@ -118,7 +118,9 @@ class AgentStore {
 
   // Runs
   getRuns(): Run[] {
-    return Array.from(this.runs.values()).sort((a, b) => b.startedAt.getTime() - a.startedAt.getTime())
+    return Array.from(this.runs.values()).sort(
+      (a, b) => b.startedAt.getTime() - a.startedAt.getTime(),
+    )
   }
 
   getRun(id: string): Run | undefined {

@@ -38,7 +38,11 @@ export function MCPManager() {
     setTools(data)
   }
 
-  const handleAddServer = async (config: { name: string; url: string; protocol: "stdio" | "http" }) => {
+  const handleAddServer = async (config: {
+    name: string
+    url: string
+    protocol: "stdio" | "http"
+  }) => {
     setLoading(true)
     try {
       const res = await fetch("/api/mcp/servers", {
@@ -78,11 +82,11 @@ export function MCPManager() {
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-4">
           <Button onClick={() => setDialogOpen(true)}>
-            <Plus className="w-4 h-4 mr-2" />
+            <Plus className="mr-2 h-4 w-4" />
             Add MCP Server
           </Button>
           <Button variant="outline" onClick={fetchServers}>
-            <RefreshCw className="w-4 h-4 mr-2" />
+            <RefreshCw className="mr-2 h-4 w-4" />
             Refresh
           </Button>
         </div>
@@ -93,9 +97,13 @@ export function MCPManager() {
           <h2 className="text-lg font-semibold">Connected Servers</h2>
           {servers.length === 0 ? (
             <Card className="p-12 text-center">
-              <Server className="w-12 h-12 mx-auto mb-4 text-muted-foreground" />
+              <Server className="text-muted-foreground mx-auto mb-4 h-12 w-12" />
               <p className="text-muted-foreground">No MCP servers connected</p>
-              <Button className="mt-4 bg-transparent" variant="outline" onClick={() => setDialogOpen(true)}>
+              <Button
+                className="mt-4 bg-transparent"
+                variant="outline"
+                onClick={() => setDialogOpen(true)}
+              >
                 Add Your First Server
               </Button>
             </Card>
@@ -107,7 +115,7 @@ export function MCPManager() {
               return (
                 <Card
                   key={server.id}
-                  className={`p-4 cursor-pointer transition-colors ${
+                  className={`cursor-pointer p-4 transition-colors ${
                     isSelected ? "border-primary/60 bg-accent/40" : "hover:border-primary/40"
                   }`}
                   onClick={() => setSelectedServer(server)}
@@ -115,14 +123,14 @@ export function MCPManager() {
                   <div className="flex items-start justify-between">
                     <div className="flex items-center gap-3">
                       <div className="rounded-lg border border-indigo-500/20 bg-indigo-500/10 p-2">
-                        <Server className="w-5 h-5 text-indigo-300" />
+                        <Server className="h-5 w-5 text-indigo-300" />
                       </div>
                       <div>
                         <h3 className="font-semibold">{server.name}</h3>
-                        <p className="text-sm text-muted-foreground mt-1">{server.url}</p>
-                        <div className="flex items-center gap-2 mt-2">
+                        <p className="text-muted-foreground mt-1 text-sm">{server.url}</p>
+                        <div className="mt-2 flex items-center gap-2">
                           <StatusIcon
-                            className={`w-3 h-3 ${server.status === "connected" ? "text-green-500" : "text-red-500"}`}
+                            className={`h-3 w-3 ${server.status === "connected" ? "text-green-500" : "text-red-500"}`}
                           />
                           <span
                             className={`text-xs ${server.status === "connected" ? "text-green-500" : "text-red-500"}`}
@@ -143,7 +151,7 @@ export function MCPManager() {
                         handleDeleteServer(server.id)
                       }}
                     >
-                      <Trash2 className="w-4 h-4 text-destructive" />
+                      <Trash2 className="text-destructive h-4 w-4" />
                     </Button>
                   </div>
 
@@ -174,7 +182,12 @@ export function MCPManager() {
         </div>
       </div>
 
-      <AddMCPServerDialog open={dialogOpen} onOpenChange={setDialogOpen} onAdd={handleAddServer} loading={loading} />
+      <AddMCPServerDialog
+        open={dialogOpen}
+        onOpenChange={setDialogOpen}
+        onAdd={handleAddServer}
+        loading={loading}
+      />
     </div>
   )
 }

@@ -111,9 +111,7 @@ export function BuilderCommandPalette({
 
         <CommandGroup heading="Add Node">
           {onAddFrame && (
-            <CommandItem onSelect={() => runAndClose(onAddFrame)}>
-              Add Frame
-            </CommandItem>
+            <CommandItem onSelect={() => runAndClose(onAddFrame)}>Add Frame</CommandItem>
           )}
           {NODE_TYPES.filter(({ type }) => type !== "frame").map(({ type, label }) => (
             <CommandItem key={type} onSelect={() => runAndClose(() => onAddNode(type))}>
