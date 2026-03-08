@@ -1,7 +1,12 @@
 // @vitest-environment jsdom
 import { describe, it, expect, vi, beforeEach } from "vitest"
 import { render, screen } from "@testing-library/react"
-import LoginPage from "@/app/login/page"
+import { useSearchParams } from "next/navigation"
+import { LoginFormWithParams } from "@/components/auth/login-form-with-params"
+
+vi.mock("next/navigation", () => ({
+  useSearchParams: vi.fn(),
+}))
 
 vi.mock("next-auth/react", () => ({
   signIn: vi.fn(),
@@ -13,36 +18,36 @@ vi.mock("sonner", () => ({
   },
 }))
 
-describe("LoginPage", () => {
+describe("LoginPage (LoginFormWithParams)", () => {
   beforeEach(() => {
     vi.clearAllMocks()
   })
 
-  it("passes fromAsap={true} to LoginForm when searchParams resolves to { from: 'asap' }", async () => {
-    const component = await LoginPage({
-      searchParams: Promise.resolve({ from: "asap" }),
-    })
-    render(component)
+  it("shows fromAsap message when searchParams has from=asap", () => {
+    vi.mocked(useSearchParams).mockReturnValue({
+      get: (key: string) => (key === "from" ? "asap" : null),
+    } as unknown as ReturnType<typeof useSearchParams>)
+    render(<LoginFormWithParams />)
 
     expect(
       screen.getByText("Continue with GitHub to access Agent Builder from ASAP Protocol."),
     ).toBeInTheDocument()
   })
 
-  it("passes fromAsap={false} to LoginForm when searchParams resolves to { from: 'other' }", async () => {
-    const component = await LoginPage({
-      searchParams: Promise.resolve({ from: "other" }),
-    })
-    render(component)
+  it("shows default message when searchParams has from=other", () => {
+    vi.mocked(useSearchParams).mockReturnValue({
+      get: (key: string) => (key === "from" ? "other" : null),
+    } as unknown as ReturnType<typeof useSearchParams>)
+    render(<LoginFormWithParams />)
 
     expect(screen.getByText("Sign in with GitHub to access your account")).toBeInTheDocument()
   })
 
-  it("passes fromAsap={false} to LoginForm when searchParams resolves to empty object", async () => {
-    const component = await LoginPage({
-      searchParams: Promise.resolve({}),
-    })
-    render(component)
+  it("shows default message when searchParams has no from", () => {
+    vi.mocked(useSearchParams).mockReturnValue({
+      get: () => null,
+    } as unknown as ReturnType<typeof useSearchParams>)
+    render(<LoginFormWithParams />)
 
     expect(screen.getByText("Sign in with GitHub to access your account")).toBeInTheDocument()
   })

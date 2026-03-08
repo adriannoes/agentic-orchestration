@@ -1,16 +1,9 @@
-import { LoginForm } from "@/components/auth/login-form"
+import { LoginFormWithParams } from "@/components/auth/login-form-with-params"
 
-interface LoginPageProps {
-  searchParams: Promise<{ from?: string }>
-}
-
-export default async function LoginPage({ searchParams }: LoginPageProps) {
-  const params = await searchParams
-  const fromAsap = params?.from === "asap"
-
+export default function LoginPage() {
   return (
     <div className="bg-background flex min-h-screen items-center justify-center p-4">
-      <LoginForm fromAsap={fromAsap} />
+      <LoginFormWithParams />
     </div>
   )
 }
