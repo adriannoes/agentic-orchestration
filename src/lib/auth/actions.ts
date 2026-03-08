@@ -14,8 +14,18 @@ export async function getCurrentUser() {
   return session?.user ?? null
 }
 
-function sessionUserToProfile(user: { id: string; name?: string | null; email?: string | null; image?: string | null }) {
-  return { id: user.id, full_name: user.name ?? undefined, email: user.email ?? undefined, avatar_url: user.image ?? undefined }
+function sessionUserToProfile(user: {
+  id: string
+  name?: string | null
+  email?: string | null
+  image?: string | null
+}) {
+  return {
+    id: user.id,
+    full_name: user.name ?? undefined,
+    email: user.email ?? undefined,
+    avatar_url: user.image ?? undefined,
+  }
 }
 
 export async function getProfile() {

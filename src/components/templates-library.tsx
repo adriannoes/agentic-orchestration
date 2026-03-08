@@ -3,7 +3,16 @@
 import type React from "react"
 
 import { useState } from "react"
-import { Search, Sparkles, Users, BarChart3, FileText, Zap, TrendingUp, ArrowRight } from "lucide-react"
+import {
+  Search,
+  Sparkles,
+  Users,
+  BarChart3,
+  FileText,
+  Zap,
+  TrendingUp,
+  ArrowRight,
+} from "lucide-react"
 import { Input } from "@/components/ui/input"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
@@ -36,7 +45,10 @@ export function TemplatesLibrary() {
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null)
 
   const { data: allTemplates } = useSWR<WorkflowTemplate[]>("/api/templates", fetcher)
-  const { data: popularTemplates } = useSWR<WorkflowTemplate[]>("/api/templates?popular=true", fetcher)
+  const { data: popularTemplates } = useSWR<WorkflowTemplate[]>(
+    "/api/templates?popular=true",
+    fetcher,
+  )
 
   const filteredTemplates = allTemplates?.filter((template) => {
     const matchesSearch =
@@ -74,20 +86,22 @@ export function TemplatesLibrary() {
   }
 
   return (
-    <div className="min-h-screen bg-background">
+    <div className="bg-background min-h-screen">
       {/* Header */}
-      <div className="border-b border-border/80 bg-card/60">
-        <div className="max-w-7xl mx-auto px-6 py-8">
-          <h1 className="text-3xl font-bold mb-2">Workflow Templates</h1>
-          <p className="text-muted-foreground">Start with pre-built workflows and customize them for your needs</p>
+      <div className="border-border/80 bg-card/60 border-b">
+        <div className="mx-auto max-w-7xl px-6 py-8">
+          <h1 className="mb-2 text-3xl font-bold">Workflow Templates</h1>
+          <p className="text-muted-foreground">
+            Start with pre-built workflows and customize them for your needs
+          </p>
         </div>
       </div>
 
       {/* Search and Filters */}
-      <div className="max-w-7xl mx-auto px-6 py-6">
-        <div className="flex gap-4 mb-6">
-          <div className="flex-1 relative">
-            <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+      <div className="mx-auto max-w-7xl px-6 py-6">
+        <div className="mb-6 flex gap-4">
+          <div className="relative flex-1">
+            <Search className="text-muted-foreground absolute top-1/2 left-3 h-4 w-4 -translate-y-1/2" />
             <Input
               placeholder="Search templates..."
               value={searchQuery}
@@ -98,7 +112,7 @@ export function TemplatesLibrary() {
         </div>
 
         {/* Category Filters */}
-        <div className="flex gap-2 mb-8 overflow-x-auto pb-2">
+        <div className="mb-8 flex gap-2 overflow-x-auto pb-2">
           <Button
             variant={selectedCategory === null ? "default" : "outline"}
             size="sm"
@@ -126,26 +140,30 @@ export function TemplatesLibrary() {
         {/* Popular Templates */}
         {!searchQuery && !selectedCategory && (
           <div className="mb-12">
-            <div className="flex items-center gap-2 mb-4">
-              <TrendingUp className="h-5 w-5 text-primary" />
+            <div className="mb-4 flex items-center gap-2">
+              <TrendingUp className="text-primary h-5 w-5" />
               <h2 className="text-xl font-semibold">Popular Templates</h2>
             </div>
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+            <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3">
               {popularTemplates?.map((template) => {
                 const Icon = categoryIcons[template.category]
                 return (
                   <div
                     key={template.id}
-                    className="group rounded-xl border border-border/80 bg-card p-6 transition-colors hover:border-primary/40"
+                    className="group border-border/80 bg-card hover:border-primary/40 rounded-xl border p-6 transition-colors"
                   >
-                    <div className="flex items-start justify-between mb-4">
-                      <div className={cn("p-3 rounded-lg", categoryColors[template.category])}>
+                    <div className="mb-4 flex items-start justify-between">
+                      <div className={cn("rounded-lg p-3", categoryColors[template.category])}>
                         <Icon className="h-6 w-6" />
                       </div>
-                      <span className="text-xs text-muted-foreground">{template.usageCount} uses</span>
+                      <span className="text-muted-foreground text-xs">
+                        {template.usageCount} uses
+                      </span>
                     </div>
-                    <h3 className="font-semibold mb-2">{template.name}</h3>
-                    <p className="text-sm text-muted-foreground mb-4 line-clamp-2">{template.description}</p>
+                    <h3 className="mb-2 font-semibold">{template.name}</h3>
+                    <p className="text-muted-foreground mb-4 line-clamp-2 text-sm">
+                      {template.description}
+                    </p>
                     <div className="mb-4 flex flex-wrap gap-1.5">
                       {template.tags.slice(0, 3).map((tag) => (
                         <Badge key={tag} variant="secondary" className="text-[11px]">
@@ -154,12 +172,12 @@ export function TemplatesLibrary() {
                       ))}
                     </div>
                     <Button
-                    className="w-full bg-transparent group-hover:border-primary/60"
+                      className="group-hover:border-primary/60 w-full bg-transparent"
                       variant="outline"
                       onClick={() => handleUseTemplate(template.id, template.name)}
                     >
                       Use Template
-                      <ArrowRight className="h-4 w-4 ml-2" />
+                      <ArrowRight className="ml-2 h-4 w-4" />
                     </Button>
                   </div>
                 )
@@ -170,25 +188,29 @@ export function TemplatesLibrary() {
 
         {/* All Templates */}
         <div>
-          <h2 className="text-xl font-semibold mb-4">
+          <h2 className="mb-4 text-xl font-semibold">
             {searchQuery || selectedCategory ? "Search Results" : "All Templates"}
           </h2>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+          <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3">
             {filteredTemplates?.map((template) => {
               const Icon = categoryIcons[template.category]
               return (
                 <div
                   key={template.id}
-                  className="group rounded-xl border border-border/80 bg-card p-6 transition-colors hover:border-primary/40"
+                  className="group border-border/80 bg-card hover:border-primary/40 rounded-xl border p-6 transition-colors"
                 >
-                  <div className="flex items-start justify-between mb-4">
-                    <div className={cn("p-3 rounded-lg", categoryColors[template.category])}>
+                  <div className="mb-4 flex items-start justify-between">
+                    <div className={cn("rounded-lg p-3", categoryColors[template.category])}>
                       <Icon className="h-6 w-6" />
                     </div>
-                    <span className="text-xs text-muted-foreground">{template.usageCount} uses</span>
+                    <span className="text-muted-foreground text-xs">
+                      {template.usageCount} uses
+                    </span>
                   </div>
-                  <h3 className="font-semibold mb-2">{template.name}</h3>
-                  <p className="text-sm text-muted-foreground mb-4 line-clamp-2">{template.description}</p>
+                  <h3 className="mb-2 font-semibold">{template.name}</h3>
+                  <p className="text-muted-foreground mb-4 line-clamp-2 text-sm">
+                    {template.description}
+                  </p>
                   <div className="mb-4 flex flex-wrap gap-1.5">
                     {template.tags.slice(0, 3).map((tag) => (
                       <Badge key={tag} variant="secondary" className="text-[11px]">
@@ -202,7 +224,7 @@ export function TemplatesLibrary() {
                     onClick={() => handleUseTemplate(template.id, template.name)}
                   >
                     Use Template
-                    <ArrowRight className="h-4 w-4 ml-2" />
+                    <ArrowRight className="ml-2 h-4 w-4" />
                   </Button>
                 </div>
               )
@@ -210,7 +232,9 @@ export function TemplatesLibrary() {
           </div>
 
           {filteredTemplates?.length === 0 && (
-            <div className="text-center py-12 text-muted-foreground">No templates found matching your criteria.</div>
+            <div className="text-muted-foreground py-12 text-center">
+              No templates found matching your criteria.
+            </div>
           )}
         </div>
       </div>

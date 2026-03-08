@@ -32,7 +32,11 @@ class VersionStore {
     return versions.find((v) => v.version === versionNumber)
   }
 
-  compareVersions(workflowId: string, version1: number, version2: number): VersionComparison | null {
+  compareVersions(
+    workflowId: string,
+    version1: number,
+    version2: number,
+  ): VersionComparison | null {
     const v1 = this.getVersion(workflowId, version1)
     const v2 = this.getVersion(workflowId, version2)
 

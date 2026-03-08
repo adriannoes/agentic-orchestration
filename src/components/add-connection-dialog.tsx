@@ -24,7 +24,12 @@ interface AddConnectionDialogProps {
   onSuccess: () => void
 }
 
-export function AddConnectionDialog({ open, onOpenChange, connector, onSuccess }: AddConnectionDialogProps) {
+export function AddConnectionDialog({
+  open,
+  onOpenChange,
+  connector,
+  onSuccess,
+}: AddConnectionDialogProps) {
   const [name, setName] = useState(`${connector.name} Connection`)
   const [apiKey, setApiKey] = useState("")
   const [loading, setLoading] = useState(false)
@@ -127,16 +132,16 @@ export function AddConnectionDialog({ open, onOpenChange, connector, onSuccess }
             )}
 
             {connector.authType === "oauth2" && (
-              <div className="p-4 rounded-lg bg-muted space-y-3">
+              <div className="bg-muted space-y-3 rounded-lg p-4">
                 <div className="flex items-center gap-2">
-                  <ExternalLink className="w-4 h-4 text-muted-foreground" />
-                  <p className="text-sm text-muted-foreground">
+                  <ExternalLink className="text-muted-foreground h-4 w-4" />
+                  <p className="text-muted-foreground text-sm">
                     You&apos;ll be redirected to {connector.name} to authorize access.
                   </p>
                 </div>
-                <div className="text-xs text-muted-foreground space-y-1">
+                <div className="text-muted-foreground space-y-1 text-xs">
                   <p>This will grant Agent Builder permission to:</p>
-                  <ul className="list-disc list-inside pl-2">
+                  <ul className="list-inside list-disc pl-2">
                     <li>Read your data</li>
                     <li>Write to your account</li>
                     <li>Access on your behalf</li>
@@ -160,11 +165,16 @@ export function AddConnectionDialog({ open, onOpenChange, connector, onSuccess }
           </div>
 
           <DialogFooter>
-            <Button type="button" variant="outline" onClick={() => onOpenChange(false)} disabled={loading}>
+            <Button
+              type="button"
+              variant="outline"
+              onClick={() => onOpenChange(false)}
+              disabled={loading}
+            >
               Cancel
             </Button>
             <Button type="submit" disabled={loading}>
-              {loading && <Loader2 className="w-4 h-4 mr-2 animate-spin" />}
+              {loading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
               {connector.authType === "oauth2" ? "Authorize" : "Connect"}
             </Button>
           </DialogFooter>

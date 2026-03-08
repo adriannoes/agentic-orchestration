@@ -38,62 +38,62 @@ const NODE_ICONS: Record<NodeType, React.ElementType> = {
 }
 
 const NODE_COLORS: Record<NodeType, { bg: string; iconBg: string; border: string; icon: string }> =
-{
-  start: {
-    bg: "bg-card/95",
-    iconBg: "bg-indigo-500/10",
-    border: "border-border/80",
-    icon: "text-indigo-300",
-  },
-  end: {
-    bg: "bg-card/95",
-    iconBg: "bg-violet-500/10",
-    border: "border-border/80",
-    icon: "text-violet-300",
-  },
-  agent: {
-    bg: "bg-card/95",
-    iconBg: "bg-indigo-400/15",
-    border: "border-border/80",
-    icon: "text-indigo-200",
-  },
-  guardrail: {
-    bg: "bg-card/95",
-    iconBg: "bg-zinc-500/10",
-    border: "border-border/80",
-    icon: "text-zinc-300",
-  },
-  condition: {
-    bg: "bg-card/95",
-    iconBg: "bg-violet-500/10",
-    border: "border-border/80",
-    icon: "text-violet-300",
-  },
-  mcp: {
-    bg: "bg-card/95",
-    iconBg: "bg-violet-400/15",
-    border: "border-border/80",
-    icon: "text-violet-200",
-  },
-  "user-approval": {
-    bg: "bg-card/95",
-    iconBg: "bg-zinc-500/10",
-    border: "border-border/80",
-    icon: "text-zinc-300",
-  },
-  "file-search": {
-    bg: "bg-card/95",
-    iconBg: "bg-indigo-400/15",
-    border: "border-border/80",
-    icon: "text-indigo-200",
-  },
-  frame: {
-    bg: "bg-card/95",
-    iconBg: "bg-zinc-500/10",
-    border: "border-border/80",
-    icon: "text-zinc-300",
-  },
-}
+  {
+    start: {
+      bg: "bg-card/95",
+      iconBg: "bg-indigo-500/10",
+      border: "border-border/80",
+      icon: "text-indigo-300",
+    },
+    end: {
+      bg: "bg-card/95",
+      iconBg: "bg-violet-500/10",
+      border: "border-border/80",
+      icon: "text-violet-300",
+    },
+    agent: {
+      bg: "bg-card/95",
+      iconBg: "bg-indigo-400/15",
+      border: "border-border/80",
+      icon: "text-indigo-200",
+    },
+    guardrail: {
+      bg: "bg-card/95",
+      iconBg: "bg-zinc-500/10",
+      border: "border-border/80",
+      icon: "text-zinc-300",
+    },
+    condition: {
+      bg: "bg-card/95",
+      iconBg: "bg-violet-500/10",
+      border: "border-border/80",
+      icon: "text-violet-300",
+    },
+    mcp: {
+      bg: "bg-card/95",
+      iconBg: "bg-violet-400/15",
+      border: "border-border/80",
+      icon: "text-violet-200",
+    },
+    "user-approval": {
+      bg: "bg-card/95",
+      iconBg: "bg-zinc-500/10",
+      border: "border-border/80",
+      icon: "text-zinc-300",
+    },
+    "file-search": {
+      bg: "bg-card/95",
+      iconBg: "bg-indigo-400/15",
+      border: "border-border/80",
+      icon: "text-indigo-200",
+    },
+    frame: {
+      bg: "bg-card/95",
+      iconBg: "bg-zinc-500/10",
+      border: "border-border/80",
+      icon: "text-zinc-300",
+    },
+  }
 
 export type WorkflowNodeProps = NodeProps<WorkflowNodeType>
 

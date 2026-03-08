@@ -18,7 +18,13 @@ import { Card, CardContent } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { Input } from "@/components/ui/input"
 import { ScrollArea } from "@/components/ui/scroll-area"
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select"
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog"
 import type { Run } from "@/lib/types"
 import { cn } from "@/lib/utils"
@@ -33,7 +39,12 @@ const sampleRuns: Run[] = [
     startedAt: new Date(Date.now() - 2 * 60 * 60 * 1000),
     completedAt: new Date(Date.now() - 2 * 60 * 60 * 1000 + 45000),
     messages: [
-      { id: "m1", role: "user", content: "What is the latest news about AI?", timestamp: new Date() },
+      {
+        id: "m1",
+        role: "user",
+        content: "What is the latest news about AI?",
+        timestamp: new Date(),
+      },
       {
         id: "m2",
         role: "assistant",
@@ -83,7 +94,14 @@ const sampleRuns: Run[] = [
     status: "failed",
     startedAt: new Date(Date.now() - 24 * 60 * 60 * 1000),
     completedAt: new Date(Date.now() - 24 * 60 * 60 * 1000 + 5000),
-    messages: [{ id: "m1", role: "user", content: "Search for quantum computing papers", timestamp: new Date() }],
+    messages: [
+      {
+        id: "m1",
+        role: "user",
+        content: "Search for quantum computing papers",
+        timestamp: new Date(),
+      },
+    ],
     toolCalls: [
       {
         id: "tc1",
@@ -113,11 +131,11 @@ export function RunsHistory() {
   const getStatusIcon = (status: Run["status"]) => {
     switch (status) {
       case "completed":
-        return <CheckCircle2 className="w-4 h-4 text-green-500" />
+        return <CheckCircle2 className="h-4 w-4 text-green-500" />
       case "failed":
-        return <XCircle className="w-4 h-4 text-red-500" />
+        return <XCircle className="h-4 w-4 text-red-500" />
       case "running":
-        return <Loader2 className="w-4 h-4 text-blue-500 animate-spin" />
+        return <Loader2 className="h-4 w-4 animate-spin text-blue-500" />
     }
   }
 
@@ -133,13 +151,13 @@ export function RunsHistory() {
   return (
     <div className="p-8">
       <div className="mb-8">
-        <h1 className="text-3xl font-bold mb-2">Run History</h1>
+        <h1 className="mb-2 text-3xl font-bold">Run History</h1>
         <p className="text-muted-foreground">View past agent runs and their execution logs</p>
       </div>
 
-      <div className="flex items-center gap-4 mb-6">
-        <div className="relative flex-1 max-w-md">
-          <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-muted-foreground" />
+      <div className="mb-6 flex items-center gap-4">
+        <div className="relative max-w-md flex-1">
+          <Search className="text-muted-foreground absolute top-1/2 left-3 h-4 w-4 -translate-y-1/2 transform" />
           <Input
             placeholder="Search by agent name..."
             value={search}
@@ -163,8 +181,8 @@ export function RunsHistory() {
       {filteredRuns.length === 0 ? (
         <Card className="border-dashed">
           <CardContent className="flex flex-col items-center justify-center py-12">
-            <History className="w-12 h-12 text-muted-foreground mb-4" />
-            <h3 className="text-lg font-semibold mb-2">No runs found</h3>
+            <History className="text-muted-foreground mb-4 h-12 w-12" />
+            <h3 className="mb-2 text-lg font-semibold">No runs found</h3>
             <p className="text-muted-foreground text-center">
               {search || statusFilter !== "all"
                 ? "Try adjusting your filters"
@@ -177,47 +195,54 @@ export function RunsHistory() {
           {filteredRuns.map((run) => (
             <Card
               key={run.id}
-              className="hover:border-primary/50 transition-colors cursor-pointer"
+              className="hover:border-primary/50 cursor-pointer transition-colors"
               onClick={() => setSelectedRun(run)}
             >
               <CardContent className="p-4">
                 <div className="flex items-center justify-between">
                   <div className="flex items-center gap-4">
-                    <div className="flex items-center justify-center w-10 h-10 rounded-lg bg-primary/10">
-                      <Bot className="w-5 h-5 text-primary" />
+                    <div className="bg-primary/10 flex h-10 w-10 items-center justify-center rounded-lg">
+                      <Bot className="text-primary h-5 w-5" />
                     </div>
                     <div>
                       <div className="flex items-center gap-2">
                         <h3 className="font-semibold">{run.agentName}</h3>
-                        <Badge variant="outline" className={cn("text-xs", getStatusBadge(run.status))}>
+                        <Badge
+                          variant="outline"
+                          className={cn("text-xs", getStatusBadge(run.status))}
+                        >
                           {run.status}
                         </Badge>
                       </div>
-                      <p className="text-sm text-muted-foreground">
+                      <p className="text-muted-foreground text-sm">
                         {formatDistanceToNow(new Date(run.startedAt), { addSuffix: true })}
                       </p>
                     </div>
                   </div>
 
                   <div className="flex items-center gap-6">
-                    <div className="flex items-center gap-4 text-sm text-muted-foreground">
+                    <div className="text-muted-foreground flex items-center gap-4 text-sm">
                       <div className="flex items-center gap-1.5">
-                        <MessageSquare className="w-4 h-4" />
+                        <MessageSquare className="h-4 w-4" />
                         {run.messages.length}
                       </div>
                       <div className="flex items-center gap-1.5">
-                        <Wrench className="w-4 h-4" />
+                        <Wrench className="h-4 w-4" />
                         {run.toolCalls.length}
                       </div>
                       {run.completedAt && (
                         <div className="flex items-center gap-1.5">
-                          <Clock className="w-4 h-4" />
-                          {Math.round((new Date(run.completedAt).getTime() - new Date(run.startedAt).getTime()) / 1000)}
+                          <Clock className="h-4 w-4" />
+                          {Math.round(
+                            (new Date(run.completedAt).getTime() -
+                              new Date(run.startedAt).getTime()) /
+                              1000,
+                          )}
                           s
                         </div>
                       )}
                     </div>
-                    <ChevronRight className="w-5 h-5 text-muted-foreground" />
+                    <ChevronRight className="text-muted-foreground h-5 w-5" />
                   </div>
                 </div>
               </CardContent>
@@ -227,7 +252,7 @@ export function RunsHistory() {
       )}
 
       <Dialog open={!!selectedRun} onOpenChange={(open) => !open && setSelectedRun(null)}>
-        <DialogContent className="max-w-2xl max-h-[80vh]">
+        <DialogContent className="max-h-[80vh] max-w-2xl">
           <DialogHeader>
             <DialogTitle className="flex items-center gap-2">
               {selectedRun && getStatusIcon(selectedRun.status)}
@@ -239,21 +264,24 @@ export function RunsHistory() {
               <div className="space-y-6">
                 <div className="grid grid-cols-2 gap-4">
                   <div>
-                    <p className="text-sm text-muted-foreground">Agent</p>
+                    <p className="text-muted-foreground text-sm">Agent</p>
                     <p className="font-medium">{selectedRun.agentName}</p>
                   </div>
                   <div>
-                    <p className="text-sm text-muted-foreground">Status</p>
-                    <Badge variant="outline" className={cn("mt-1", getStatusBadge(selectedRun.status))}>
+                    <p className="text-muted-foreground text-sm">Status</p>
+                    <Badge
+                      variant="outline"
+                      className={cn("mt-1", getStatusBadge(selectedRun.status))}
+                    >
                       {selectedRun.status}
                     </Badge>
                   </div>
                   <div>
-                    <p className="text-sm text-muted-foreground">Started</p>
+                    <p className="text-muted-foreground text-sm">Started</p>
                     <p className="font-medium">{format(new Date(selectedRun.startedAt), "PPpp")}</p>
                   </div>
                   <div>
-                    <p className="text-sm text-muted-foreground">Duration</p>
+                    <p className="text-muted-foreground text-sm">Duration</p>
                     <p className="font-medium">
                       {selectedRun.completedAt
                         ? `${Math.round((new Date(selectedRun.completedAt).getTime() - new Date(selectedRun.startedAt).getTime()) / 1000)}s`
@@ -263,11 +291,11 @@ export function RunsHistory() {
                 </div>
 
                 <div>
-                  <h4 className="font-semibold mb-3">Messages</h4>
+                  <h4 className="mb-3 font-semibold">Messages</h4>
                   <div className="space-y-2">
                     {selectedRun.messages.map((msg) => (
-                      <div key={msg.id} className="p-3 rounded-lg bg-muted">
-                        <p className="text-xs text-muted-foreground capitalize mb-1">{msg.role}</p>
+                      <div key={msg.id} className="bg-muted rounded-lg p-3">
+                        <p className="text-muted-foreground mb-1 text-xs capitalize">{msg.role}</p>
                         <p className="text-sm">{msg.content}</p>
                       </div>
                     ))}
@@ -275,29 +303,33 @@ export function RunsHistory() {
                 </div>
 
                 <div>
-                  <h4 className="font-semibold mb-3">Tool Calls</h4>
+                  <h4 className="mb-3 font-semibold">Tool Calls</h4>
                   <div className="space-y-2">
                     {selectedRun.toolCalls.map((tc) => (
                       <Card key={tc.id}>
                         <CardContent className="p-3">
-                          <div className="flex items-center justify-between mb-2">
+                          <div className="mb-2 flex items-center justify-between">
                             <div className="flex items-center gap-2">
                               <Badge variant="outline">{tc.toolName}</Badge>
-                              {tc.status === "completed" && <CheckCircle2 className="w-4 h-4 text-green-500" />}
-                              {tc.status === "failed" && <XCircle className="w-4 h-4 text-red-500" />}
+                              {tc.status === "completed" && (
+                                <CheckCircle2 className="h-4 w-4 text-green-500" />
+                              )}
+                              {tc.status === "failed" && (
+                                <XCircle className="h-4 w-4 text-red-500" />
+                              )}
                             </div>
                           </div>
                           <div className="grid gap-2">
                             <div>
-                              <p className="text-xs text-muted-foreground">Input</p>
-                              <pre className="text-xs bg-muted p-2 rounded mt-1">
+                              <p className="text-muted-foreground text-xs">Input</p>
+                              <pre className="bg-muted mt-1 rounded p-2 text-xs">
                                 {JSON.stringify(tc.input, null, 2)}
                               </pre>
                             </div>
                             {tc.output ? (
                               <div>
-                                <p className="text-xs text-muted-foreground">Output</p>
-                                <pre className="text-xs bg-muted p-2 rounded mt-1">
+                                <p className="text-muted-foreground text-xs">Output</p>
+                                <pre className="bg-muted mt-1 rounded p-2 text-xs">
                                   {JSON.stringify(tc.output, null, 2)}
                                 </pre>
                               </div>

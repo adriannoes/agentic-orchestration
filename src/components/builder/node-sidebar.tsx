@@ -229,7 +229,12 @@ export function NodeSidebar({ isOpen, onToggle, onAddNode }: NodeSidebarProps) {
                           <motion.button
                             initial={{ opacity: 0, x: -10 }}
                             animate={{ opacity: 1, x: 0 }}
-                            transition={{ delay: i * 0.05, type: "spring", stiffness: 300, damping: 24 }}
+                            transition={{
+                              delay: i * 0.05,
+                              type: "spring",
+                              stiffness: 300,
+                              damping: 24,
+                            }}
                             className={cn(
                               "flex w-full items-center gap-3 rounded-xl px-3.5 py-3 transition-colors duration-300 ease-out",
                               "border-border/80 border",

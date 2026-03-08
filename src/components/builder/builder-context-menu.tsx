@@ -17,7 +17,16 @@ import {
   DropdownMenuSubContent,
   DropdownMenuSubTrigger,
 } from "@/components/ui/dropdown-menu"
-import { Copy, Layers, Trash2, MessageSquare, ClipboardPaste, ArrowDownUp, Frame, CornerDownLeft } from "lucide-react"
+import {
+  Copy,
+  Layers,
+  Trash2,
+  MessageSquare,
+  ClipboardPaste,
+  ArrowDownUp,
+  Frame,
+  CornerDownLeft,
+} from "lucide-react"
 import type { WorkflowNode } from "@/lib/workflow-types"
 
 const MENU_CONTENT = "border border-border/80 bg-popover text-popover-foreground shadow-none"
@@ -75,10 +84,7 @@ export function NodeContextMenu({
             </DropdownMenuSubTrigger>
             <DropdownMenuSubContent className={MENU_CONTENT}>
               {availableFrames.map((frame) => (
-                <DropdownMenuItem
-                  key={frame.id}
-                  onSelect={() => onAssignToFrame(nodeId, frame.id)}
-                >
+                <DropdownMenuItem key={frame.id} onSelect={() => onAssignToFrame(nodeId, frame.id)}>
                   {frame.data?.label ?? "Frame"}
                 </DropdownMenuItem>
               ))}
@@ -100,7 +106,7 @@ export function NodeContextMenu({
         <DropdownMenuItem disabled>
           <MessageSquare className="h-4 w-4 opacity-50" />
           Add Comment
-          <span className="ml-auto text-[10px] text-muted-foreground">Coming soon</span>
+          <span className="text-muted-foreground ml-auto text-[10px]">Coming soon</span>
         </DropdownMenuItem>
       </DropdownMenuContent>
     </DropdownMenu>

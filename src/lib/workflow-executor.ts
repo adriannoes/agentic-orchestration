@@ -1,4 +1,10 @@
-import type { Workflow, WorkflowNode, WorkflowExecution, ExecutionLog, NodeExecutionResult } from "./workflow-types"
+import type {
+  Workflow,
+  WorkflowNode,
+  WorkflowExecution,
+  ExecutionLog,
+  NodeExecutionResult,
+} from "./workflow-types"
 import { generateText } from "ai"
 
 export class WorkflowExecutor {
@@ -6,7 +12,11 @@ export class WorkflowExecutor {
   private workflow: Workflow
   private onUpdate?: (execution: WorkflowExecution) => void
 
-  constructor(workflow: Workflow, input: string, onUpdate?: (execution: WorkflowExecution) => void) {
+  constructor(
+    workflow: Workflow,
+    input: string,
+    onUpdate?: (execution: WorkflowExecution) => void,
+  ) {
     this.workflow = workflow
     this.onUpdate = onUpdate
     this.execution = {
@@ -120,7 +130,11 @@ export class WorkflowExecutor {
         message: error instanceof Error ? error.message : "Unknown error",
         duration: Date.now() - startTime,
       })
-      return { success: false, error: error instanceof Error ? error.message : "Unknown error", logs }
+      return {
+        success: false,
+        error: error instanceof Error ? error.message : "Unknown error",
+        logs,
+      }
     }
   }
 
@@ -173,7 +187,11 @@ export class WorkflowExecutor {
         message: error instanceof Error ? error.message : "Agent execution failed",
         duration: Date.now() - startTime,
       })
-      return { success: false, error: error instanceof Error ? error.message : "Agent execution failed", logs }
+      return {
+        success: false,
+        error: error instanceof Error ? error.message : "Agent execution failed",
+        logs,
+      }
     }
   }
 

@@ -35,7 +35,9 @@ export function useRealtimeWorkflows(workspaceId: string, initialWorkflows: Work
         },
         (payload: RealtimePostgresChangesPayload<Workflow>) => {
           setWorkflows((current) =>
-            current.map((workflow) => (workflow.id === (payload.new as Workflow).id ? (payload.new as Workflow) : workflow)),
+            current.map((workflow) =>
+              workflow.id === (payload.new as Workflow).id ? (payload.new as Workflow) : workflow,
+            ),
           )
         },
       )
@@ -48,7 +50,9 @@ export function useRealtimeWorkflows(workspaceId: string, initialWorkflows: Work
           filter: `workspace_id=eq.${workspaceId}`,
         },
         (payload: RealtimePostgresChangesPayload<Workflow>) => {
-          setWorkflows((current) => current.filter((workflow) => workflow.id !== (payload.old as Partial<Workflow>).id))
+          setWorkflows((current) =>
+            current.filter((workflow) => workflow.id !== (payload.old as Partial<Workflow>).id),
+          )
         },
       )
       .subscribe()

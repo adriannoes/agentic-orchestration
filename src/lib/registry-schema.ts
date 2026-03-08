@@ -4,8 +4,10 @@ export const registryAgentSchema = z
   .object({
     id: z.string(),
     name: z.string(),
-    version: z.string(),
+    version: z.string().optional(),
+    asap_version: z.string().optional(),
     description: z.string(),
+    skills: z.array(z.string()).optional(),
     capabilities: z
       .object({
         skills: z
@@ -13,7 +15,7 @@ export const registryAgentSchema = z
             z.object({
               id: z.string(),
               description: z.string(),
-            })
+            }),
           )
           .optional(),
       })
@@ -22,6 +24,8 @@ export const registryAgentSchema = z
       .object({
         asap: z.string().optional(),
         ws: z.string().optional(),
+        http: z.string().optional(),
+        manifest: z.string().optional(),
       })
       .optional(),
     auth: z
@@ -41,8 +45,8 @@ export const registryAgentSchema = z
         max_response_time_seconds: z.number().optional(),
       })
       .optional(),
-    repository_url: z.string().nullable().optional(),
-    documentation_url: z.string().nullable().optional(),
+    repository_url: z.string().url().nullable().optional(),
+    documentation_url: z.string().url().nullable().optional(),
     built_with: z.string().nullable().optional(),
     category: z.string().nullable().optional(),
     tags: z.array(z.string()).optional(),
@@ -60,5 +64,6 @@ export const revokedAgentSchema = z.object({
 })
 
 export const revokedResponseSchema = z.object({
-  revoked_agents: z.array(revokedAgentSchema),
+  revoked: z.array(revokedAgentSchema),
+  version: z.string().optional(),
 })

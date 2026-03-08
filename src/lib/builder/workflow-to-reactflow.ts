@@ -21,7 +21,9 @@ function toNodeType(value: string | undefined): NodeType {
   return "agent"
 }
 
-export function workflowNodesToReactFlow(nodes: WorkflowNode[]): Node<NodeData, WorkflowNodeType>[] {
+export function workflowNodesToReactFlow(
+  nodes: WorkflowNode[],
+): Node<NodeData, WorkflowNodeType>[] {
   return (nodes || []).map((n) => {
     const base = {
       id: n.id,
@@ -73,7 +75,9 @@ export function workflowConnectionsToEdges(
   })
 }
 
-export function reactFlowNodesToWorkflow(nodes: Node<NodeData, WorkflowNodeType>[]): WorkflowNode[] {
+export function reactFlowNodesToWorkflow(
+  nodes: Node<NodeData, WorkflowNodeType>[],
+): WorkflowNode[] {
   return (nodes || []).map((n) => {
     const base: WorkflowNode = {
       id: n.id,

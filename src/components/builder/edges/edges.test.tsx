@@ -67,8 +67,12 @@ describe("GradientEdge", () => {
     const { container } = render(<GradientEdge {...defaultEdgeProps} />)
     const stops = container.querySelectorAll("stop")
     expect(stops).toHaveLength(2)
-    expect(stops[0].getAttribute("stop-color") ?? stops[0].getAttribute("stopColor")).toBe("#3b82f6")
-    expect(stops[1].getAttribute("stop-color") ?? stops[1].getAttribute("stopColor")).toBe("#94a3b8")
+    expect(stops[0].getAttribute("stop-color") ?? stops[0].getAttribute("stopColor")).toBe(
+      "#3b82f6",
+    )
+    expect(stops[1].getAttribute("stop-color") ?? stops[1].getAttribute("stopColor")).toBe(
+      "#94a3b8",
+    )
   })
 
   it("uses data.sourceColor and data.targetColor when provided", () => {
@@ -79,8 +83,12 @@ describe("GradientEdge", () => {
       />,
     )
     const stops = container.querySelectorAll("stop")
-    expect(stops[0].getAttribute("stop-color") ?? stops[0].getAttribute("stopColor")).toBe("#ff0000")
-    expect(stops[1].getAttribute("stop-color") ?? stops[1].getAttribute("stopColor")).toBe("#00ff00")
+    expect(stops[0].getAttribute("stop-color") ?? stops[0].getAttribute("stopColor")).toBe(
+      "#ff0000",
+    )
+    expect(stops[1].getAttribute("stop-color") ?? stops[1].getAttribute("stopColor")).toBe(
+      "#00ff00",
+    )
   })
 
   it("renders visible path with gradient url referencing gradient id", () => {
@@ -89,7 +97,9 @@ describe("GradientEdge", () => {
     const strokePath = Array.from(paths).find((p) => p.getAttribute("stroke")?.startsWith("url"))
     expect(strokePath).toBeInTheDocument()
     expect(strokePath?.getAttribute("stroke")).toBe("url(#gradient-e1)")
-    expect(strokePath?.getAttribute("stroke-width") ?? strokePath?.getAttribute("strokeWidth")).toBe("2")
+    expect(
+      strokePath?.getAttribute("stroke-width") ?? strokePath?.getAttribute("strokeWidth"),
+    ).toBe("2")
   })
 
   it("renders interaction path with transparent stroke and correct width", () => {
@@ -99,7 +109,9 @@ describe("GradientEdge", () => {
       (p) => p.getAttribute("stroke") === "transparent",
     )
     expect(interactionPath).toBeInTheDocument()
-    expect(interactionPath?.getAttribute("stroke-width") ?? interactionPath?.getAttribute("strokeWidth")).toBe("20")
+    expect(
+      interactionPath?.getAttribute("stroke-width") ?? interactionPath?.getAttribute("strokeWidth"),
+    ).toBe("20")
     expect(interactionPath?.classList.contains("react-flow__edge-interaction")).toBe(true)
   })
 })
@@ -131,8 +143,12 @@ describe("AnimatedFlowEdge", () => {
     const paths = container.querySelectorAll("path")
     const strokePath = Array.from(paths).find((p) => p.getAttribute("stroke")?.startsWith("url"))
     expect(strokePath).toBeInTheDocument()
-    expect(strokePath?.getAttribute("stroke-dasharray") ?? strokePath?.getAttribute("strokeDasharray")).toBe("8 4")
-    expect(strokePath?.getAttribute("stroke-dashoffset") ?? strokePath?.getAttribute("strokeDashoffset")).toBe("0")
+    expect(
+      strokePath?.getAttribute("stroke-dasharray") ?? strokePath?.getAttribute("strokeDasharray"),
+    ).toBe("8 4")
+    expect(
+      strokePath?.getAttribute("stroke-dashoffset") ?? strokePath?.getAttribute("strokeDashoffset"),
+    ).toBe("0")
     expect(strokePath?.classList.contains("animate-flow-dash")).toBe(true)
   })
 
@@ -148,8 +164,12 @@ describe("AnimatedFlowEdge", () => {
       />,
     )
     const stops = container.querySelectorAll("stop")
-    expect(stops[0].getAttribute("stop-color") ?? stops[0].getAttribute("stopColor")).toBe("#aabbcc")
-    expect(stops[1].getAttribute("stop-color") ?? stops[1].getAttribute("stopColor")).toBe("#ddeeff")
+    expect(stops[0].getAttribute("stop-color") ?? stops[0].getAttribute("stopColor")).toBe(
+      "#aabbcc",
+    )
+    expect(stops[1].getAttribute("stop-color") ?? stops[1].getAttribute("stopColor")).toBe(
+      "#ddeeff",
+    )
   })
 })
 

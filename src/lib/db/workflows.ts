@@ -45,7 +45,7 @@ export async function createWorkflow(
       connections: workflow.connections,
       version: 1,
       createdAt: new Date(),
-      updatedAt: new Date()
+      updatedAt: new Date(),
     }
     memoryWorkflows.set(newWorkflow.id, newWorkflow)
     return newWorkflow
@@ -103,7 +103,10 @@ export async function deleteWorkflow(id: string): Promise<boolean> {
   return !error
 }
 
-export async function addWorkflowNode(workflowId: string, node: Omit<WorkflowNode, "id">): Promise<Workflow> {
+export async function addWorkflowNode(
+  workflowId: string,
+  node: Omit<WorkflowNode, "id">,
+): Promise<Workflow> {
   const workflow = await getWorkflow(workflowId)
   if (!workflow) throw new Error("Workflow not found")
 
@@ -136,12 +139,17 @@ export async function deleteWorkflowNode(workflowId: string, nodeId: string): Pr
   if (!workflow) throw new Error("Workflow not found")
 
   const updatedNodes = workflow.nodes.filter((node) => node.id !== nodeId)
-  const updatedConnections = workflow.connections.filter((conn) => conn.sourceId !== nodeId && conn.targetId !== nodeId)
+  const updatedConnections = workflow.connections.filter(
+    (conn) => conn.sourceId !== nodeId && conn.targetId !== nodeId,
+  )
 
   return await updateWorkflow(workflowId, { nodes: updatedNodes, connections: updatedConnections })
 }
 
-export async function addWorkflowConnection(workflowId: string, connection: Omit<Connection, "id">): Promise<Workflow> {
+export async function addWorkflowConnection(
+  workflowId: string,
+  connection: Omit<Connection, "id">,
+): Promise<Workflow> {
   const workflow = await getWorkflow(workflowId)
   if (!workflow) throw new Error("Workflow not found")
 
@@ -156,7 +164,10 @@ export async function addWorkflowConnection(workflowId: string, connection: Omit
   return await updateWorkflow(workflowId, { connections: updatedConnections })
 }
 
-export async function deleteWorkflowConnection(workflowId: string, connectionId: string): Promise<Workflow> {
+export async function deleteWorkflowConnection(
+  workflowId: string,
+  connectionId: string,
+): Promise<Workflow> {
   const workflow = await getWorkflow(workflowId)
   if (!workflow) throw new Error("Workflow not found")
 

@@ -23,28 +23,28 @@ export function ConnectorCard({ connector, onConnect }: ConnectorCardProps) {
   const StatusIcon = status.icon
 
   return (
-    <Card className="border-border/80 p-6 transition-colors hover:border-primary/40">
-      <div className="flex items-start justify-between mb-4">
+    <Card className="border-border/80 hover:border-primary/40 p-6 transition-colors">
+      <div className="mb-4 flex items-start justify-between">
         <div className="flex items-center gap-3">
           <div
-            className="w-12 h-12 rounded-lg flex items-center justify-center text-2xl"
+            className="flex h-12 w-12 items-center justify-center rounded-lg text-2xl"
             style={{ backgroundColor: `${connector.color}15` }}
           >
             {connector.icon}
           </div>
           <div>
             <h3 className="font-semibold">{connector.name}</h3>
-            <div className="flex items-center gap-2 mt-1">
-              <StatusIcon className={`w-3 h-3 ${status.color}`} />
+            <div className="mt-1 flex items-center gap-2">
+              <StatusIcon className={`h-3 w-3 ${status.color}`} />
               <span className={`text-xs ${status.color}`}>{status.label}</span>
             </div>
           </div>
         </div>
       </div>
 
-      <p className="text-sm text-muted-foreground mb-4 leading-relaxed">{connector.description}</p>
+      <p className="text-muted-foreground mb-4 text-sm leading-relaxed">{connector.description}</p>
 
-      <div className="flex items-center gap-2 mb-4">
+      <div className="mb-4 flex items-center gap-2">
         <Badge variant="secondary" className="text-xs">
           {connector.category}
         </Badge>
@@ -57,7 +57,10 @@ export function ConnectorCard({ connector, onConnect }: ConnectorCardProps) {
           </Badge>
         )}
         {connector.isPremium && (
-          <Badge variant="default" className="border border-violet-500/20 bg-violet-500/10 text-xs text-violet-300">
+          <Badge
+            variant="default"
+            className="border border-violet-500/20 bg-violet-500/10 text-xs text-violet-300"
+          >
             Premium
           </Badge>
         )}
@@ -70,14 +73,14 @@ export function ConnectorCard({ connector, onConnect }: ConnectorCardProps) {
           </Button>
         ) : (
           <Button size="sm" className="flex-1" onClick={() => onConnect(connector)}>
-            <Plug className="w-4 h-4 mr-2" />
+            <Plug className="mr-2 h-4 w-4" />
             Connect
           </Button>
         )}
         {connector.website && (
           <Button variant="ghost" size="icon" asChild>
             <a href={connector.website} target="_blank" rel="noopener noreferrer">
-              <ExternalLink className="w-4 h-4" />
+              <ExternalLink className="h-4 w-4" />
             </a>
           </Button>
         )}

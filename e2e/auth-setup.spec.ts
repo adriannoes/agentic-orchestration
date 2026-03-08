@@ -1,29 +1,36 @@
-import { test, expect } from '@playwright/test'
+import { test, expect } from "@playwright/test"
 
-test.describe('Login page', () => {
-  test('login page loads and shows GitHub sign-in', async ({ page }) => {
-    await page.goto('/login')
+test.describe("Login page", () => {
+  test("login page loads and shows GitHub sign-in", async ({ page }) => {
+    await page.goto("/login")
     await expect(page.getByText(/Sign In/i).first()).toBeVisible({ timeout: 8_000 })
-    await expect(page.getByRole('button', { name: /Sign in with GitHub/i })).toBeVisible()
+    await expect(page.getByRole("button", { name: /Sign in with GitHub/i })).toBeVisible()
   })
 })
 
-test.describe('Signup page', () => {
-  test('signup page loads and shows GitHub sign-up', async ({ page }) => {
-    await page.goto('/signup')
+test.describe("Signup page", () => {
+  test("signup page loads and shows GitHub sign-up", async ({ page }) => {
+    await page.goto("/signup")
     await expect(page.getByText(/Create account/i).first()).toBeVisible({ timeout: 8_000 })
-    await expect(page.getByRole('button', { name: /Sign up with GitHub/i })).toBeVisible()
+    await expect(page.getByRole("button", { name: /Sign up with GitHub/i })).toBeVisible()
   })
 })
 
-test.describe('Setup page', () => {
-  test('setup page loads and shows env configuration', async ({ page }) => {
-    await page.goto('/setup')
-    await expect(page.getByRole('heading', { name: /Supabase Setup|Setup & Validation/i })).toBeVisible({ timeout: 10_000 })
+test.describe("Setup page", () => {
+  test("setup page loads and shows env configuration", async ({ page }) => {
+    await page.goto("/setup")
+    await expect(
+      page.getByRole("heading", { name: /Supabase Setup|Setup & Validation/i }),
+    ).toBeVisible({ timeout: 10_000 })
   })
 
-  test('setup has Test connection or env check', async ({ page }) => {
-    await page.goto('/setup')
-    await expect(page.getByRole('button').or(page.getByText(/Required tables|profiles|workspaces|environment/i)).first()).toBeVisible({ timeout: 10_000 })
+  test("setup has Test connection or env check", async ({ page }) => {
+    await page.goto("/setup")
+    await expect(
+      page
+        .getByRole("button")
+        .or(page.getByText(/Required tables|profiles|workspaces|environment/i))
+        .first(),
+    ).toBeVisible({ timeout: 10_000 })
   })
 })

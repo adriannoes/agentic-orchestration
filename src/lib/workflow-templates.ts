@@ -16,7 +16,8 @@ export const workflowTemplates: WorkflowTemplate[] = [
   {
     id: "customer-support-routing",
     name: "Customer Support Routing",
-    description: "Intelligent routing system that classifies customer inquiries and routes them to specialized agents",
+    description:
+      "Intelligent routing system that classifies customer inquiries and routes them to specialized agents",
     category: "customer-support",
     tags: ["support", "classification", "routing", "multi-agent"],
     usageCount: 245,
@@ -51,7 +52,8 @@ export const workflowTemplates: WorkflowTemplate[] = [
         data: {
           label: "Technical Support Agent",
           model: "openai/gpt-4o",
-          systemPrompt: "You are a technical support specialist. Help customers resolve technical issues.",
+          systemPrompt:
+            "You are a technical support specialist. Help customers resolve technical issues.",
           tools: ["web-search"],
         },
       },
@@ -61,7 +63,8 @@ export const workflowTemplates: WorkflowTemplate[] = [
         data: {
           label: "Billing Support Agent",
           model: "openai/gpt-4o",
-          systemPrompt: "You are a billing support specialist. Help customers with payment and billing questions.",
+          systemPrompt:
+            "You are a billing support specialist. Help customers with payment and billing questions.",
         },
       },
       {
@@ -153,7 +156,8 @@ export const workflowTemplates: WorkflowTemplate[] = [
   {
     id: "research-assistant",
     name: "Research & Analysis Assistant",
-    description: "Comprehensive research workflow with web search, file analysis, and report generation",
+    description:
+      "Comprehensive research workflow with web search, file analysis, and report generation",
     category: "research",
     tags: ["research", "analysis", "web-search", "file-search"],
     usageCount: 312,
@@ -217,7 +221,8 @@ export const workflowTemplates: WorkflowTemplate[] = [
   {
     id: "data-analysis-pipeline",
     name: "Data Analysis Pipeline",
-    description: "Automated data processing with MCP integration for database queries and visualization",
+    description:
+      "Automated data processing with MCP integration for database queries and visualization",
     category: "data-analysis",
     tags: ["data", "analysis", "mcp", "automation"],
     usageCount: 156,
@@ -269,7 +274,8 @@ export const workflowTemplates: WorkflowTemplate[] = [
   {
     id: "content-creation-workflow",
     name: "Content Creation Workflow",
-    description: "Multi-agent content creation with research, writing, editing, and approval stages",
+    description:
+      "Multi-agent content creation with research, writing, editing, and approval stages",
     category: "content-creation",
     tags: ["content", "writing", "editing", "approval"],
     usageCount: 423,

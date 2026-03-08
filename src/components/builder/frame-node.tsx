@@ -50,14 +50,14 @@ export function FrameNode({ data, selected }: NodeProps<FrameNodeType>) {
   return (
     <div
       className={cn(
-        "rounded-lg border border-border/80 bg-card/90",
+        "border-border/80 bg-card/90 rounded-lg border",
         "transition-all duration-300 ease-out",
-        "min-w-[120px] min-h-[80px]",
-        selected && "border-primary/40 ring-2 ring-primary/40",
+        "min-h-[80px] min-w-[120px]",
+        selected && "border-primary/40 ring-primary/40 ring-2",
       )}
       style={{ width, height }}
     >
-      <div className="flex items-center border-b border-border/80 p-3">
+      <div className="border-border/80 flex items-center border-b p-3">
         {isEditing ? (
           <input
             type="text"
@@ -65,13 +65,13 @@ export function FrameNode({ data, selected }: NodeProps<FrameNodeType>) {
             onChange={handleLabelChange}
             onBlur={handleLabelBlur}
             onKeyDown={(e) => e.key === "Enter" && handleLabelBlur()}
-            className="flex-1 bg-transparent text-sm font-medium text-foreground outline-none border-none focus:ring-0 px-0"
+            className="text-foreground flex-1 border-none bg-transparent px-0 text-sm font-medium outline-none focus:ring-0"
             autoFocus
             data-label="frame-label"
           />
         ) : (
           <span
-            className="text-sm font-medium text-foreground/90 truncate cursor-text"
+            className="text-foreground/90 cursor-text truncate text-sm font-medium"
             onDoubleClick={handleDoubleClick}
           >
             {label}

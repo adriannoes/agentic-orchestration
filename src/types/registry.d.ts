@@ -1,8 +1,10 @@
 export interface RegistryAgent {
   id: string
   name: string
-  version: string
+  version?: string
+  asap_version?: string
   description: string
+  skills?: string[]
   capabilities?: {
     skills?: Array<{
       id: string
@@ -12,6 +14,8 @@ export interface RegistryAgent {
   endpoints?: {
     asap?: string
     ws?: string
+    http?: string
+    manifest?: string
   }
   auth?: {
     schemes?: string[]
@@ -42,7 +46,8 @@ export interface RegistryResponse {
 }
 
 export interface RevokedResponse {
-  revoked_agents: RevokedAgent[]
+  revoked: RevokedAgent[]
+  version?: string
 }
 
 export interface FetchRegistryResult {

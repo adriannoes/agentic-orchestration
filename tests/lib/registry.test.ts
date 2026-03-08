@@ -51,10 +51,7 @@ beforeEach(() => {
 
 describe("fetchRegistryAgents", () => {
   it("returns agents from valid registry response", async () => {
-    const mockFetch = createFetchMock(
-      { agents: [mockAgent1, mockAgent2] },
-      { revoked_agents: [] }
-    )
+    const mockFetch = createFetchMock({ agents: [mockAgent1, mockAgent2] }, { revoked: [] })
     vi.stubGlobal("fetch", mockFetch)
 
     const result = await fetchRegistryAgents()
@@ -69,14 +66,14 @@ describe("fetchRegistryAgents", () => {
     const mockFetch = createFetchMock(
       { agents: [mockAgent1, mockRevokedAgent] },
       {
-        revoked_agents: [
+        revoked: [
           {
             id: mockRevokedAgent.id,
             revoked_at: "2026-01-01T00:00:00Z",
             reason: "Violation",
           },
         ],
-      }
+      },
     )
     vi.stubGlobal("fetch", mockFetch)
 
@@ -87,7 +84,10 @@ describe("fetchRegistryAgents", () => {
   })
 
   it("returns empty array with error on network failure", async () => {
-    vi.stubGlobal("fetch", vi.fn(() => Promise.reject(new Error("Network error"))))
+    vi.stubGlobal(
+      "fetch",
+      vi.fn(() => Promise.reject(new Error("Network error"))),
+    )
 
     const result = await fetchRegistryAgents()
 
@@ -98,9 +98,7 @@ describe("fetchRegistryAgents", () => {
   it("returns empty array with error on non-OK HTTP response", async () => {
     vi.stubGlobal(
       "fetch",
-      vi.fn(() =>
-        Promise.resolve({ ok: false, status: 500, statusText: "Internal Server Error" })
-      )
+      vi.fn(() => Promise.resolve({ ok: false, status: 500, statusText: "Internal Server Error" })),
     )
 
     const result = await fetchRegistryAgents()
@@ -110,10 +108,7 @@ describe("fetchRegistryAgents", () => {
   })
 
   it("returns empty array with error on malformed JSON", async () => {
-    const mockFetch = createFetchMock(
-      { not_agents: "bad data" },
-      { revoked_agents: [] }
-    )
+    const mockFetch = createFetchMock({ not_agents: "bad data" }, { revoked: [] })
     vi.stubGlobal("fetch", mockFetch)
 
     const result = await fetchRegistryAgents()
@@ -135,7 +130,7 @@ describe("fetchRegistryAgents", () => {
           })
         }
         return Promise.reject(new Error("Revoked list unavailable"))
-      })
+      }),
     )
 
     const result = await fetchRegistryAgents()
@@ -145,10 +140,7 @@ describe("fetchRegistryAgents", () => {
   })
 
   it("returns empty agents for empty registry", async () => {
-    const mockFetch = createFetchMock(
-      { agents: [] },
-      { revoked_agents: [] }
-    )
+    const mockFetch = createFetchMock({ agents: [] }, { revoked: [] })
     vi.stubGlobal("fetch", mockFetch)
 
     const result = await fetchRegistryAgents()

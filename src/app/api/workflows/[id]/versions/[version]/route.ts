@@ -2,7 +2,10 @@ import { type NextRequest, NextResponse } from "next/server"
 import { withWorkspace } from "@/lib/api/with-workspace"
 import { versionStore } from "@/lib/version-store"
 
-export async function GET(request: NextRequest, { params }: { params: Promise<{ id: string; version: string }> }) {
+export async function GET(
+  request: NextRequest,
+  { params }: { params: Promise<{ id: string; version: string }> },
+) {
   const result = await withWorkspace()
   if (result.error) return result.error
 
@@ -17,7 +20,10 @@ export async function GET(request: NextRequest, { params }: { params: Promise<{ 
   return NextResponse.json(versionData)
 }
 
-export async function DELETE(request: NextRequest, { params }: { params: Promise<{ id: string; version: string }> }) {
+export async function DELETE(
+  request: NextRequest,
+  { params }: { params: Promise<{ id: string; version: string }> },
+) {
   const result = await withWorkspace()
   if (result.error) return result.error
 
@@ -32,7 +38,10 @@ export async function DELETE(request: NextRequest, { params }: { params: Promise
   return NextResponse.json({ success: true })
 }
 
-export async function PATCH(request: NextRequest, { params }: { params: Promise<{ id: string; version: string }> }) {
+export async function PATCH(
+  request: NextRequest,
+  { params }: { params: Promise<{ id: string; version: string }> },
+) {
   const result = await withWorkspace()
   if (result.error) return result.error
 

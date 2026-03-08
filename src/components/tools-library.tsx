@@ -11,10 +11,10 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import type { Tool } from "@/lib/types"
 
 const categoryIcons: Record<string, React.ReactNode> = {
-  web: <Globe className="w-5 h-5" />,
-  data: <Database className="w-5 h-5" />,
-  code: <Code className="w-5 h-5" />,
-  utility: <Sparkles className="w-5 h-5" />,
+  web: <Globe className="h-5 w-5" />,
+  data: <Database className="h-5 w-5" />,
+  code: <Code className="h-5 w-5" />,
+  utility: <Sparkles className="h-5 w-5" />,
 }
 
 const categoryColors: Record<string, string> = {
@@ -49,8 +49,8 @@ export function ToolsLibrary() {
 
   if (loading) {
     return (
-      <div className="flex items-center justify-center h-full">
-        <div className="animate-pulse text-muted-foreground">Loading tools...</div>
+      <div className="flex h-full items-center justify-center">
+        <div className="text-muted-foreground animate-pulse">Loading tools...</div>
       </div>
     )
   }
@@ -58,13 +58,13 @@ export function ToolsLibrary() {
   return (
     <div className="p-8">
       <div className="mb-8">
-        <h1 className="text-3xl font-bold mb-2">Tools Library</h1>
+        <h1 className="mb-2 text-3xl font-bold">Tools Library</h1>
         <p className="text-muted-foreground">Browse and explore available tools for your agents</p>
       </div>
 
       <div className="mb-6">
         <div className="relative max-w-md">
-          <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-muted-foreground" />
+          <Search className="text-muted-foreground absolute top-1/2 left-3 h-4 w-4 -translate-y-1/2 transform" />
           <Input
             placeholder="Search tools..."
             value={search}
@@ -89,13 +89,16 @@ export function ToolsLibrary() {
               {filteredTools
                 .filter((tool) => cat === "all" || tool.category === cat)
                 .map((tool) => (
-                  <Card key={tool.id} className="border-border/80 transition-colors hover:border-primary/40">
+                  <Card
+                    key={tool.id}
+                    className="border-border/80 hover:border-primary/40 transition-colors"
+                  >
                     <CardHeader className="pb-3">
                       <div className="flex items-start justify-between">
                         <div
-                          className={`flex items-center justify-center w-10 h-10 rounded-lg ${categoryColors[tool.category]}`}
+                          className={`flex h-10 w-10 items-center justify-center rounded-lg ${categoryColors[tool.category]}`}
                         >
-                          {categoryIcons[tool.category] || <Wrench className="w-5 h-5" />}
+                          {categoryIcons[tool.category] || <Wrench className="h-5 w-5" />}
                         </div>
                         <Badge variant="outline" className="capitalize">
                           {tool.category}
@@ -106,8 +109,8 @@ export function ToolsLibrary() {
                     </CardHeader>
                     <CardContent>
                       <div className="space-y-2">
-                        <p className="text-xs text-muted-foreground font-medium">Input Schema</p>
-                        <pre className="overflow-auto rounded border border-border/70 bg-muted/40 p-2 text-xs">
+                        <p className="text-muted-foreground text-xs font-medium">Input Schema</p>
+                        <pre className="border-border/70 bg-muted/40 overflow-auto rounded border p-2 text-xs">
                           {JSON.stringify(tool.inputSchema, null, 2)}
                         </pre>
                       </div>

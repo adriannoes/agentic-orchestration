@@ -11,8 +11,7 @@ const REVOKED_URL =
 
 const FETCH_TIMEOUT_MS = 5000
 
-const REVOCATION_LIST_UNAVAILABLE_ERROR =
-  "Security restriction: Unable to verify revocation list."
+const REVOCATION_LIST_UNAVAILABLE_ERROR = "Security restriction: Unable to verify revocation list."
 
 export async function fetchRegistryAgents(): Promise<FetchRegistryResult> {
   try {
@@ -41,11 +40,7 @@ export async function fetchRegistryAgents(): Promise<FetchRegistryResult> {
         signal: AbortSignal.timeout(FETCH_TIMEOUT_MS),
       })
       if (!revokedRes.ok) {
-        console.error(
-          "Revoked list fetch failed:",
-          revokedRes.status,
-          revokedRes.statusText
-        )
+        console.error("Revoked list fetch failed:", revokedRes.status, revokedRes.statusText)
         return { agents: [], error: REVOCATION_LIST_UNAVAILABLE_ERROR }
       }
       const revokedJson = await revokedRes.json()
@@ -54,15 +49,13 @@ export async function fetchRegistryAgents(): Promise<FetchRegistryResult> {
         console.error("Revoked list validation failed:", revokedParsed.error.flatten())
         return { agents: [], error: REVOCATION_LIST_UNAVAILABLE_ERROR }
       }
-      revokedIds = new Set(revokedParsed.data.revoked_agents.map((r) => r.id))
+      revokedIds = new Set(revokedParsed.data.revoked.map((r) => r.id))
     } catch (error) {
       console.error("Failed to fetch revoked agents list", error)
       return { agents: [], error: REVOCATION_LIST_UNAVAILABLE_ERROR }
     }
 
-    const activeAgents = registryParsed.data.agents.filter(
-      (agent) => !revokedIds.has(agent.id)
-    )
+    const activeAgents = registryParsed.data.agents.filter((agent) => !revokedIds.has(agent.id))
 
     return { agents: activeAgents }
   } catch (error) {

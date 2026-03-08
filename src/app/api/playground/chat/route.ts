@@ -16,8 +16,16 @@ const availableTools = {
       await new Promise((resolve) => setTimeout(resolve, 1000))
       return {
         results: [
-          { title: `Result for "${query}"`, snippet: "This is a simulated search result.", url: "https://example.com" },
-          { title: `More about ${query}`, snippet: "Additional information found.", url: "https://example.org" },
+          {
+            title: `Result for "${query}"`,
+            snippet: "This is a simulated search result.",
+            url: "https://example.com",
+          },
+          {
+            title: `More about ${query}`,
+            snippet: "Additional information found.",
+            url: "https://example.org",
+          },
         ],
       }
     },

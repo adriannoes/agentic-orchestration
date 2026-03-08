@@ -26,7 +26,8 @@ export function ExportImportDialog({ workflowId, onImportSuccess }: ExportImport
       const a = document.createElement("a")
       a.href = url
       a.download =
-        response.headers.get("Content-Disposition")?.split("filename=")[1]?.replace(/"/g, "") || "workflow.json"
+        response.headers.get("Content-Disposition")?.split("filename=")[1]?.replace(/"/g, "") ||
+        "workflow.json"
       a.click()
       window.URL.revokeObjectURL(url)
       toast({ title: "Workflow exported successfully" })
@@ -54,11 +55,21 @@ export function ExportImportDialog({ workflowId, onImportSuccess }: ExportImport
 
   return (
     <>
-      <Button variant="ghost" size="sm" className="h-8 gap-2 hover:bg-accent" onClick={handleExport}>
+      <Button
+        variant="ghost"
+        size="sm"
+        className="hover:bg-accent h-8 gap-2"
+        onClick={handleExport}
+      >
         <Download className="h-3.5 w-3.5" />
         Export
       </Button>
-      <Button variant="ghost" size="sm" className="h-8 gap-2 hover:bg-accent" onClick={() => setShowImport(true)}>
+      <Button
+        variant="ghost"
+        size="sm"
+        className="hover:bg-accent h-8 gap-2"
+        onClick={() => setShowImport(true)}
+      >
         <Upload className="h-3.5 w-3.5" />
         Import
       </Button>
@@ -71,7 +82,7 @@ export function ExportImportDialog({ workflowId, onImportSuccess }: ExportImport
           <div className="space-y-4">
             <Textarea
               placeholder="Paste your workflow JSON here..."
-              className="min-h-[300px] border-border/80 bg-background/70 font-mono text-sm"
+              className="border-border/80 bg-background/70 min-h-[300px] font-mono text-sm"
               value={importData}
               onChange={(e) => setImportData(e.target.value)}
             />

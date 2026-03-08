@@ -177,8 +177,8 @@ export function SettingsPanel() {
                   <div>
                     <p className="text-sm font-medium">Security Notice</p>
                     <p className="text-muted-foreground text-sm">
-                      API keys are stored securely and encrypted. We never share your keys with third
-                      parties.
+                      API keys are stored securely and encrypted. We never share your keys with
+                      third parties.
                     </p>
                   </div>
                 </div>
@@ -261,7 +261,9 @@ export function SettingsPanel() {
                 <div className="flex items-center justify-between">
                   <div>
                     <Label>Error Notifications</Label>
-                    <p className="text-muted-foreground text-sm">Get alerted when agent runs fail</p>
+                    <p className="text-muted-foreground text-sm">
+                      Get alerted when agent runs fail
+                    </p>
                   </div>
                   <Switch defaultChecked />
                 </div>

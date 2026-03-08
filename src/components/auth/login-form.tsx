@@ -3,7 +3,14 @@
 import { useState } from "react"
 import { signIn } from "next-auth/react"
 import { Button } from "@/components/ui/button"
-import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardFooter,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card"
 import { toast } from "sonner"
 import { Github } from "lucide-react"
 
@@ -33,18 +40,13 @@ export function LoginForm() {
         }}
       >
         <CardContent>
-          <Button
-            type="submit"
-            variant="outline"
-            className="w-full"
-            disabled={isLoading}
-          >
+          <Button type="submit" variant="outline" className="w-full" disabled={isLoading}>
             <Github className="mr-2 h-4 w-4" />
             {isLoading ? "Signing in..." : "Sign in with GitHub"}
           </Button>
         </CardContent>
         <CardFooter className="flex flex-col gap-2">
-          <p className="text-xs text-muted-foreground text-center">
+          <p className="text-muted-foreground text-center text-xs">
             By signing in, you agree to use your GitHub account for authentication.
           </p>
         </CardFooter>
