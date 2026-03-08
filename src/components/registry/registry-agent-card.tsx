@@ -22,7 +22,9 @@ export function RegistryAgentCard({ agent, onViewDetails }: RegistryAgentCardPro
         <div className="flex items-center justify-between">
           <CardTitle className="text-base font-semibold">{agent.name}</CardTitle>
           <div className="flex items-center gap-2">
-            {hasAuth && <Lock className="text-muted-foreground h-3.5 w-3.5" />}
+            {hasAuth && (
+              <Lock className="text-muted-foreground h-3.5 w-3.5" data-testid="lock-icon" />
+            )}
             <Badge variant="secondary" className="text-xs">
               v{agent.version || agent.asap_version || "1.0"}
             </Badge>
