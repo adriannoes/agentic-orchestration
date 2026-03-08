@@ -41,8 +41,8 @@ export const registryAgentSchema = z
         max_response_time_seconds: z.number().optional(),
       })
       .optional(),
-    repository_url: z.string().nullable().optional(),
-    documentation_url: z.string().nullable().optional(),
+    repository_url: z.string().url().nullable().optional(),
+    documentation_url: z.string().url().nullable().optional(),
     built_with: z.string().nullable().optional(),
     category: z.string().nullable().optional(),
     tags: z.array(z.string()).optional(),

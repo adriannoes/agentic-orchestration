@@ -78,6 +78,16 @@ describe("registryAgentSchema", () => {
     expect(result.success).toBe(false)
   })
 
+  it("rejects invalid repository_url", () => {
+    const agentWithBadRepo = { ...validAgent, repository_url: "not-a-valid-url" }
+    expect(registryAgentSchema.safeParse(agentWithBadRepo).success).toBe(false)
+  })
+
+  it("rejects invalid documentation_url", () => {
+    const agentWithBadDocs = { ...validAgent, documentation_url: "not-a-valid-url" }
+    expect(registryAgentSchema.safeParse(agentWithBadDocs).success).toBe(false)
+  })
+
   it("accepts nullable fields as null", () => {
     const withNulls = {
       ...minimalAgent,

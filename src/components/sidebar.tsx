@@ -15,11 +15,15 @@ import {
   LayoutTemplate,
   Plug,
   Server,
-  Store,
+  Globe,
+  ExternalLink,
 } from "lucide-react"
 import { useState } from "react"
 import { Button } from "@/components/ui/button"
 import { UserMenu } from "@/components/user-menu"
+
+const ASAP_PROTOCOL_URL =
+  process.env.NEXT_PUBLIC_ASAP_PROTOCOL_URL ?? "https://asap-protocol.vercel.app"
 
 const navItems = [
   { href: "/", label: "Agents", icon: Bot },
@@ -27,7 +31,7 @@ const navItems = [
   { href: "/templates", label: "Templates", icon: LayoutTemplate },
   { href: "/connectors", label: "Connectors", icon: Plug },
   { href: "/mcp", label: "MCP Servers", icon: Server },
-  { href: "/marketplace", label: "Marketplace", icon: Store },
+  { href: "/marketplace", label: "Registry", icon: Globe },
   { href: "/runs", label: "Runs", icon: History },
   { href: "/tools", label: "Tools", icon: Wrench },
   { href: "/settings", label: "Settings", icon: Settings },
@@ -89,6 +93,23 @@ export function Sidebar() {
         })}
       </nav>
 
+      <div className="border-border/80 border-t p-2">
+        <a
+          href={ASAP_PROTOCOL_URL}
+          target="_blank"
+          rel="noopener noreferrer"
+          aria-label="Open ASAP Protocol"
+          className={cn(
+            "flex items-center gap-3 rounded-lg px-3 py-2 transition-colors",
+            "text-muted-foreground hover:bg-accent/80 hover:text-foreground",
+            collapsed && "justify-center px-2",
+          )}
+        >
+          <ExternalLink className="h-5 w-5 shrink-0" />
+          {!collapsed && <span>ASAP Protocol</span>}
+        </a>
+      </div>
+
       <div className="border-border/80 border-t p-4">
         {status === "authenticated" && user ? (
           <div className={cn(collapsed && "flex justify-center")}>
@@ -97,7 +118,14 @@ export function Sidebar() {
         ) : (
           !collapsed && (
             <div className="text-muted-foreground text-xs">
-              <p>Powered by ASAP protocol.</p>
+              <a
+                href={ASAP_PROTOCOL_URL}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="transition-colors hover:text-foreground"
+              >
+                Powered by ASAP protocol.
+              </a>
             </div>
           )
         )}
