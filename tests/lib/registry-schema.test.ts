@@ -123,7 +123,7 @@ describe("registryResponseSchema", () => {
 describe("revokedResponseSchema", () => {
   it("validates a valid revoked response", () => {
     const result = revokedResponseSchema.safeParse({
-      revoked_agents: [
+      revoked: [
         {
           id: "urn:asap:agent:user:revoked",
           revoked_at: "2026-01-01T00:00:00Z",
@@ -135,7 +135,7 @@ describe("revokedResponseSchema", () => {
   })
 
   it("validates empty revoked agents", () => {
-    const result = revokedResponseSchema.safeParse({ revoked_agents: [] })
+    const result = revokedResponseSchema.safeParse({ revoked: [] })
     expect(result.success).toBe(true)
   })
 })
