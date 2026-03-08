@@ -14,7 +14,11 @@ import {
 import { toast } from "sonner"
 import { Github } from "lucide-react"
 
-export function LoginForm() {
+interface LoginFormProps {
+  fromAsap?: boolean
+}
+
+export function LoginForm({ fromAsap }: LoginFormProps) {
   const [isLoading, setIsLoading] = useState(false)
 
   async function handleGitHubSignIn() {
@@ -31,7 +35,11 @@ export function LoginForm() {
     <Card className="w-full max-w-md">
       <CardHeader>
         <CardTitle className="text-2xl">Sign In</CardTitle>
-        <CardDescription>Sign in with GitHub to access your account</CardDescription>
+        <CardDescription>
+          {fromAsap
+            ? "Continue with GitHub to access Agent Builder from ASAP Protocol."
+            : "Sign in with GitHub to access your account"}
+        </CardDescription>
       </CardHeader>
       <form
         onSubmit={(e) => {
@@ -49,6 +57,14 @@ export function LoginForm() {
           <p className="text-muted-foreground text-center text-xs">
             By signing in, you agree to use your GitHub account for authentication.
           </p>
+          {fromAsap && (
+            <a
+              href={process.env.NEXT_PUBLIC_ASAP_PROTOCOL_URL ?? "https://asap-protocol.vercel.app"}
+              className="text-muted-foreground hover:text-foreground text-xs transition-colors"
+            >
+              ← Back to ASAP Protocol
+            </a>
+          )}
         </CardFooter>
       </form>
     </Card>
