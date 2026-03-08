@@ -111,7 +111,7 @@ function BuilderCanvasInner() {
               mutate("/api/workflows")
             }
           })
-          .catch(() => { })
+          .catch(() => {})
       } else if (workflows.length > 0 && !workflowId) {
         setWorkflowId(workflows[0].id)
       }
@@ -234,19 +234,19 @@ function BuilderCanvasInner() {
 
   const initialNodes = workflow
     ? workflowNodesToReactFlow(workflow.nodes).map((n) => ({
-      ...n,
-      data: {
-        ...n.data,
-        isHighlighted: n.id === highlightedNodeId,
-        customOnDelete: () => handleNodeDeleteById(n.id),
-      } as WorkflowNodeData & { customOnDelete?: () => void },
-    }))
+        ...n,
+        data: {
+          ...n.data,
+          isHighlighted: n.id === highlightedNodeId,
+          customOnDelete: () => handleNodeDeleteById(n.id),
+        } as WorkflowNodeData & { customOnDelete?: () => void },
+      }))
     : []
   const initialEdges = workflow
     ? workflowConnectionsToEdges(workflow.connections, {
-      nodes: workflow.nodes,
-      runningEdgeIds: highlightedEdgeIds,
-    })
+        nodes: workflow.nodes,
+        runningEdgeIds: highlightedEdgeIds,
+      })
     : []
 
   const [nodes, setNodes, onNodesChange] = useNodesState(initialNodes)
