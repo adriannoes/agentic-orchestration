@@ -35,7 +35,7 @@ Thumbs.db
 *.swo
 .idea/
 .vscode/
-.cursor/   # Cursor IDE rules, commands, dev-planning, skills (local only)
+.cursor/   # Cursor IDE rules, commands, dev-planning (local only)
 
 # turbo
 .turbo
@@ -44,6 +44,10 @@ Thumbs.db
 coverage/
 *.log
 .npm
+
+# dev scripts and test artifacts (ad-hoc, not part of app)
+test-reg.ts
+test-output.txt
 
 # Playwright
 /test-results/
