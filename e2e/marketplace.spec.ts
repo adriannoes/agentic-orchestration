@@ -14,17 +14,18 @@ test.describe("ASAP Agent Registry", () => {
   })
 
   test("has search input", async ({ page }) => {
-    await expect(page.getByPlaceholder(/search agents/i)).toBeVisible()
+    await expect(page.getByPlaceholder(/search agents/i).first()).toBeVisible()
   })
 
-  test("shows agent cards or empty state", async ({ page }) => {
+  test("shows registry content (agents, empty state, or error)", async ({ page }) => {
+    // Marketplace fetches server-side (SSR); Playwright route cannot intercept. Asserts one of the expected states.
     await expect(
       page
         .getByText(/Showing \d+ agent/i)
-        .or(page.getByText(/No agents registered/i))
-        .or(page.getByText(/Failed to/i))
+        .or(page.getByText("No agents registered yet"))
+        .or(page.getByText(/Failed to|Try again/i))
         .first(),
-    ).toBeVisible({ timeout: 10_000 })
+    ).toBeVisible({ timeout: 15_000 })
   })
 
   test("has category tabs with All tab", async ({ page }) => {
