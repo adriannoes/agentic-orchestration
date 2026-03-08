@@ -30,6 +30,7 @@ import {
   LogIn,
 } from "lucide-react"
 import { Button } from "@/components/ui/button"
+import Link from "next/link"
 import type { WorkflowNode, Position, NodeType, Workflow, Connection } from "@/lib/workflow-types"
 import { NodeSidebar } from "./node-sidebar"
 import { CanvasNode } from "./canvas-node"
@@ -125,7 +126,6 @@ function BuilderCanvasInner() {
   const { data: historyStatus } = useSWR(
     workflowId ? `/api/workflows/${workflowId}/history/status` : null,
     fetcher,
-    { refreshInterval: 500 },
   )
 
   const [showSidebar, setShowSidebar] = useState(true)
@@ -143,6 +143,11 @@ function BuilderCanvasInner() {
       historyManager.saveState(workflow)
     }
   }, [workflow, workflowId])
+
+  const mutateWorkflowAndHistory = useCallback((id: string) => {
+    mutate(`/api/workflows/${id}`)
+    mutate(`/api/workflows/${id}/history/status`)
+  }, [])
 
   const [menuType, setMenuType] = useState<"node" | "pane" | null>(null)
   const [menuPosition, setMenuPosition] = useState<{ x: number; y: number } | null>(null)
@@ -176,9 +181,9 @@ function BuilderCanvasInner() {
       if (!workflowId) return
       saveToHistory()
       await fetch(`/api/workflows/${workflowId}/nodes/${nodeId}`, { method: "DELETE" })
-      mutate(`/api/workflows/${workflowId}`)
+      mutateWorkflowAndHistory(workflowId)
     },
-    [workflowId, saveToHistory],
+    [workflowId, saveToHistory, mutateWorkflowAndHistory],
   )
 
   const handleAssignToFrame = useCallback(
@@ -190,10 +195,10 @@ function BuilderCanvasInner() {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ parentId: frameId }),
       })
-      mutate(`/api/workflows/${workflowId}`)
+      mutateWorkflowAndHistory(workflowId)
       toast({ title: "Node added to frame" })
     },
-    [workflowId, saveToHistory, toast],
+    [workflowId, saveToHistory, mutateWorkflowAndHistory, toast],
   )
 
   const handleRemoveFromFrame = useCallback(
@@ -205,10 +210,10 @@ function BuilderCanvasInner() {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ parentId: null }),
       })
-      mutate(`/api/workflows/${workflowId}`)
+      mutateWorkflowAndHistory(workflowId)
       toast({ title: "Node removed from frame" })
     },
-    [workflowId, saveToHistory, toast],
+    [workflowId, saveToHistory, mutateWorkflowAndHistory, toast],
   )
 
   const handleFrameLabelChange = useCallback(
@@ -222,9 +227,9 @@ function BuilderCanvasInner() {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ data: { ...node.data, label: newLabel } }),
       })
-      mutate(`/api/workflows/${workflowId}`)
+      mutateWorkflowAndHistory(workflowId)
     },
-    [workflowId, workflow?.nodes, saveToHistory],
+    [workflowId, workflow?.nodes, saveToHistory, mutateWorkflowAndHistory],
   )
 
   const initialNodes = workflow
@@ -309,10 +314,10 @@ function BuilderCanvasInner() {
           method: "PATCH",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({ connections: reactFlowEdgesToConnections(updatedEdges) }),
-        }).then(() => mutate(`/api/workflows/${workflowId}`))
+        }).then(() => mutateWorkflowAndHistory(workflowId!))
       }
     },
-    [onEdgesChange, edges, workflowId, saveToHistory],
+    [onEdgesChange, edges, workflowId, saveToHistory, mutateWorkflowAndHistory],
   )
 
   const handleConnect = useCallback(
@@ -329,9 +334,9 @@ function BuilderCanvasInner() {
           targetHandle: connection.targetHandle ?? undefined,
         }),
       })
-      mutate(`/api/workflows/${workflowId}`)
+      mutateWorkflowAndHistory(workflowId)
     },
-    [workflowId, saveToHistory],
+    [workflowId, saveToHistory, mutateWorkflowAndHistory],
   )
 
   const handleNodeDragStop = useCallback(
@@ -347,9 +352,9 @@ function BuilderCanvasInner() {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ position: snappedPosition }),
       })
-      mutate(`/api/workflows/${workflowId}`)
+      mutateWorkflowAndHistory(workflowId)
     },
-    [workflowId, saveToHistory],
+    [workflowId, saveToHistory, mutateWorkflowAndHistory],
   )
 
   const handleAddNode = useCallback(
@@ -409,9 +414,9 @@ function BuilderCanvasInner() {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(nodePayload),
       })
-      mutate(`/api/workflows/${workflowId}`)
+      mutateWorkflowAndHistory(workflowId)
     },
-    [workflowId, workflow?.nodes, saveToHistory, screenToFlowPosition],
+    [workflowId, workflow?.nodes, saveToHistory, mutateWorkflowAndHistory, screenToFlowPosition],
   )
 
   const handleAddFrame = useCallback(() => {
@@ -424,16 +429,14 @@ function BuilderCanvasInner() {
   const handleUndo = useCallback(async () => {
     if (!workflowId) return
     await fetch(`/api/workflows/${workflowId}/undo`, { method: "POST" })
-    mutate(`/api/workflows/${workflowId}`)
-    mutate(`/api/workflows/${workflowId}/history/status`)
-  }, [workflowId])
+    mutateWorkflowAndHistory(workflowId)
+  }, [workflowId, mutateWorkflowAndHistory])
 
   const handleRedo = useCallback(async () => {
     if (!workflowId) return
     await fetch(`/api/workflows/${workflowId}/redo`, { method: "POST" })
-    mutate(`/api/workflows/${workflowId}`)
-    mutate(`/api/workflows/${workflowId}/history/status`)
-  }, [workflowId])
+    mutateWorkflowAndHistory(workflowId)
+  }, [workflowId, mutateWorkflowAndHistory])
 
   const handleCopy = useCallback(async () => {
     if (!selectedNodeId || !workflowId) return
@@ -464,12 +467,12 @@ function BuilderCanvasInner() {
     })
     if (response.ok) {
       const result = await response.json()
-      mutate(`/api/workflows/${workflowId}`)
+      mutateWorkflowAndHistory(workflowId)
       toast({ title: `Pasted ${result.nodeIds?.length ?? 0} node(s)` })
     } else {
       toast({ title: "Nothing to paste", variant: "destructive" })
     }
-  }, [workflowId, saveToHistory, toast])
+  }, [workflowId, saveToHistory, mutateWorkflowAndHistory, toast])
 
   const handleDuplicate = useCallback(async () => {
     if (!selectedNodeId || !workflowId) return
@@ -494,10 +497,10 @@ function BuilderCanvasInner() {
       }),
     })
     if (pasteRes.ok) {
-      mutate(`/api/workflows/${workflowId}`)
+      mutateWorkflowAndHistory(workflowId)
       toast({ title: "Node duplicated" })
     }
-  }, [selectedNodeId, workflowId, saveToHistory, toast])
+  }, [selectedNodeId, workflowId, saveToHistory, mutateWorkflowAndHistory, toast])
 
   const handleSelectAll = useCallback(() => {
     if (workflow?.nodes.length) {
@@ -515,7 +518,7 @@ function BuilderCanvasInner() {
     setIsLayoutTransitioning(true)
     const response = await fetch(`/api/workflows/${workflowId}/auto-layout`, { method: "POST" })
     if (response.ok) {
-      mutate(`/api/workflows/${workflowId}`)
+      mutateWorkflowAndHistory(workflowId)
       toast({ title: "Layout applied successfully" })
       layoutTransitionTimeoutRef.current = setTimeout(() => {
         layoutTransitionTimeoutRef.current = null
@@ -525,7 +528,7 @@ function BuilderCanvasInner() {
       setIsLayoutTransitioning(false)
       toast({ title: "Failed to apply layout", variant: "destructive" })
     }
-  }, [workflowId, saveToHistory, toast])
+  }, [workflowId, saveToHistory, mutateWorkflowAndHistory, toast])
 
   useEffect(() => {
     return () => {
@@ -540,8 +543,8 @@ function BuilderCanvasInner() {
     if (!selectedNodeId || !workflowId) return
     saveToHistory()
     await fetch(`/api/workflows/${workflowId}/nodes/${selectedNodeId}`, { method: "DELETE" })
-    mutate(`/api/workflows/${workflowId}`)
-  }, [selectedNodeId, workflowId, saveToHistory])
+    mutateWorkflowAndHistory(workflowId)
+  }, [selectedNodeId, workflowId, saveToHistory, mutateWorkflowAndHistory])
 
   const handleDuplicateById = useCallback(
     async (nodeId: string) => {
@@ -563,11 +566,11 @@ function BuilderCanvasInner() {
         }),
       })
       if (pasteRes.ok) {
-        mutate(`/api/workflows/${workflowId}`)
+        mutateWorkflowAndHistory(workflowId)
         toast({ title: "Node duplicated" })
       }
     },
-    [workflowId, saveToHistory, toast],
+    [workflowId, saveToHistory, mutateWorkflowAndHistory, toast],
   )
 
   const handleCopyById = useCallback(
@@ -713,7 +716,7 @@ function BuilderCanvasInner() {
         <LogIn className="text-muted-foreground h-12 w-12" />
         <p className="text-muted-foreground">Sign in to access the workflow builder</p>
         <Button asChild>
-          <a href="/login">Sign in</a>
+          <Link href="/login">Sign in</Link>
         </Button>
       </div>
     )

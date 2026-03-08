@@ -44,6 +44,23 @@ describe("RegistryAgentDetail", () => {
     expect(screen.getByText("A test agent for unit testing")).toBeInTheDocument()
   })
 
+  it("renders without crashing when agent has no capabilities or skills", () => {
+    const agentWithoutCapabilities: RegistryAgent = {
+      id: "urn:asap:agent:test:minimal",
+      name: "Minimal Agent",
+      version: "1.0.0",
+      description: "Agent without capabilities",
+      capabilities: undefined,
+      skills: undefined,
+    }
+    render(
+      <RegistryAgentDetail agent={agentWithoutCapabilities} open={true} onOpenChange={vi.fn()} />,
+    )
+
+    expect(screen.getByText("Minimal Agent")).toBeInTheDocument()
+    expect(screen.queryByText("Capabilities")).not.toBeInTheDocument()
+  })
+
   it("renders capabilities section when agent has skills", () => {
     render(<RegistryAgentDetail agent={mockAgent} open={true} onOpenChange={vi.fn()} />)
 

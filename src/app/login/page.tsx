@@ -1,9 +1,9 @@
-import { LoginForm } from "@/components/auth/login-form"
+import { LoginFormWithParams } from "@/components/auth/login-form-with-params"
 
 export default function LoginPage() {
   return (
     <div className="bg-background flex min-h-screen items-center justify-center p-4">
-      <LoginForm />
+      <LoginFormWithParams />
     </div>
   )
 }

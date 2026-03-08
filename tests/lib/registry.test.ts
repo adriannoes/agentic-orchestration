@@ -117,6 +117,16 @@ describe("fetchRegistryAgents", () => {
     expect(result.error).toBeDefined()
   })
 
+  it("returns empty agents with error when revoked list JSON is malformed", async () => {
+    const mockFetch = createFetchMock({ agents: [mockAgent1] }, { revoked: "not an array" })
+    vi.stubGlobal("fetch", mockFetch)
+
+    const result = await fetchRegistryAgents()
+
+    expect(result.agents).toEqual([])
+    expect(result.error).toBe("Security restriction: Unable to verify revocation list.")
+  })
+
   it("returns empty agents with error when revoked list fetch fails (fail closed)", async () => {
     let callCount = 0
     vi.stubGlobal(

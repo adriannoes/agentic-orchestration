@@ -7,6 +7,11 @@ export default defineConfig({
     include: ["**/*.test.ts", "**/*.test.tsx"],
     globals: true,
     setupFiles: ["src/test/setup.ts"],
+    coverage: {
+      provider: "v8",
+      include: ["src/**/*.ts", "src/**/*.tsx"],
+      exclude: ["**/*.test.*", "**/*.d.ts"],
+    },
   },
   resolve: {
     alias: {

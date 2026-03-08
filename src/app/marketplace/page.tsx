@@ -1,5 +1,6 @@
 import { fetchRegistryAgents, getRegistryCategories } from "@/lib/registry"
 import { RegistryContent } from "@/components/registry/registry-content"
+import Link from "next/link"
 
 export default async function MarketplacePage() {
   const { agents, error } = await fetchRegistryAgents()
@@ -18,9 +19,9 @@ export default async function MarketplacePage() {
         {error ? (
           <div className="flex flex-col items-center justify-center py-16 text-center">
             <p className="text-muted-foreground mb-4">{error}</p>
-            <a href="/marketplace" className="text-primary text-sm hover:underline">
+            <Link href="/marketplace" className="text-primary text-sm hover:underline">
               Try again
-            </a>
+            </Link>
           </div>
         ) : agents.length === 0 ? (
           <div className="flex flex-col items-center justify-center py-16 text-center">
