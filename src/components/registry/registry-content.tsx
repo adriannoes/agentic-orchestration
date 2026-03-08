@@ -1,6 +1,6 @@
 "use client"
 
-import { useState, useMemo } from "react"
+import { useState, useMemo, useDeferredValue } from "react"
 import type { RegistryAgent } from "@/types/registry"
 import { Input } from "@/components/ui/input"
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs"
@@ -15,6 +15,7 @@ interface RegistryContentProps {
 
 export function RegistryContent({ agents, categories }: RegistryContentProps) {
   const [searchQuery, setSearchQuery] = useState("")
+  const deferredSearch = useDeferredValue(searchQuery)
   const [selectedCategory, setSelectedCategory] = useState("all")
   const [selectedAgent, setSelectedAgent] = useState<RegistryAgent | null>(null)
   const [detailOpen, setDetailOpen] = useState(false)
@@ -24,8 +25,8 @@ export function RegistryContent({ agents, categories }: RegistryContentProps) {
       selectedCategory === "all"
         ? agents
         : agents.filter((agent) => agent.category === selectedCategory)
-    if (!searchQuery.trim()) return byCategory
-    const q = searchQuery.toLowerCase()
+    if (!deferredSearch.trim()) return byCategory
+    const q = deferredSearch.toLowerCase()
     return byCategory.filter(
       (agent) =>
         agent.name.toLowerCase().includes(q) ||
@@ -33,7 +34,7 @@ export function RegistryContent({ agents, categories }: RegistryContentProps) {
         agent.id.toLowerCase().includes(q) ||
         agent.tags?.some((tag) => tag.toLowerCase().includes(q)),
     )
-  }, [agents, searchQuery, selectedCategory])
+  }, [agents, deferredSearch, selectedCategory])
 
   function handleViewDetails(agent: RegistryAgent) {
     setSelectedAgent(agent)
@@ -43,7 +44,7 @@ export function RegistryContent({ agents, categories }: RegistryContentProps) {
   return (
     <div className="space-y-6">
       <div className="relative">
-        <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+        <Search className="text-muted-foreground absolute top-1/2 left-3 h-4 w-4 -translate-y-1/2" />
         <Input
           placeholder="Search agents by name, description, or tags..."
           value={searchQuery}
@@ -63,36 +64,28 @@ export function RegistryContent({ agents, categories }: RegistryContentProps) {
         </TabsList>
       </Tabs>
 
-      <p className="text-sm text-muted-foreground">
+      <p className="text-muted-foreground text-sm">
         Showing {filteredAgents.length} agent{filteredAgents.length !== 1 ? "s" : ""}
       </p>
 
       {filteredAgents.length > 0 ? (
         <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3">
           {filteredAgents.map((agent) => (
-            <RegistryAgentCard
-              key={agent.id}
-              agent={agent}
-              onViewDetails={handleViewDetails}
-            />
+            <RegistryAgentCard key={agent.id} agent={agent} onViewDetails={handleViewDetails} />
           ))}
         </div>
       ) : (
         <div className="flex flex-col items-center justify-center py-12 text-center">
           <p className="text-muted-foreground">No agents found</p>
           {searchQuery && (
-            <p className="mt-1 text-sm text-muted-foreground">
+            <p className="text-muted-foreground mt-1 text-sm">
               Try adjusting your search or filters
             </p>
           )}
         </div>
       )}
 
-      <RegistryAgentDetail
-        agent={selectedAgent}
-        open={detailOpen}
-        onOpenChange={setDetailOpen}
-      />
+      <RegistryAgentDetail agent={selectedAgent} open={detailOpen} onOpenChange={setDetailOpen} />
     </div>
   )
 }

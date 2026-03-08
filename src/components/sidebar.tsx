@@ -21,9 +21,7 @@ import {
 import { useState } from "react"
 import { Button } from "@/components/ui/button"
 import { UserMenu } from "@/components/user-menu"
-
-const ASAP_PROTOCOL_URL =
-  process.env.NEXT_PUBLIC_ASAP_PROTOCOL_URL ?? "https://asap-protocol.vercel.app"
+import { env } from "@/lib/env"
 
 const navItems = [
   { href: "/", label: "Agents", icon: Bot },
@@ -95,7 +93,7 @@ export function Sidebar() {
 
       <div className="border-border/80 border-t p-2">
         <a
-          href={ASAP_PROTOCOL_URL}
+          href={env.NEXT_PUBLIC_ASAP_PROTOCOL_URL}
           target="_blank"
           rel="noopener noreferrer"
           aria-label="Open ASAP Protocol"
@@ -119,10 +117,10 @@ export function Sidebar() {
           !collapsed && (
             <div className="text-muted-foreground text-xs">
               <a
-                href={ASAP_PROTOCOL_URL}
+                href={env.NEXT_PUBLIC_ASAP_PROTOCOL_URL}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="transition-colors hover:text-foreground"
+                className="hover:text-foreground transition-colors"
               >
                 Powered by ASAP protocol.
               </a>

@@ -11,6 +11,7 @@ import {
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import { ExternalLink, Globe, Lock, Zap } from "lucide-react"
+import { env } from "@/lib/env"
 
 interface RegistryAgentDetailProps {
   agent: RegistryAgent | null
@@ -21,8 +22,7 @@ interface RegistryAgentDetailProps {
 export function RegistryAgentDetail({ agent, open, onOpenChange }: RegistryAgentDetailProps) {
   if (!agent) return null
 
-  const asapProtocolUrl =
-    process.env.NEXT_PUBLIC_ASAP_PROTOCOL_URL ?? "https://asap-protocol.vercel.app"
+  const asapProtocolUrl = env.NEXT_PUBLIC_ASAP_PROTOCOL_URL
   const hasAuth = agent.auth?.schemes && agent.auth.schemes.length > 0
   const hasSkills = agent.capabilities?.skills && agent.capabilities.skills.length > 0
 
@@ -32,50 +32,66 @@ export function RegistryAgentDetail({ agent, open, onOpenChange }: RegistryAgent
         <DialogHeader>
           <div className="flex items-center gap-3">
             <DialogTitle className="text-xl">{agent.name}</DialogTitle>
-            <Badge variant="secondary">v{agent.version}</Badge>
+            <Badge variant="secondary">v{agent.version || agent.asap_version || "1.0"}</Badge>
             {agent.category && <Badge variant="outline">{agent.category}</Badge>}
           </div>
           <DialogDescription>{agent.description}</DialogDescription>
         </DialogHeader>
 
         <div className="space-y-6 pt-4">
-          {hasSkills && (
+          {(hasSkills || (agent.skills && agent.skills.length > 0)) && (
             <section>
               <h3 className="mb-2 flex items-center gap-2 text-sm font-semibold">
                 <Zap className="h-4 w-4" /> Capabilities
               </h3>
               <ul className="space-y-1.5">
                 {(agent.capabilities?.skills ?? []).map((skill) => (
-                  <li key={skill.id} className="text-sm text-muted-foreground">
-                    <span className="font-mono text-xs text-foreground">{skill.id}</span>
+                  <li key={skill.id} className="text-muted-foreground text-sm">
+                    <span className="text-foreground font-mono text-xs">{skill.id}</span>
                     {" — "}
                     {skill.description}
+                  </li>
+                ))}
+                {(agent.skills ?? []).map((skill) => (
+                  <li key={skill} className="text-muted-foreground text-sm">
+                    <span className="text-foreground font-mono text-xs">{skill}</span>
                   </li>
                 ))}
               </ul>
             </section>
           )}
 
-          {agent.endpoints && (agent.endpoints.asap || agent.endpoints.ws) && (
-            <section>
-              <h3 className="mb-2 flex items-center gap-2 text-sm font-semibold">
-                <Globe className="h-4 w-4" /> Endpoints
-              </h3>
-              <div className="space-y-1 text-sm text-muted-foreground">
-                {agent.endpoints.asap && (
-                  <p>
-                    <span className="font-medium text-foreground">HTTP:</span> {agent.endpoints.asap}
-                  </p>
-                )}
-                {agent.endpoints.ws && (
-                  <p>
-                    <span className="font-medium text-foreground">WebSocket:</span>{" "}
-                    {agent.endpoints.ws}
-                  </p>
-                )}
-              </div>
-            </section>
-          )}
+          {agent.endpoints &&
+            (agent.endpoints.asap ||
+              agent.endpoints.ws ||
+              agent.endpoints.http ||
+              agent.endpoints.manifest) && (
+              <section>
+                <h3 className="mb-2 flex items-center gap-2 text-sm font-semibold">
+                  <Globe className="h-4 w-4" /> Endpoints
+                </h3>
+                <div className="text-muted-foreground space-y-1 text-sm">
+                  {(agent.endpoints.asap || agent.endpoints.http) && (
+                    <p>
+                      <span className="text-foreground font-medium">HTTP:</span>{" "}
+                      {agent.endpoints.asap || agent.endpoints.http}
+                    </p>
+                  )}
+                  {agent.endpoints.ws && (
+                    <p>
+                      <span className="text-foreground font-medium">WebSocket:</span>{" "}
+                      {agent.endpoints.ws}
+                    </p>
+                  )}
+                  {agent.endpoints.manifest && (
+                    <p>
+                      <span className="text-foreground font-medium">Manifest:</span>{" "}
+                      {agent.endpoints.manifest}
+                    </p>
+                  )}
+                </div>
+              </section>
+            )}
 
           {hasAuth && (
             <section>
@@ -95,7 +111,7 @@ export function RegistryAgentDetail({ agent, open, onOpenChange }: RegistryAgent
           {agent.sla?.max_response_time_seconds && (
             <section>
               <h3 className="mb-2 text-sm font-semibold">SLA</h3>
-              <p className="text-sm text-muted-foreground">
+              <p className="text-muted-foreground text-sm">
                 Max response time: {"< "}
                 {agent.sla.max_response_time_seconds}s
               </p>
@@ -115,7 +131,7 @@ export function RegistryAgentDetail({ agent, open, onOpenChange }: RegistryAgent
             </section>
           )}
 
-          <div className="flex flex-wrap gap-2 border-t border-border pt-2">
+          <div className="border-border flex flex-wrap gap-2 border-t pt-2">
             {agent.repository_url && (
               <Button variant="outline" size="sm" asChild>
                 <a href={agent.repository_url} target="_blank" rel="noopener noreferrer">
@@ -142,7 +158,7 @@ export function RegistryAgentDetail({ agent, open, onOpenChange }: RegistryAgent
           </div>
 
           {agent.built_with && (
-            <p className="text-xs text-muted-foreground">
+            <p className="text-muted-foreground text-xs">
               Built with: <span className="font-medium">{agent.built_with}</span>
             </p>
           )}

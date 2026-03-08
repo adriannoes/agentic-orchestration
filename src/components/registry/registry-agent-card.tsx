@@ -22,15 +22,15 @@ export function RegistryAgentCard({ agent, onViewDetails }: RegistryAgentCardPro
         <div className="flex items-center justify-between">
           <CardTitle className="text-base font-semibold">{agent.name}</CardTitle>
           <div className="flex items-center gap-2">
-            {hasAuth && <Lock className="h-3.5 w-3.5 text-muted-foreground" />}
+            {hasAuth && <Lock className="text-muted-foreground h-3.5 w-3.5" />}
             <Badge variant="secondary" className="text-xs">
-              v{agent.version}
+              v{agent.version || agent.asap_version || "1.0"}
             </Badge>
           </div>
         </div>
       </CardHeader>
       <CardContent className="flex-1 space-y-3">
-        <p className="text-sm text-muted-foreground line-clamp-2">{agent.description}</p>
+        <p className="text-muted-foreground line-clamp-2 text-sm">{agent.description}</p>
         <div className="flex flex-wrap gap-1.5">
           {agent.category && (
             <Badge variant="outline" className="text-xs">
@@ -55,6 +55,7 @@ export function RegistryAgentCard({ agent, onViewDetails }: RegistryAgentCardPro
           size="sm"
           className="w-full"
           onClick={() => onViewDetails(agent)}
+          aria-label={`View details for ${agent.name}`}
         >
           View Details
         </Button>
