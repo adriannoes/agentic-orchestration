@@ -26,6 +26,14 @@ const tabFadeIn = {
   transition: { duration: 0.3, ease: "easeOut" as const },
 }
 
+const ACCENT_COLORS = [
+  { hex: "#3b82f6", hsl: "217.2 91.2% 59.8%" }, // Blue
+  { hex: "#8b5cf6", hsl: "258.3 89.5% 66.3%" }, // Violet
+  { hex: "#10b981", hsl: "159.6 83.5% 39.4%" }, // Emerald
+  { hex: "#f59e0b", hsl: "37.7 92.1% 50.2%" }, // Amber
+  { hex: "#ef4444", hsl: "0 84.2% 60.2%" }, // Red
+]
+
 export function SettingsPanel() {
   const { theme, setTheme } = useTheme()
   const [mounted, setMounted] = useState(false)
@@ -41,6 +49,15 @@ export function SettingsPanel() {
 
   const handleSave = () => {
     toast.success("Settings saved successfully")
+  }
+
+  const handleColorChange = (colorObj: { hex: string; hsl: string }) => {
+    try {
+      localStorage.setItem("app-accent-color", colorObj.hsl)
+      document.documentElement.style.setProperty("--primary", colorObj.hsl)
+    } catch (e) {
+      console.error(e)
+    }
   }
 
   return (
@@ -214,15 +231,15 @@ export function SettingsPanel() {
                 </div>
                 <div className="space-y-2">
                   <Label>Accent Color</Label>
-                  {/* TODO: wire accent color to theme */}
                   <div className="flex gap-2">
-                    {["#3b82f6", "#8b5cf6", "#10b981", "#f59e0b", "#ef4444"].map((color) => (
+                    {ACCENT_COLORS.map((color) => (
                       <button
-                        key={color}
+                        key={color.hex}
                         type="button"
+                        onClick={() => handleColorChange(color)}
                         className="hover:border-foreground h-8 w-8 rounded-full border-2 border-transparent transition-colors"
-                        style={{ backgroundColor: color }}
-                        aria-label={`Accent color ${color}`}
+                        style={{ backgroundColor: color.hex }}
+                        aria-label={`Accent color ${color.hex}`}
                       />
                     ))}
                   </div>
