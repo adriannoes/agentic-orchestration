@@ -7,10 +7,9 @@ describe("parseEnv", () => {
     expect(result.NEXT_PUBLIC_ASAP_PROTOCOL_URL).toBe("https://asap-protocol.vercel.app")
   })
 
-  it("throws when NEXT_PUBLIC_ASAP_PROTOCOL_URL is empty string (invalid URL)", () => {
-    expect(() => parseEnv({ NEXT_PUBLIC_ASAP_PROTOCOL_URL: "" })).toThrow(
-      /Invalid environment variables/,
-    )
+  it("returns default URL when NEXT_PUBLIC_ASAP_PROTOCOL_URL is empty string", () => {
+    const result = parseEnv({ NEXT_PUBLIC_ASAP_PROTOCOL_URL: "" })
+    expect(result.NEXT_PUBLIC_ASAP_PROTOCOL_URL).toBe("https://asap-protocol.vercel.app")
   })
 
   it("accepts valid URL when set", () => {
