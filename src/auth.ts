@@ -1,5 +1,6 @@
 import NextAuth from "next-auth"
 import GitHub from "next-auth/providers/github"
+import { resolveRedirectUrl } from "@/lib/auth-redirect"
 
 export const { handlers, auth, signIn, signOut } = NextAuth({
   providers: [
@@ -11,6 +12,9 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
   ],
   trustHost: true,
   callbacks: {
+    redirect({ url, baseUrl }) {
+      return resolveRedirectUrl(url, baseUrl, process.env.NEXT_PUBLIC_ASAP_PROTOCOL_URL)
+    },
     jwt({ token, user, profile }) {
       if (user) {
         token.id = user.id
