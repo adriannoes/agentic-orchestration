@@ -10,7 +10,7 @@ if (process.env.NODE_ENV !== "production") globalForWorkflows.memoryWorkflows = 
 
 export async function getWorkflows(workspaceId: string): Promise<Workflow[]> {
   const supabase = await getSupabaseServerClient()
-  if (!supabase) return Array.from(memoryWorkflows.values())
+  if (!supabase || workspaceId === "local-workspace") return Array.from(memoryWorkflows.values())
   const { data, error } = await supabase
     .from("workflows")
     .select("*")
@@ -35,7 +35,7 @@ export async function createWorkflow(
   workflow: Omit<Workflow, "id" | "version" | "createdAt" | "updatedAt">,
 ): Promise<Workflow> {
   const supabase = await getSupabaseServerClient()
-  if (!supabase) {
+  if (!supabase || workspaceId === "local-workspace") {
     const newWorkflow: Workflow = {
       id: crypto.randomUUID(),
       workspaceId,

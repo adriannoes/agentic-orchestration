@@ -16,7 +16,9 @@ export async function getCurrentWorkspace() {
     .limit(1)
     .single()
 
-  if (error) return null
+  if (error || !data?.workspaces) {
+    return { id: "local-workspace", name: "Local Workspace" } as any
+  }
   return data.workspaces as any
 }
 
@@ -33,7 +35,9 @@ export async function getUserWorkspaces() {
     .select("workspace_id, role, workspaces(*)")
     .eq("user_id", user.id)
 
-  if (error) return []
+  if (error || !data?.length) {
+    return [{ id: "local-workspace", name: "Local Workspace", role: "admin" }] as any
+  }
   return data.map((item) => ({ ...item.workspaces, role: item.role }))
 }
 

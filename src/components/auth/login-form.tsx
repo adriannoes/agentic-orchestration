@@ -31,13 +31,13 @@ export function LoginForm({ fromAsap }: LoginFormProps) {
     try {
       const result = await signIn("github", { callbackUrl: "/", redirect: false })
       if (result && !result.ok) {
-        toast.error("Failed to sign in with GitHub")
+        toast.error("Failed to sign in: " + result.error)
         setIsLoading(false)
       } else if (result?.url) {
         window.location.href = result.url
       }
-    } catch {
-      toast.error("Failed to sign in with GitHub")
+    } catch (err: any) {
+      toast.error("Failed to sign in catch: " + (err?.message || "Unknown error"))
       setIsLoading(false)
     }
   }

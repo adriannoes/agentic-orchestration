@@ -10,7 +10,9 @@ test.describe("ASAP Agent Registry", () => {
   })
 
   test("shows registry description", async ({ page }) => {
-    await expect(page.getByText(/Discover agents registered on the ASAP Protocol/i)).toBeVisible()
+    await expect(
+      page.getByText(/Discover agents registered on the ASAP Protocol/i).first(),
+    ).toBeVisible()
   })
 
   test("has search input", async ({ page }) => {
