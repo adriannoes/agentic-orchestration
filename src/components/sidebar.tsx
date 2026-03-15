@@ -78,9 +78,9 @@ export function Sidebar() {
               key={item.href}
               href={item.href}
               className={cn(
-                "flex items-center gap-3 rounded-lg px-3 py-2 transition-colors",
+                "flex items-center gap-3 rounded-lg px-3 py-2 transition-all duration-200",
                 "hover:bg-accent/80 hover:text-accent-foreground",
-                isActive && "bg-accent text-foreground border-border/80 border",
+                isActive && "border-primary bg-accent text-foreground border-l-2",
                 collapsed && "justify-center px-2",
               )}
             >
@@ -98,7 +98,7 @@ export function Sidebar() {
           rel="noopener noreferrer"
           aria-label="Open ASAP Protocol"
           className={cn(
-            "flex items-center gap-3 rounded-lg px-3 py-2 transition-colors",
+            "flex items-center gap-3 rounded-lg px-3 py-2 transition-all duration-200",
             "text-muted-foreground hover:bg-accent/80 hover:text-foreground",
             collapsed && "justify-center px-2",
           )}
@@ -120,7 +120,7 @@ export function Sidebar() {
                 href={env.NEXT_PUBLIC_ASAP_PROTOCOL_URL}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="hover:text-foreground transition-colors"
+                className="hover:text-foreground transition-all duration-200"
               >
                 Powered by ASAP protocol.
               </a>
