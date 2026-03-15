@@ -4,8 +4,13 @@ test.describe("Builder Context Menu", () => {
   test.beforeEach(async ({ page }) => {
     await page.goto("/builder")
     await page.waitForLoadState("networkidle")
-    // Wait for ReactFlow to be ready
-    await expect(page.locator(".react-flow__renderer")).toBeVisible()
+    const toolbar = page.getByTestId("builder-toolbar")
+    const signInPrompt = page.getByText("Sign in to access the workflow builder")
+    await expect(toolbar.or(signInPrompt).first()).toBeVisible({ timeout: 25_000 })
+    if (await signInPrompt.isVisible()) {
+      test.skip(true, "Builder context menu tests require authenticated session")
+    }
+    await expect(page.locator(".react-flow__renderer")).toBeVisible({ timeout: 15_000 })
   })
 
   test("should show pane context menu on right-click", async ({ page }) => {

@@ -21,7 +21,7 @@ export default defineConfig({
   },
   projects: [{ name: "chromium", use: { ...devices["Desktop Chrome"] } }],
   webServer: {
-    command: `PORT=${E2E_PORT} AUTH_URL=${baseURL} NEXT_PUBLIC_APP_URL=${baseURL} npm start`,
+    command: `PORT=${E2E_PORT} AUTH_URL=${baseURL} NEXT_PUBLIC_APP_URL=${baseURL} NODE_ENV=test PLAYWRIGHT_E2E=1 npm start`,
     url: baseURL,
     reuseExistingServer: process.env.CI ? false : !!process.env.E2E_REUSE_SERVER,
     timeout: 60_000,
