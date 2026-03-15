@@ -1,9 +1,13 @@
 "use client"
 
 import { useState, useEffect } from "react"
-import { Plus, Bot, MoreHorizontal, Pencil, Trash2 } from "lucide-react"
+import { Plus, Bot, MoreHorizontal, Pencil, Trash2, History } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
+import { Skeleton } from "@/components/ui/skeleton"
+import { EmptyState } from "@/components/ui/empty-state"
+import { AnimatedText } from "@/components/ui/animated-text"
+import { BentoGrid, BentoCard } from "@/components/ui/bento-grid"
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -15,6 +19,8 @@ import type { Agent } from "@/lib/types"
 import { CreateAgentDialog } from "@/components/create-agent-dialog"
 import { EditAgentDialog } from "@/components/edit-agent-dialog"
 import { formatDistanceToNow } from "date-fns"
+
+const FLUID_BADGE = "bg-black/5 dark:bg-white/10 backdrop-blur-sm text-xs"
 
 export function AgentsDashboard() {
   const [agents, setAgents] = useState<Agent[]>([])
@@ -47,19 +53,11 @@ export function AgentsDashboard() {
     }
   }
 
-  if (loading) {
-    return (
-      <div className="flex h-full items-center justify-center">
-        <div className="text-muted-foreground animate-pulse">Loading agents...</div>
-      </div>
-    )
-  }
-
   return (
     <div className="p-8">
       <div className="mb-8 flex items-center justify-between">
         <div>
-          <h1 className="text-3xl font-bold">Agents</h1>
+          <AnimatedText text="Agents" as="h1" className="text-3xl font-bold tracking-tight" />
           <p className="text-muted-foreground mt-1">Create and manage your AI agents</p>
         </div>
         <Button onClick={() => setCreateDialogOpen(true)}>
@@ -68,87 +66,113 @@ export function AgentsDashboard() {
         </Button>
       </div>
 
-      {agents.length === 0 ? (
-        <Card className="border-dashed">
-          <CardContent className="flex flex-col items-center justify-center py-12">
-            <Bot className="text-muted-foreground mb-4 h-12 w-12" />
-            <h3 className="mb-2 text-lg font-semibold">No agents yet</h3>
-            <p className="text-muted-foreground mb-4 text-center">
-              Create your first AI agent to get started
-            </p>
-            <Button onClick={() => setCreateDialogOpen(true)}>
-              <Plus className="mr-2 h-4 w-4" />
-              Create Agent
-            </Button>
-          </CardContent>
-        </Card>
-      ) : (
+      {loading ? (
         <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
-          {agents.map((agent) => (
-            <Card
-              key={agent.id}
-              className="group border-border/80 hover:border-primary/40 transition-colors"
-            >
-              <CardHeader className="pb-3">
-                <div className="flex items-start justify-between">
-                  <div className="flex items-center gap-3">
-                    <div className="flex h-10 w-10 items-center justify-center rounded-lg border border-indigo-500/20 bg-indigo-500/10">
-                      <Bot className="h-5 w-5 text-indigo-300" />
-                    </div>
-                    <div>
-                      <CardTitle className="text-lg">{agent.name}</CardTitle>
-                      <p className="text-muted-foreground mt-0.5 text-xs">{agent.model}</p>
-                    </div>
-                  </div>
-                  <DropdownMenu>
-                    <DropdownMenuTrigger asChild>
-                      <Button
-                        variant="ghost"
-                        size="icon"
-                        className="opacity-0 transition-opacity group-hover:opacity-100"
-                      >
-                        <MoreHorizontal className="h-4 w-4" />
-                      </Button>
-                    </DropdownMenuTrigger>
-                    <DropdownMenuContent align="end">
-                      <DropdownMenuItem onClick={() => setEditingAgent(agent)}>
-                        <Pencil className="mr-2 h-4 w-4" />
-                        Edit
-                      </DropdownMenuItem>
-                      <DropdownMenuItem
-                        onClick={() => handleDelete(agent.id)}
-                        className="text-destructive"
-                      >
-                        <Trash2 className="mr-2 h-4 w-4" />
-                        Delete
-                      </DropdownMenuItem>
-                    </DropdownMenuContent>
-                  </DropdownMenu>
-                </div>
-              </CardHeader>
-              <CardContent>
-                <CardDescription className="mb-4 line-clamp-2">{agent.description}</CardDescription>
-                <div className="mb-4 flex flex-wrap gap-1.5">
-                  {agent.tools.slice(0, 3).map((toolId) => (
-                    <Badge key={toolId} variant="secondary" className="text-xs">
-                      {toolId.replace("-", " ")}
-                    </Badge>
-                  ))}
-                  {agent.tools.length > 3 && (
-                    <Badge variant="secondary" className="text-xs">
-                      +{agent.tools.length - 3} more
-                    </Badge>
-                  )}
-                </div>
-                <div className="flex items-center justify-between">
-                  <p className="text-muted-foreground text-xs">
-                    Updated {formatDistanceToNow(new Date(agent.updatedAt), { addSuffix: true })}
-                  </p>
-                </div>
-              </CardContent>
-            </Card>
+          {Array.from({ length: 6 }).map((_, i) => (
+            <Skeleton key={i} className="h-[200px] w-full rounded-xl" />
           ))}
         </div>
+      ) : agents.length === 0 ? (
+        <EmptyState
+          icon={Bot}
+          title="No agents yet"
+          description="Create your first AI agent to get started"
+          actionLabel="Create Agent"
+          onAction={() => setCreateDialogOpen(true)}
+        />
+      ) : (
+        <>
+          <BentoGrid className="mb-8">
+            <BentoCard
+              icon={Bot}
+              title="Total Agents"
+              value={agents.length}
+              description="Configured agents in your workspace"
+              className="md:col-span-2"
+            />
+            <BentoCard
+              icon={History}
+              title="Latest Activity"
+              value={
+                agents.length > 0
+                  ? formatDistanceToNow(
+                      new Date(Math.max(...agents.map((a) => new Date(a.updatedAt).getTime()))),
+                      { addSuffix: true },
+                    )
+                  : "—"
+              }
+              description="Most recent agent update"
+            />
+          </BentoGrid>
+          <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+            {agents.map((agent) => (
+              <Card
+                key={agent.id}
+                className="group border-border/80 hover:border-primary/20 hover-lift transition-all duration-300"
+              >
+                <CardHeader className="pb-3">
+                  <div className="flex items-start justify-between">
+                    <div className="flex items-center gap-3">
+                      <div className="flex h-10 w-10 items-center justify-center rounded-lg border border-indigo-500/20 bg-indigo-500/10">
+                        <Bot className="h-5 w-5 text-indigo-300" />
+                      </div>
+                      <div>
+                        <CardTitle className="text-lg">{agent.name}</CardTitle>
+                        <p className="text-muted-foreground mt-0.5 text-xs">{agent.model}</p>
+                      </div>
+                    </div>
+                    <DropdownMenu>
+                      <DropdownMenuTrigger asChild>
+                        <Button
+                          variant="ghost"
+                          size="icon"
+                          className="opacity-0 transition-opacity group-hover:opacity-100"
+                        >
+                          <MoreHorizontal className="h-4 w-4" />
+                        </Button>
+                      </DropdownMenuTrigger>
+                      <DropdownMenuContent align="end">
+                        <DropdownMenuItem onClick={() => setEditingAgent(agent)}>
+                          <Pencil className="mr-2 h-4 w-4" />
+                          Edit
+                        </DropdownMenuItem>
+                        <DropdownMenuItem
+                          onClick={() => handleDelete(agent.id)}
+                          className="text-destructive"
+                        >
+                          <Trash2 className="mr-2 h-4 w-4" />
+                          Delete
+                        </DropdownMenuItem>
+                      </DropdownMenuContent>
+                    </DropdownMenu>
+                  </div>
+                </CardHeader>
+                <CardContent>
+                  <CardDescription className="mb-4 line-clamp-2">
+                    {agent.description}
+                  </CardDescription>
+                  <div className="mb-4 flex flex-wrap gap-1.5">
+                    {agent.tools.slice(0, 3).map((toolId) => (
+                      <Badge key={toolId} variant="secondary" className={FLUID_BADGE}>
+                        {toolId.replace("-", " ")}
+                      </Badge>
+                    ))}
+                    {agent.tools.length > 3 && (
+                      <Badge variant="secondary" className={FLUID_BADGE}>
+                        +{agent.tools.length - 3} more
+                      </Badge>
+                    )}
+                  </div>
+                  <div className="flex items-center justify-between">
+                    <p className="text-muted-foreground text-xs">
+                      Updated {formatDistanceToNow(new Date(agent.updatedAt), { addSuffix: true })}
+                    </p>
+                  </div>
+                </CardContent>
+              </Card>
+            ))}
+          </div>
+        </>
       )}
 
       <CreateAgentDialog
