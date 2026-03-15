@@ -1,6 +1,8 @@
 "use client"
 
 import type { RegistryAgent } from "@/types/registry"
+
+const FLUID_BADGE = "bg-black/5 dark:bg-white/10 backdrop-blur-sm text-xs"
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
@@ -17,7 +19,7 @@ export function RegistryAgentCard({ agent, onViewDetails }: RegistryAgentCardPro
   const extraTagCount = (agent.tags?.length ?? 0) - 3
 
   return (
-    <Card className="flex flex-col transition-colors hover:border-indigo-500/50">
+    <Card className="border-border/80 hover:border-primary/20 hover-lift flex flex-col transition-all duration-300 dark:border-white/10">
       <CardHeader className="pb-3">
         <div className="flex items-center justify-between">
           <CardTitle className="text-base font-semibold">{agent.name}</CardTitle>
@@ -25,7 +27,7 @@ export function RegistryAgentCard({ agent, onViewDetails }: RegistryAgentCardPro
             {hasAuth && (
               <Lock className="text-muted-foreground h-3.5 w-3.5" data-testid="lock-icon" />
             )}
-            <Badge variant="secondary" className="text-xs">
+            <Badge variant="secondary" className={FLUID_BADGE}>
               v{agent.version || agent.asap_version || "1.0"}
             </Badge>
           </div>
@@ -35,17 +37,17 @@ export function RegistryAgentCard({ agent, onViewDetails }: RegistryAgentCardPro
         <p className="text-muted-foreground line-clamp-2 text-sm">{agent.description}</p>
         <div className="flex flex-wrap gap-1.5">
           {agent.category && (
-            <Badge variant="outline" className="text-xs">
+            <Badge variant="outline" className={FLUID_BADGE}>
               {agent.category}
             </Badge>
           )}
           {visibleTags.map((tag) => (
-            <Badge key={tag} variant="secondary" className="text-xs">
+            <Badge key={tag} variant="secondary" className={FLUID_BADGE}>
               {tag}
             </Badge>
           ))}
           {extraTagCount > 0 && (
-            <Badge variant="secondary" className="text-xs">
+            <Badge variant="secondary" className={FLUID_BADGE}>
               +{extraTagCount}
             </Badge>
           )}
