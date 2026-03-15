@@ -165,7 +165,7 @@ export function NodeSidebar({ isOpen, onToggle, onAddNode }: NodeSidebarProps) {
   return (
     <div
       className={cn(
-        "border-border/80 bg-card/80 relative z-40 border-r transition-all duration-300",
+        "border-border/80 bg-card/90 relative z-40 border-r backdrop-blur-md transition-all duration-300",
         isOpen ? "w-72" : "w-0",
       )}
     >
@@ -191,7 +191,7 @@ export function NodeSidebar({ isOpen, onToggle, onAddNode }: NodeSidebarProps) {
             className="flex h-full flex-col"
           >
             <div className="border-border/80 border-b p-5">
-              <h2 className="mb-4 text-lg font-semibold tracking-tight">Add Nodes</h2>
+              <h2 className="mb-4 text-lg leading-snug font-semibold tracking-tight">Add Nodes</h2>
               <div className="group relative">
                 <Search className="text-muted-foreground group-focus-within:text-primary absolute top-1/2 left-3 h-4 w-4 -translate-y-1/2 transition-colors" />
                 <Input

@@ -8,6 +8,7 @@ import { ScrollArea } from "@/components/ui/scroll-area"
 import { cn } from "@/lib/utils"
 import type { WorkflowVersion } from "@/lib/workflow-types"
 import useSWR from "swr"
+import { EmptyState } from "@/components/ui/empty-state"
 
 const fetcher = (url: string) => fetch(url).then((res) => res.json())
 
@@ -63,10 +64,10 @@ export function VersionHistoryPanel({
   if (!isOpen) return null
 
   return (
-    <div className="bg-card border-border fixed inset-y-0 right-0 z-40 flex w-80 flex-col border-l shadow-xl">
+    <div className="bg-card/95 border-border fixed inset-y-0 right-0 z-40 flex w-80 flex-col border-l shadow-xl backdrop-blur-md">
       <div className="border-border flex h-14 items-center justify-between border-b px-4">
         <div className="flex items-center gap-2">
-          <History className="h-4 w-4" />
+          <History className="text-muted-foreground h-4 w-4" />
           <h2 className="font-semibold">Version History</h2>
         </div>
         <Button variant="ghost" size="icon" className="h-8 w-8" onClick={onToggle}>
@@ -179,9 +180,13 @@ export function VersionHistoryPanel({
           ))}
 
           {(!versions || versions.length === 0) && (
-            <div className="text-muted-foreground py-8 text-center text-sm">
-              No versions yet. Save your first version.
-            </div>
+            <EmptyState
+              icon={History}
+              title="No versions yet"
+              description="Save your first version to track changes."
+              actionLabel="Save Version"
+              onAction={handleCreateVersion}
+            />
           )}
         </div>
       </ScrollArea>

@@ -97,7 +97,7 @@ export function NodePropertiesPanel({
   return (
     <div
       className={cn(
-        "border-border/80 bg-card/80 relative z-40 border-l transition-all duration-300",
+        "border-border/80 bg-card/90 relative z-40 border-l backdrop-blur-md transition-all duration-300",
         isOpen ? "w-80" : "w-0",
       )}
     >
@@ -125,7 +125,7 @@ export function NodePropertiesPanel({
                     <Icon className="text-foreground h-5 w-5" />
                   </div>
                   <div>
-                    <h2 className="text-foreground font-semibold tracking-tight">
+                    <h2 className="text-foreground leading-snug font-semibold tracking-tight">
                       {node.data.label}
                     </h2>
                     <p className="text-muted-foreground/70 mt-0.5 text-[11px] font-medium tracking-widest uppercase">

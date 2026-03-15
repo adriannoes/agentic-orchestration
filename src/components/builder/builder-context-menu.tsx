@@ -29,7 +29,7 @@ import {
 } from "lucide-react"
 import type { WorkflowNode } from "@/lib/workflow-types"
 
-const MENU_CONTENT = "border border-border/80 bg-popover text-popover-foreground shadow-none"
+const MENU_CONTENT = "border border-white/10 bg-popover text-popover-foreground shadow-none"
 
 export interface NodeContextMenuProps {
   onDuplicate: () => void
