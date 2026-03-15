@@ -142,6 +142,22 @@
 }
 
 @layer utilities {
+  /* Touch-safe hover lift */
+  @media (hover: hover) {
+    .hover-lift:hover {
+      transform: translateY(-0.125rem);
+    }
+  }
+  .hover-lift {
+    will-change: transform;
+    transition:
+      transform 0.3s ease,
+      box-shadow 0.3s ease;
+  }
+  .hover-lift:active {
+    transform: scale(0.98);
+  }
+
   /* Smooth node dragging */
   .node-drag-active {
     transition: transform 0.1s cubic-bezier(0.4, 0, 0.2, 1);
