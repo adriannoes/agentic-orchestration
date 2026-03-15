@@ -4,8 +4,10 @@ import { useState, useEffect, useCallback, useMemo } from "react"
 import type { Connector, ConnectorCategory } from "@/lib/connector-types"
 import { Input } from "@/components/ui/input"
 import { Card } from "@/components/ui/card"
+import { Skeleton } from "@/components/ui/skeleton"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { Search, Plug, CheckCircle2, AlertCircle } from "lucide-react"
+import { EmptyState } from "@/components/ui/empty-state"
 import { ConnectorCard } from "./connector-card"
 import { AddConnectionDialog } from "./add-connection-dialog"
 import { useToast } from "@/hooks/use-toast"
@@ -24,6 +26,7 @@ const categories: { value: ConnectorCategory | "all"; label: string }[] = [
 
 export function ConnectorRegistry() {
   const [connectors, setConnectors] = useState<Connector[]>([])
+  const [loading, setLoading] = useState(true)
   const [searchQuery, setSearchQuery] = useState("")
   const [selectedCategory, setSelectedCategory] = useState<string>("all")
   const [selectedConnector, setSelectedConnector] = useState<Connector | null>(null)
@@ -32,12 +35,17 @@ export function ConnectorRegistry() {
   const searchParams = useSearchParams()
 
   const fetchConnectors = useCallback(async () => {
-    const res = await fetch("/api/connectors")
-    const data = await res.json()
-    setConnectors(data)
+    setLoading(true)
+    try {
+      const res = await fetch("/api/connectors")
+      if (!res.ok) throw new Error(`Failed to fetch: ${res.status}`)
+      const data = await res.json()
+      setConnectors(data)
+    } finally {
+      setLoading(false)
+    }
   }, [])
 
-  /* eslint-disable react-hooks/set-state-in-effect */
   useEffect(() => {
     fetchConnectors()
 
@@ -57,7 +65,6 @@ export function ConnectorRegistry() {
       })
     }
   }, [fetchConnectors, searchParams, toast])
-  /* eslint-enable react-hooks/set-state-in-effect */
 
   const filteredConnectors = useMemo(() => {
     let filtered = connectors
@@ -152,10 +159,18 @@ export function ConnectorRegistry() {
         </TabsList>
 
         <TabsContent value={selectedCategory} className="mt-6">
-          {filteredConnectors.length === 0 ? (
-            <Card className="p-12 text-center">
-              <p className="text-muted-foreground">No connectors found</p>
-            </Card>
+          {loading ? (
+            <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+              {Array.from({ length: 6 }).map((_, i) => (
+                <Skeleton key={i} className="h-[220px] w-full rounded-xl" />
+              ))}
+            </div>
+          ) : filteredConnectors.length === 0 ? (
+            <EmptyState
+              icon={Plug}
+              title="No connectors found"
+              description="Try adjusting your search or filters."
+            />
           ) : (
             <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
               {filteredConnectors.map((connector) => (

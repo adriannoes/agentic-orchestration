@@ -7,6 +7,7 @@ import { Input } from "@/components/ui/input"
 import { cn } from "@/lib/utils"
 import type { WorkflowExecution, ExecutionLog } from "@/lib/workflow-types"
 import { ScrollArea } from "@/components/ui/scroll-area"
+import { EmptyState } from "@/components/ui/empty-state"
 
 interface ExecutionMonitorProps {
   workflowId: string
@@ -100,7 +101,7 @@ export function ExecutionMonitor({
   if (!isOpen) return null
 
   return (
-    <div className="bg-card border-border fixed inset-y-0 right-0 z-50 flex w-96 flex-col border-l shadow-xl">
+    <div className="bg-card/95 border-border fixed inset-y-0 right-0 z-50 flex w-96 flex-col border-l shadow-xl backdrop-blur-md">
       {/* Header */}
       <div className="border-border flex h-14 items-center justify-between border-b px-4">
         <h2 className="font-semibold">Execution Monitor</h2>
@@ -190,8 +191,12 @@ export function ExecutionMonitor({
       )}
 
       {!execution && !isExecuting && (
-        <div className="text-muted-foreground flex flex-1 items-center justify-center text-sm">
-          Enter a message and click Run to start
+        <div className="flex flex-1 items-center justify-center p-6">
+          <EmptyState
+            icon={Play}
+            title="Ready to run"
+            description="Enter a message above and click Run to start the workflow."
+          />
         </div>
       )}
     </div>

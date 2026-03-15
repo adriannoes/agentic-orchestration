@@ -44,7 +44,7 @@ test.describe("App shell and critical routes", () => {
 
     await page.getByRole("link", { name: /Agents/i }).click()
     await expect(page).toHaveURL("/")
-    await expect(page.getByRole("heading", { name: /Agents/i })).toBeVisible()
+    await expect(page.getByRole("heading", { name: "Agents", exact: true })).toBeVisible()
   })
 
   test("/connectors loads Connector Registry", async ({ page }) => {

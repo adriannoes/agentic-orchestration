@@ -15,6 +15,7 @@ import {
   Search,
 } from "lucide-react"
 import { Card, CardContent } from "@/components/ui/card"
+import { EmptyState } from "@/components/ui/empty-state"
 import { Badge } from "@/components/ui/badge"
 import { Input } from "@/components/ui/input"
 import { ScrollArea } from "@/components/ui/scroll-area"
@@ -179,23 +180,21 @@ export function RunsHistory() {
       </div>
 
       {filteredRuns.length === 0 ? (
-        <Card className="border-dashed">
-          <CardContent className="flex flex-col items-center justify-center py-12">
-            <History className="text-muted-foreground mb-4 h-12 w-12" />
-            <h3 className="mb-2 text-lg font-semibold">No runs found</h3>
-            <p className="text-muted-foreground text-center">
-              {search || statusFilter !== "all"
-                ? "Try adjusting your filters"
-                : "Run an agent to see history here"}
-            </p>
-          </CardContent>
-        </Card>
+        <EmptyState
+          icon={History}
+          title="No runs found"
+          description={
+            search || statusFilter !== "all"
+              ? "Try adjusting your filters"
+              : "Run an agent to see execution history here."
+          }
+        />
       ) : (
         <div className="space-y-3">
           {filteredRuns.map((run) => (
             <Card
               key={run.id}
-              className="hover:border-primary/50 cursor-pointer transition-colors"
+              className="hover:border-primary/50 hover:bg-muted/50 cursor-pointer transition-colors"
               onClick={() => setSelectedRun(run)}
             >
               <CardContent className="p-4">

@@ -42,6 +42,7 @@ import { VersionHistoryPanel } from "./version-history-panel"
 import { ExportImportDialog } from "./export-import-dialog"
 import { BuilderCommandPalette } from "./builder-command-palette"
 import { NodeContextMenu, PaneContextMenu } from "./builder-context-menu"
+import { GlassContainer } from "@/components/ui/glass-container"
 import { getHistoryManager } from "@/lib/history-manager"
 import { useToast } from "@/hooks/use-toast"
 import {
@@ -747,127 +748,126 @@ function BuilderCanvasInner() {
       />
 
       <div className="relative flex flex-1 flex-col">
-        <div
-          className="border-border/80 bg-card/90 absolute top-4 right-4 left-4 z-50 flex items-center gap-3 rounded-2xl border px-3 py-2 shadow-sm"
-          data-testid="builder-toolbar"
-        >
-          <div className="flex min-w-0 items-center gap-3">
-            <h1 className="truncate text-sm font-semibold tracking-tight">
-              {workflow?.name || "Untitled Workflow"}
-            </h1>
-            <span className="border-border/80 bg-muted/40 text-muted-foreground rounded-full border px-2 py-0.5 text-[10px] font-medium">
-              v{workflow?.version || 1}
-            </span>
-          </div>
+        <div className="absolute top-4 right-4 left-4 z-50" data-testid="builder-toolbar">
+          <GlassContainer className="flex items-center gap-3 px-3 py-2 shadow-sm">
+            <div className="flex min-w-0 items-center gap-3">
+              <h1 className="truncate text-sm font-semibold tracking-tight">
+                {workflow?.name || "Untitled Workflow"}
+              </h1>
+              <span className="border-border/80 bg-muted/40 text-muted-foreground rounded-full border px-2 py-0.5 text-[10px] font-medium">
+                v{workflow?.version || 1}
+              </span>
+            </div>
 
-          <div className="border-border/80 bg-background/70 ml-auto flex max-w-full items-center gap-1.5 overflow-x-auto rounded-full border p-1">
-            <ExportImportDialog
-              workflowId={workflowId}
-              onImportSuccess={(newWorkflow) => {
-                mutate("/api/workflows")
-                if (newWorkflow?.id) {
-                  setWorkflowId(newWorkflow.id)
-                  mutate(`/api/workflows/${newWorkflow.id}`)
-                } else {
-                  mutate(`/api/workflows/${workflowId}`)
-                }
-              }}
-            />
-            <div className="bg-border/80 mx-1 h-4 w-px" />
-            <Button
-              variant="ghost"
-              size="icon"
-              className="hover:bg-accent h-8 w-8 rounded-full"
-              onClick={handleUndo}
-              disabled={!historyStatus?.canUndo}
-              aria-label="Undo"
-              title="Undo"
-            >
-              <Undo className="h-4 w-4" />
-            </Button>
-            <Button
-              variant="ghost"
-              size="icon"
-              className="hover:bg-accent h-8 w-8 rounded-full"
-              onClick={handleRedo}
-              disabled={!historyStatus?.canRedo}
-              aria-label="Redo"
-              title="Redo"
-            >
-              <Redo className="h-4 w-4" />
-            </Button>
-            <div className="bg-border/80 mx-1 h-4 w-px" />
-            <Button
-              variant="ghost"
-              size="icon"
-              className="hover:bg-accent h-8 w-8 rounded-full"
-              onClick={handleAutoLayout}
-              title="Auto Layout"
-              aria-label="Auto Layout"
-            >
-              <ArrowDownUp className="h-4 w-4" />
-            </Button>
-            <Button
-              variant="ghost"
-              size="icon"
-              className="hover:bg-accent h-8 w-8 rounded-full"
-              onClick={handleZoomOut}
-              aria-label="Zoom out"
-              title="Zoom out"
-            >
-              <ZoomOut className="h-4 w-4" />
-            </Button>
-            <span
-              className="text-muted-foreground w-10 text-center text-xs font-medium select-none"
-              aria-live="polite"
-            >
-              {Math.round((viewport?.zoom ?? 1) * 100)}%
-            </span>
-            <Button
-              variant="ghost"
-              size="icon"
-              className="hover:bg-accent h-8 w-8 rounded-full"
-              onClick={handleZoomIn}
-              aria-label="Zoom in"
-              title="Zoom in"
-            >
-              <ZoomIn className="h-4 w-4" />
-            </Button>
-            <Button
-              variant="ghost"
-              size="icon"
-              className="hover:bg-accent h-8 w-8 rounded-full"
-              onClick={handleResetView}
-              aria-label="Fit view"
-              title="Fit view"
-            >
-              <Maximize2 className="h-4 w-4" />
-            </Button>
-            <div className="bg-border/80 mx-1 h-4 w-px" />
-            <Button
-              variant="ghost"
-              size="icon"
-              className="hover:bg-accent h-8 w-8 rounded-full"
-              onClick={() => setShowVersionHistory(!showVersionHistory)}
-              aria-label="Version history"
-              title="Version history"
-            >
-              <History className="h-4 w-4" />
-            </Button>
-            <Button
-              variant="outline"
-              size="sm"
-              className="ml-1 h-8 gap-2 rounded-full border-indigo-500/20 bg-indigo-500/10 text-indigo-300 hover:bg-indigo-500/20"
-              onClick={() => setShowExecutionMonitor(!showExecutionMonitor)}
-            >
-              <Play className="h-3.5 w-3.5" />
-              {showExecutionMonitor ? "Close" : "Run"}
-            </Button>
-            <Button size="sm" className="h-8 gap-2 rounded-full" onClick={handleSaveVersion}>
-              <Save className="h-3.5 w-3.5" />
-              Save
-            </Button>
-          </div>
+            <div className="border-border/80 bg-background/70 ml-auto flex max-w-full items-center gap-1.5 overflow-x-auto rounded-full border p-1">
+              <ExportImportDialog
+                workflowId={workflowId}
+                onImportSuccess={(newWorkflow) => {
+                  mutate("/api/workflows")
+                  if (newWorkflow?.id) {
+                    setWorkflowId(newWorkflow.id)
+                    mutate(`/api/workflows/${newWorkflow.id}`)
+                  } else {
+                    mutate(`/api/workflows/${workflowId}`)
+                  }
+                }}
+              />
+              <div className="bg-border/80 mx-1 h-4 w-px" />
+              <Button
+                variant="ghost"
+                size="icon"
+                className="hover:bg-accent h-8 w-8 rounded-full"
+                onClick={handleUndo}
+                disabled={!historyStatus?.canUndo}
+                aria-label="Undo"
+                title="Undo"
+              >
+                <Undo className="h-4 w-4" />
+              </Button>
+              <Button
+                variant="ghost"
+                size="icon"
+                className="hover:bg-accent h-8 w-8 rounded-full"
+                onClick={handleRedo}
+                disabled={!historyStatus?.canRedo}
+                aria-label="Redo"
+                title="Redo"
+              >
+                <Redo className="h-4 w-4" />
+              </Button>
+              <div className="bg-border/80 mx-1 h-4 w-px" />
+              <Button
+                variant="ghost"
+                size="icon"
+                className="hover:bg-accent h-8 w-8 rounded-full"
+                onClick={handleAutoLayout}
+                title="Auto Layout"
+                aria-label="Auto Layout"
+              >
+                <ArrowDownUp className="h-4 w-4" />
+              </Button>
+              <Button
+                variant="ghost"
+                size="icon"
+                className="hover:bg-accent h-8 w-8 rounded-full"
+                onClick={handleZoomOut}
+                aria-label="Zoom out"
+                title="Zoom out"
+              >
+                <ZoomOut className="h-4 w-4" />
+              </Button>
+              <span
+                className="text-muted-foreground w-10 text-center text-xs font-medium select-none"
+                aria-live="polite"
+              >
+                {Math.round((viewport?.zoom ?? 1) * 100)}%
+              </span>
+              <Button
+                variant="ghost"
+                size="icon"
+                className="hover:bg-accent h-8 w-8 rounded-full"
+                onClick={handleZoomIn}
+                aria-label="Zoom in"
+                title="Zoom in"
+              >
+                <ZoomIn className="h-4 w-4" />
+              </Button>
+              <Button
+                variant="ghost"
+                size="icon"
+                className="hover:bg-accent h-8 w-8 rounded-full"
+                onClick={handleResetView}
+                aria-label="Fit view"
+                title="Fit view"
+              >
+                <Maximize2 className="h-4 w-4" />
+              </Button>
+              <div className="bg-border/80 mx-1 h-4 w-px" />
+              <Button
+                variant="ghost"
+                size="icon"
+                className="hover:bg-accent h-8 w-8 rounded-full"
+                onClick={() => setShowVersionHistory(!showVersionHistory)}
+                aria-label="Version history"
+                title="Version history"
+              >
+                <History className="h-4 w-4" />
+              </Button>
+              <Button
+                variant="outline"
+                size="sm"
+                className="ml-1 h-8 gap-2 rounded-full border-indigo-500/20 bg-indigo-500/10 text-indigo-300 hover:bg-indigo-500/20"
+                onClick={() => setShowExecutionMonitor(!showExecutionMonitor)}
+              >
+                <Play className="h-3.5 w-3.5" />
+                {showExecutionMonitor ? "Close" : "Run"}
+              </Button>
+              <Button size="sm" className="h-8 gap-2 rounded-full" onClick={handleSaveVersion}>
+                <Save className="h-3.5 w-3.5" />
+                Save
+              </Button>
+            </div>
+          </GlassContainer>
         </div>
 
         <div

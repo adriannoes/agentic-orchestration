@@ -23,7 +23,7 @@ export function ConnectorCard({ connector, onConnect }: ConnectorCardProps) {
   const StatusIcon = status.icon
 
   return (
-    <Card className="border-border/80 hover:border-primary/40 p-6 transition-colors">
+    <Card className="border-border/80 hover:border-primary/20 hover-lift p-6 transition-all duration-300">
       <div className="mb-4 flex items-start justify-between">
         <div className="flex items-center gap-3">
           <div
