@@ -6,6 +6,7 @@ import { useState, useEffect } from "react"
 import { Search, Wrench, Globe, Database, Code, Sparkles } from "lucide-react"
 import { Input } from "@/components/ui/input"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
+import { Skeleton } from "@/components/ui/skeleton"
 import { Badge } from "@/components/ui/badge"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import type { Tool } from "@/lib/types"
@@ -47,14 +48,6 @@ export function ToolsLibrary() {
 
   const categories = ["all", "web", "data", "code", "utility"]
 
-  if (loading) {
-    return (
-      <div className="flex h-full items-center justify-center">
-        <div className="text-muted-foreground animate-pulse">Loading tools...</div>
-      </div>
-    )
-  }
-
   return (
     <div className="p-8">
       <div className="mb-8">
@@ -85,39 +78,47 @@ export function ToolsLibrary() {
 
         {categories.map((cat) => (
           <TabsContent key={cat} value={cat}>
-            <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
-              {filteredTools
-                .filter((tool) => cat === "all" || tool.category === cat)
-                .map((tool) => (
-                  <Card
-                    key={tool.id}
-                    className="border-border/80 hover:border-primary/40 transition-colors"
-                  >
-                    <CardHeader className="pb-3">
-                      <div className="flex items-start justify-between">
-                        <div
-                          className={`flex h-10 w-10 items-center justify-center rounded-lg ${categoryColors[tool.category]}`}
-                        >
-                          {categoryIcons[tool.category] || <Wrench className="h-5 w-5" />}
-                        </div>
-                        <Badge variant="outline" className="capitalize">
-                          {tool.category}
-                        </Badge>
-                      </div>
-                      <CardTitle className="mt-3">{tool.name}</CardTitle>
-                      <CardDescription>{tool.description}</CardDescription>
-                    </CardHeader>
-                    <CardContent>
-                      <div className="space-y-2">
-                        <p className="text-muted-foreground text-xs font-medium">Input Schema</p>
-                        <pre className="border-border/70 bg-muted/40 overflow-auto rounded border p-2 text-xs">
-                          {JSON.stringify(tool.inputSchema, null, 2)}
-                        </pre>
-                      </div>
-                    </CardContent>
-                  </Card>
+            {loading ? (
+              <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+                {Array.from({ length: 6 }).map((_, i) => (
+                  <Skeleton key={i} className="h-[180px] w-full rounded-xl" />
                 ))}
-            </div>
+              </div>
+            ) : (
+              <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+                {filteredTools
+                  .filter((tool) => cat === "all" || tool.category === cat)
+                  .map((tool) => (
+                    <Card
+                      key={tool.id}
+                      className="border-border/80 hover:border-primary/20 hover-lift transition-all duration-300"
+                    >
+                      <CardHeader className="pb-3">
+                        <div className="flex items-start justify-between">
+                          <div
+                            className={`flex h-10 w-10 items-center justify-center rounded-lg ${categoryColors[tool.category]}`}
+                          >
+                            {categoryIcons[tool.category] || <Wrench className="h-5 w-5" />}
+                          </div>
+                          <Badge variant="outline" className="capitalize">
+                            {tool.category}
+                          </Badge>
+                        </div>
+                        <CardTitle className="mt-3">{tool.name}</CardTitle>
+                        <CardDescription>{tool.description}</CardDescription>
+                      </CardHeader>
+                      <CardContent>
+                        <div className="space-y-2">
+                          <p className="text-muted-foreground text-xs font-medium">Input Schema</p>
+                          <pre className="border-border/70 bg-muted/40 overflow-auto rounded border p-2 text-xs">
+                            {JSON.stringify(tool.inputSchema, null, 2)}
+                          </pre>
+                        </div>
+                      </CardContent>
+                    </Card>
+                  ))}
+              </div>
+            )}
           </TabsContent>
         ))}
       </Tabs>

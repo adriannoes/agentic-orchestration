@@ -89,9 +89,9 @@ export function SettingsPanel() {
 
         <TabsContent value="general">
           <motion.div key="general" {...tabFadeIn}>
-            <Card>
+            <Card className="border-border/80">
               <CardHeader>
-                <CardTitle>General Settings</CardTitle>
+                <CardTitle className="leading-snug">General Settings</CardTitle>
                 <CardDescription>Configure default behavior for your agents</CardDescription>
               </CardHeader>
               <CardContent className="space-y-6">
@@ -168,9 +168,9 @@ export function SettingsPanel() {
 
         <TabsContent value="api">
           <motion.div key="api" {...tabFadeIn}>
-            <Card>
+            <Card className="border-border/80">
               <CardHeader>
-                <CardTitle>API Configuration</CardTitle>
+                <CardTitle className="leading-snug">API Configuration</CardTitle>
                 <CardDescription>Manage your API keys for different providers</CardDescription>
               </CardHeader>
               <CardContent className="space-y-6">
@@ -206,9 +206,9 @@ export function SettingsPanel() {
 
         <TabsContent value="appearance">
           <motion.div key="appearance" {...tabFadeIn}>
-            <Card>
+            <Card className="border-border/80">
               <CardHeader>
-                <CardTitle>Appearance</CardTitle>
+                <CardTitle className="leading-snug">Appearance</CardTitle>
                 <CardDescription>Customize how Agent Builder looks</CardDescription>
               </CardHeader>
               <CardContent className="space-y-6">
@@ -251,9 +251,9 @@ export function SettingsPanel() {
 
         <TabsContent value="notifications">
           <motion.div key="notifications" {...tabFadeIn}>
-            <Card>
+            <Card className="border-border/80">
               <CardHeader>
-                <CardTitle>Notifications</CardTitle>
+                <CardTitle className="leading-snug">Notifications</CardTitle>
                 <CardDescription>Configure how you receive updates</CardDescription>
               </CardHeader>
               <CardContent className="space-y-4">

@@ -12,8 +12,11 @@ import {
   Zap,
   TrendingUp,
   ArrowRight,
+  LayoutTemplate,
 } from "lucide-react"
 import { Input } from "@/components/ui/input"
+import { Skeleton } from "@/components/ui/skeleton"
+import { EmptyState } from "@/components/ui/empty-state"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
 import { cn } from "@/lib/utils"
@@ -44,7 +47,7 @@ export function TemplatesLibrary() {
   const [searchQuery, setSearchQuery] = useState("")
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null)
 
-  const { data: allTemplates } = useSWR<WorkflowTemplate[]>("/api/templates", fetcher)
+  const { data: allTemplates, isLoading } = useSWR<WorkflowTemplate[]>("/api/templates", fetcher)
   const { data: popularTemplates } = useSWR<WorkflowTemplate[]>(
     "/api/templates?popular=true",
     fetcher,
@@ -150,7 +153,7 @@ export function TemplatesLibrary() {
                 return (
                   <div
                     key={template.id}
-                    className="group border-border/80 bg-card hover:border-primary/40 rounded-xl border p-6 transition-colors"
+                    className="group border-border/80 bg-card hover:border-primary/40 hover-lift rounded-xl border p-6 transition-all duration-300"
                   >
                     <div className="mb-4 flex items-start justify-between">
                       <div className={cn("rounded-lg p-3", categoryColors[template.category])}>
@@ -191,49 +194,57 @@ export function TemplatesLibrary() {
           <h2 className="mb-4 text-xl font-semibold">
             {searchQuery || selectedCategory ? "Search Results" : "All Templates"}
           </h2>
-          <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3">
-            {filteredTemplates?.map((template) => {
-              const Icon = categoryIcons[template.category]
-              return (
-                <div
-                  key={template.id}
-                  className="group border-border/80 bg-card hover:border-primary/40 rounded-xl border p-6 transition-colors"
-                >
-                  <div className="mb-4 flex items-start justify-between">
-                    <div className={cn("rounded-lg p-3", categoryColors[template.category])}>
-                      <Icon className="h-6 w-6" />
-                    </div>
-                    <span className="text-muted-foreground text-xs">
-                      {template.usageCount} uses
-                    </span>
-                  </div>
-                  <h3 className="mb-2 font-semibold">{template.name}</h3>
-                  <p className="text-muted-foreground mb-4 line-clamp-2 text-sm">
-                    {template.description}
-                  </p>
-                  <div className="mb-4 flex flex-wrap gap-1.5">
-                    {template.tags.slice(0, 3).map((tag) => (
-                      <Badge key={tag} variant="secondary" className="text-[11px]">
-                        {tag}
-                      </Badge>
-                    ))}
-                  </div>
-                  <Button
-                    className="w-full bg-transparent"
-                    variant="outline"
-                    onClick={() => handleUseTemplate(template.id, template.name)}
+          {isLoading ? (
+            <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3">
+              {Array.from({ length: 6 }).map((_, i) => (
+                <Skeleton key={i} className="h-[220px] w-full rounded-xl" />
+              ))}
+            </div>
+          ) : filteredTemplates?.length === 0 ? (
+            <EmptyState
+              icon={LayoutTemplate}
+              title="No templates"
+              description="Templates will appear here when available."
+            />
+          ) : (
+            <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3">
+              {filteredTemplates?.map((template) => {
+                const Icon = categoryIcons[template.category]
+                return (
+                  <div
+                    key={template.id}
+                    className="group border-border/80 bg-card hover:border-primary/40 hover-lift rounded-xl border p-6 transition-all duration-300"
                   >
-                    Use Template
-                    <ArrowRight className="ml-2 h-4 w-4" />
-                  </Button>
-                </div>
-              )
-            })}
-          </div>
-
-          {filteredTemplates?.length === 0 && (
-            <div className="text-muted-foreground py-12 text-center">
-              No templates found matching your criteria.
+                    <div className="mb-4 flex items-start justify-between">
+                      <div className={cn("rounded-lg p-3", categoryColors[template.category])}>
+                        <Icon className="h-6 w-6" />
+                      </div>
+                      <span className="text-muted-foreground text-xs">
+                        {template.usageCount} uses
+                      </span>
+                    </div>
+                    <h3 className="mb-2 font-semibold">{template.name}</h3>
+                    <p className="text-muted-foreground mb-4 line-clamp-2 text-sm">
+                      {template.description}
+                    </p>
+                    <div className="mb-4 flex flex-wrap gap-1.5">
+                      {template.tags.slice(0, 3).map((tag) => (
+                        <Badge key={tag} variant="secondary" className="text-[11px]">
+                          {tag}
+                        </Badge>
+                      ))}
+                    </div>
+                    <Button
+                      className="w-full bg-transparent"
+                      variant="outline"
+                      onClick={() => handleUseTemplate(template.id, template.name)}
+                    >
+                      Use Template
+                      <ArrowRight className="ml-2 h-4 w-4" />
+                    </Button>
+                  </div>
+                )
+              })}
             </div>
           )}
         </div>

@@ -4,6 +4,8 @@ import { useState, useEffect } from "react"
 import type { MCPServer, MCPTool } from "@/lib/mcp-client"
 import { Button } from "@/components/ui/button"
 import { Card } from "@/components/ui/card"
+import { Skeleton } from "@/components/ui/skeleton"
+import { EmptyState } from "@/components/ui/empty-state"
 import { Badge } from "@/components/ui/badge"
 import { Plus, Server, Trash2, RefreshCw, CheckCircle2, XCircle } from "lucide-react"
 import { AddMCPServerDialog } from "./add-mcp-server-dialog"
@@ -11,6 +13,7 @@ import { MCPToolsList } from "./mcp-tools-list"
 
 export function MCPManager() {
   const [servers, setServers] = useState<MCPServer[]>([])
+  const [serversLoading, setServersLoading] = useState(true)
   const [selectedServer, setSelectedServer] = useState<MCPServer | null>(null)
   const [tools, setTools] = useState<MCPTool[]>([])
   const [dialogOpen, setDialogOpen] = useState(false)
@@ -27,13 +30,20 @@ export function MCPManager() {
   }, [selectedServer])
 
   const fetchServers = async () => {
-    const res = await fetch("/api/mcp/servers")
-    const data = await res.json()
-    setServers(data)
+    setServersLoading(true)
+    try {
+      const res = await fetch("/api/mcp/servers")
+      if (!res.ok) throw new Error(`Failed to fetch: ${res.status}`)
+      const data = await res.json()
+      setServers(data)
+    } finally {
+      setServersLoading(false)
+    }
   }
 
   const fetchTools = async (serverId: string) => {
     const res = await fetch(`/api/mcp/servers/${serverId}/tools`)
+    if (!res.ok) throw new Error(`Failed to fetch: ${res.status}`)
     const data = await res.json()
     setTools(data)
   }
@@ -95,18 +105,20 @@ export function MCPManager() {
       <div className="grid gap-6 lg:grid-cols-2">
         <div className="space-y-4">
           <h2 className="text-lg font-semibold">Connected Servers</h2>
-          {servers.length === 0 ? (
-            <Card className="p-12 text-center">
-              <Server className="text-muted-foreground mx-auto mb-4 h-12 w-12" />
-              <p className="text-muted-foreground">No MCP servers connected</p>
-              <Button
-                className="mt-4 bg-transparent"
-                variant="outline"
-                onClick={() => setDialogOpen(true)}
-              >
-                Add Your First Server
-              </Button>
-            </Card>
+          {serversLoading ? (
+            <div className="space-y-4">
+              {Array.from({ length: 3 }).map((_, i) => (
+                <Skeleton key={i} className="h-24 w-full rounded-lg" />
+              ))}
+            </div>
+          ) : servers.length === 0 ? (
+            <EmptyState
+              icon={Server}
+              title="No MCP servers"
+              description="Add an MCP server to extend agent capabilities."
+              actionLabel="Add MCP Server"
+              onAction={() => setDialogOpen(true)}
+            />
           ) : (
             servers.map((server) => {
               const isSelected = selectedServer?.id === server.id
@@ -130,10 +142,10 @@ export function MCPManager() {
                         <p className="text-muted-foreground mt-1 text-sm">{server.url}</p>
                         <div className="mt-2 flex items-center gap-2">
                           <StatusIcon
-                            className={`h-3 w-3 ${server.status === "connected" ? "text-green-500" : "text-red-500"}`}
+                            className={`h-3 w-3 ${server.status === "connected" ? "text-indigo-300" : "text-destructive"}`}
                           />
                           <span
-                            className={`text-xs ${server.status === "connected" ? "text-green-500" : "text-red-500"}`}
+                            className={`text-xs ${server.status === "connected" ? "text-indigo-300" : "text-destructive"}`}
                           >
                             {server.status}
                           </span>
