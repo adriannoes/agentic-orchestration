@@ -12,11 +12,13 @@ import { AuthProvider } from "@/components/auth-provider"
 const geistSans = Geist({
   variable: "--font-geist-sans",
   subsets: ["latin"],
+  display: "swap",
 })
 
 const geistMono = Geist_Mono({
   variable: "--font-geist-mono",
   subsets: ["latin"],
+  display: "swap",
 })
 
 export const metadata: Metadata = {
@@ -58,7 +60,9 @@ export default function RootLayout({
                 if (color) {
                   document.documentElement.style.setProperty("--primary", color)
                 }
-              } catch (e) {}
+              } catch (e) {
+                console.warn("Accent color restoration failed:", e)
+              }
             `,
           }}
         />

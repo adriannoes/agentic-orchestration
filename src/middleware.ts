@@ -6,6 +6,13 @@ import { Redis } from "@upstash/redis"
 const redisUrl = process.env.UPSTASH_REDIS_REST_URL ?? process.env.KV_REST_API_URL
 const redisToken = process.env.UPSTASH_REDIS_REST_TOKEN ?? process.env.KV_REST_API_TOKEN
 
+export function isE2ERateLimitBypass(): boolean {
+  return (
+    process.env.NODE_ENV !== "production" &&
+    (process.env.PLAYWRIGHT_E2E === "1" || process.env.CI === "true")
+  )
+}
+
 // Create a global rate limiter instance allowing 20 requests per 10 seconds (only active if env vars are present).
 const ratelimit =
   redisUrl && redisToken
@@ -30,8 +37,7 @@ export async function middleware(request: NextRequest) {
 
   // For /api routes, reject non-allowlisted cross-origin requests
   if (request.nextUrl.pathname.startsWith("/api")) {
-    // Enforce API Rate Limit if configured
-    if (ratelimit) {
+    if (ratelimit && !isE2ERateLimitBypass()) {
       const forwarded = request.headers.get("x-forwarded-for")
       const ip = forwarded?.split(",")[0]?.trim() ?? request.headers.get("x-real-ip") ?? "anonymous"
       const { success, limit, reset, remaining } = await ratelimit.limit(ip)

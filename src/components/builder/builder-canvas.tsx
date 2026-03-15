@@ -122,10 +122,15 @@ function BuilderCanvasInner() {
   const { data: workflow, isLoading } = useSWR<Workflow | null>(
     workflowId ? `/api/workflows/${workflowId}` : null,
     fetcher,
+    {
+      revalidateOnFocus: false,
+      revalidateOnReconnect: false,
+    },
   )
-  const { data: historyStatus } = useSWR(
+  const { data: historyStatus } = useSWR<{ canUndo: boolean; canRedo: boolean } | null>(
     workflowId ? `/api/workflows/${workflowId}/history/status` : null,
     fetcher,
+    { revalidateOnFocus: false },
   )
 
   const [showSidebar, setShowSidebar] = useState(true)
@@ -722,7 +727,8 @@ function BuilderCanvasInner() {
     )
   }
 
-  if (isLoadingWorkflows || !workflowId || isLoading) {
+  const hasWorkflowData = workflow != null
+  if (isLoadingWorkflows || !workflowId || (!hasWorkflowData && isLoading)) {
     return (
       <div className="bg-background flex h-screen items-center justify-center">
         <div className="text-muted-foreground">Loading workflow...</div>
