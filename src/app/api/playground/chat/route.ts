@@ -4,7 +4,6 @@ import { store } from "@/lib/store"
 
 export const maxDuration = 60
 
-// Define available tools
 const availableTools = {
   "web-search": tool({
     description: "Search the web for current information",
@@ -12,7 +11,6 @@ const availableTools = {
       query: z.string().describe("The search query"),
     }),
     async execute({ query }) {
-      // Simulated web search
       await new Promise((resolve) => setTimeout(resolve, 1000))
       return {
         results: [
@@ -54,7 +52,6 @@ const availableTools = {
     async execute({ expression }) {
       await new Promise((resolve) => setTimeout(resolve, 300))
       try {
-        // Safe eval for basic math
         const result = Function('"use strict"; return (' + expression + ")")()
         return { expression, result }
       } catch {
@@ -69,7 +66,6 @@ const availableTools = {
     }),
     async execute({ code }) {
       await new Promise((resolve) => setTimeout(resolve, 1500))
-      // Simulated code execution
       return {
         code,
         output: `Executed code successfully.\nSimulated output for: ${code.slice(0, 50)}...`,
@@ -103,7 +99,6 @@ export async function POST(req: Request) {
     return new Response("Agent not found", { status: 404 })
   }
 
-  // Filter tools based on agent configuration
   const agentTools: Record<string, (typeof availableTools)[keyof typeof availableTools]> = {}
   agent.tools.forEach((toolId) => {
     const toolKey = toolId as keyof typeof availableTools
@@ -112,7 +107,6 @@ export async function POST(req: Request) {
     }
   })
 
-  // Determine model provider prefix
   let modelString = agent.model
   if (agent.model.startsWith("gpt")) {
     modelString = `openai/${agent.model}`

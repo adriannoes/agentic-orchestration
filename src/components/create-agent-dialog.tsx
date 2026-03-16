@@ -82,7 +82,6 @@ export function CreateAgentDialog({ open, onOpenChange, onCreated }: CreateAgent
       onOpenChange(false)
       onCreated()
 
-      // Reset form
       setName("")
       setDescription("")
       setModel("gpt-4o")

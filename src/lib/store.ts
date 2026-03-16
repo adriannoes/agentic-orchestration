@@ -1,8 +1,5 @@
 import type { Agent, Run, Tool } from "./types"
 
-// In-memory store for demo purposes
-// In production, this would use a database
-
 const defaultTools: Tool[] = [
   {
     id: "web-search",
@@ -75,7 +72,6 @@ class AgentStore {
     defaultTools.forEach((tool) => this.tools.set(tool.id, tool))
   }
 
-  // Agents
   getAgents(): Agent[] {
     return Array.from(this.agents.values())
   }
@@ -107,7 +103,6 @@ class AgentStore {
     return this.agents.delete(id)
   }
 
-  // Tools
   getTools(): Tool[] {
     return Array.from(this.tools.values())
   }
@@ -116,7 +111,6 @@ class AgentStore {
     return this.tools.get(id)
   }
 
-  // Runs
   getRuns(): Run[] {
     return Array.from(this.runs.values()).sort(
       (a, b) => b.startedAt.getTime() - a.startedAt.getTime(),

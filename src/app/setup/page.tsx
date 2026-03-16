@@ -29,7 +29,6 @@ export default function SetupPage() {
   const [envConfigured, setEnvConfigured] = useState(false)
 
   useEffect(() => {
-    // Check if env vars are configured
     const checkEnv = async () => {
       try {
         const response = await fetch("/api/setup/check-env")

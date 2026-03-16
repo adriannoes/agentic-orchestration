@@ -35,7 +35,6 @@ export class WorkflowExecutor {
 
   async execute(): Promise<WorkflowExecution> {
     try {
-      // Find start node
       const startNode = this.workflow.nodes.find((n) => n.type === "start")
       if (!startNode) {
         throw new Error("No start node found in workflow")
@@ -43,7 +42,6 @@ export class WorkflowExecutor {
 
       this.addLog("start", "info", "Workflow execution started")
 
-      // Execute workflow
       let currentNode = this.getNextNode(startNode.id)
 
       while (currentNode && currentNode.type !== "end") {
@@ -59,15 +57,12 @@ export class WorkflowExecutor {
           return this.execution
         }
 
-        // Add logs from node execution
         result.logs.forEach((log) => this.execution.logs.push(log))
 
-        // Update context with node output
         if (result.output) {
           this.execution.context.variables[currentNode.id] = result.output
         }
 
-        // Determine next node
         if (result.nextNodeId) {
           currentNode = this.workflow.nodes.find((n) => n.id === result.nextNodeId)
         } else {
@@ -77,7 +72,6 @@ export class WorkflowExecutor {
         this.notifyUpdate()
       }
 
-      // Reached end node
       this.execution.status = "completed"
       this.execution.completedAt = new Date()
       this.addLog("end", "success", "Workflow execution completed")
@@ -161,7 +155,6 @@ export class WorkflowExecutor {
         messages: this.execution.context.messages as any,
       })
 
-      // Add assistant message to context
       this.execution.context.messages.push({
         role: "assistant",
         content: text,
@@ -208,7 +201,6 @@ export class WorkflowExecutor {
       message: `Checking guardrail: ${node.data.guardrailType}`,
     })
 
-    // Simulate guardrail check
     const passed = true // In real implementation, check based on guardrailType
 
     logs.push({
@@ -236,12 +228,10 @@ export class WorkflowExecutor {
       message: `Evaluating condition: ${node.data.condition}`,
     })
 
-    // Simple condition evaluation (in real implementation, use a proper expression evaluator)
     const condition = node.data.condition || "true"
     let result = false
 
     try {
-      // Very basic evaluation - in production use a proper expression parser
       result = condition.toLowerCase() === "true"
     } catch (_error) {
       logs.push({
@@ -255,7 +245,6 @@ export class WorkflowExecutor {
       return { success: false, error: "Condition evaluation failed", logs }
     }
 
-    // Find the appropriate next node based on result
     const connections = this.workflow.connections.filter((c) => c.sourceId === node.id)
     const nextConnection =
       connections.find((c) => (result ? c.label === "true" : c.label === "false")) || connections[0]
@@ -286,11 +275,9 @@ export class WorkflowExecutor {
       message: "Pausing for user approval",
     })
 
-    // In real implementation, this would pause and wait for user input
     this.execution.status = "paused"
     this.notifyUpdate()
 
-    // For now, auto-approve after simulation
     logs.push({
       id: crypto.randomUUID(),
       nodeId: node.id,
@@ -317,7 +304,6 @@ export class WorkflowExecutor {
       message: `Calling MCP server: ${node.data.mcpServer}`,
     })
 
-    // Simulate MCP call
     logs.push({
       id: crypto.randomUUID(),
       nodeId: node.id,
@@ -343,7 +329,6 @@ export class WorkflowExecutor {
       message: "Searching files",
     })
 
-    // Simulate file search
     logs.push({
       id: crypto.randomUUID(),
       nodeId: node.id,

@@ -1,5 +1,3 @@
-// Workflow and Canvas Types for Visual Agent Builder
-
 export type NodeType =
   | "agent"
   | "guardrail"
@@ -34,19 +32,14 @@ export interface NodeData {
   /** Frame-specific: width and height in px */
   width?: number
   height?: number
-  // Agent-specific
   agentId?: string
   model?: string
   systemPrompt?: string
   tools?: string[]
-  // Guardrail-specific
   guardrailType?: "jailbreak" | "pii" | "custom"
   guardrailConfig?: Record<string, unknown>
-  // Condition-specific
   condition?: string
-  // MCP-specific
   mcpServer?: string
-  // File Search-specific
   fileTypes?: string[]
 }
 

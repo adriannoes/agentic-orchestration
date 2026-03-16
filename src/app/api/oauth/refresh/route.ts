@@ -23,7 +23,6 @@ export async function POST(request: Request) {
       connection.config.credentials.refreshToken,
     )
 
-    // Update connection with new access token
     connectorStore.updateConnection(connectionId, {
       config: {
         ...connection.config,

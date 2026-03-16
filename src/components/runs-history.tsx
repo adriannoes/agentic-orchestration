@@ -30,7 +30,6 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/u
 import type { Run } from "@/lib/types"
 import { cn } from "@/lib/utils"
 
-// Sample run data for demonstration
 const sampleRuns: Run[] = [
   {
     id: "run-1",

@@ -46,7 +46,6 @@ export function AddConnectionDialog({
       const data = await res.json()
 
       if (data.authUrl) {
-        // Redirect to OAuth provider
         window.location.href = data.authUrl
       }
     } catch (error) {

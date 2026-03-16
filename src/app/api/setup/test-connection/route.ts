@@ -5,7 +5,6 @@ export async function POST(request: NextRequest) {
   try {
     const { url, key } = await request.json()
 
-    // Use provided credentials or env vars
     const supabaseUrl = url || process.env.NEXT_PUBLIC_SUPABASE_URL
     const supabaseKey = key || process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
 
@@ -45,7 +44,6 @@ export async function POST(request: NextRequest) {
     const tablesFound: string[] = []
     const tablesMissing: string[] = []
 
-    // Test each table
     for (const table of requiredTables) {
       const { error } = await supabase.from(table).select("count").limit(0)
       if (error) {
@@ -55,10 +53,8 @@ export async function POST(request: NextRequest) {
       }
     }
 
-    // Check connection validity
     const connectionValid = tablesFound.length > 0
 
-    // Check if auth is enabled
     let authEnabled = false
     try {
       const { data: _data } = await supabase.auth.getSession()
@@ -67,7 +63,6 @@ export async function POST(request: NextRequest) {
       authEnabled = false
     }
 
-    // Determine success
     const success = tablesMissing.length === 0 && connectionValid
 
     return NextResponse.json({
