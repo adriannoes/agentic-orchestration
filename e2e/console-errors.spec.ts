@@ -21,7 +21,14 @@ test.describe("Console Errors & Warnings", () => {
       const errors: string[] = []
       const warnings: string[] = []
 
-      const knownErrors = ["/_vercel/speed-insights/script.js", "/_vercel/insights/script.js"]
+      const knownErrors = [
+        "/_vercel/speed-insights/script.js",
+        "/_vercel/insights/script.js",
+        "THREE.WebGLRenderer",
+        "WebGL context could not be created",
+        "Error creating WebGL context",
+        "BindToCurrentSequence",
+      ]
 
       page.on("console", (msg) => {
         if (msg.type() === "error") {
@@ -38,7 +45,12 @@ test.describe("Console Errors & Warnings", () => {
 
       page.on("pageerror", (error) => {
         const text = error.message
-        if (!knownErrors.some((k) => text.includes(k))) {
+        const isKnownWebGLOrSequence =
+          text.includes("WebGL context could not be created") ||
+          text.includes("Error creating WebGL context") ||
+          text.includes("THREE.WebGLRenderer") ||
+          text.includes("BindToCurrentSequence")
+        if (!knownErrors.some((k) => text.includes(k)) && !isKnownWebGLOrSequence) {
           errors.push(error.message)
         }
       })

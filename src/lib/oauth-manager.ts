@@ -88,7 +88,6 @@ class OAuthManager {
     const state = this.generateState()
     const codeVerifier = this.generateCodeVerifier()
 
-    // Store state for later verification
     this.pendingStates.set(state, {
       connectorId,
       redirectUri,
@@ -97,7 +96,6 @@ class OAuthManager {
       timestamp: Date.now(),
     })
 
-    // Clean up old states (older than 10 minutes)
     this.cleanupOldStates()
 
     const params = new URLSearchParams({
@@ -110,7 +108,6 @@ class OAuthManager {
       prompt: "consent",
     })
 
-    // Add PKCE if supported
     if (codeVerifier) {
       const codeChallenge = this.generateCodeChallenge(codeVerifier)
       params.append("code_challenge", codeChallenge)
@@ -134,11 +131,8 @@ class OAuthManager {
       throw new Error("Provider not found")
     }
 
-    // Clean up used state
     this.pendingStates.delete(state)
 
-    // In a real implementation, this would make an actual HTTP request to the token endpoint
-    // For demo purposes, we'll return mock tokens
     console.log(`[v0] Exchanging code for token with provider ${provider.name}`)
 
     return {
@@ -157,7 +151,6 @@ class OAuthManager {
       throw new Error("Provider not found")
     }
 
-    // In a real implementation, this would make an actual HTTP request
     console.log(`[v0] Refreshing token for provider ${provider.name}`)
 
     return {
@@ -184,8 +177,6 @@ class OAuthManager {
   }
 
   private generateCodeChallenge(verifier: string): string {
-    // In a real implementation, this would use SHA-256
-    // For demo, we'll just return the verifier
     return verifier
   }
 

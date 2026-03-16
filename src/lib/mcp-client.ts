@@ -49,7 +49,6 @@ class MCPClient {
   }): Promise<MCPServer> {
     const serverId = `mcp-${Date.now()}-${Math.random().toString(36).substring(7)}`
 
-    // Simulate MCP handshake
     const server: MCPServer = {
       id: serverId,
       name: config.name,
@@ -66,7 +65,6 @@ class MCPClient {
 
     this.servers.set(serverId, server)
 
-    // Auto-discover capabilities
     await this.discoverCapabilities(serverId)
 
     return server
@@ -76,11 +74,7 @@ class MCPClient {
     const server = this.servers.get(serverId)
     if (!server) throw new Error("Server not found")
 
-    // Simulate discovering tools, resources, and prompts
-    // In a real implementation, this would use the MCP protocol to list capabilities
-
     if (server.name.includes("Filesystem")) {
-      // Add filesystem tools
       this.tools.set(`${serverId}-read`, {
         name: "read_file",
         description: "Read contents of a file",
@@ -121,7 +115,6 @@ class MCPClient {
         serverId,
       })
     } else if (server.name.includes("Memory")) {
-      // Add memory/knowledge graph tools
       this.tools.set(`${serverId}-store`, {
         name: "store_memory",
         description: "Store information in knowledge graph",
@@ -173,7 +166,6 @@ class MCPClient {
 
     server.status = "disconnected"
 
-    // Remove tools and resources associated with this server
     for (const [key, tool] of this.tools.entries()) {
       if (tool.serverId === serverId) {
         this.tools.delete(key)
@@ -202,10 +194,8 @@ class MCPClient {
       throw new Error("MCP server not connected")
     }
 
-    // Simulate MCP tool call
     console.log(`[v0] Calling MCP tool ${toolName} on server ${server.name}`, args)
 
-    // Return mock response based on tool type
     if (toolName === "read_file") {
       return { content: "File content from MCP server", mimeType: "text/plain" }
     } else if (toolName === "write_file") {

@@ -76,7 +76,7 @@ describe("LoginForm", () => {
     await user.click(screen.getByRole("button", { name: /sign in with github/i }))
 
     await waitFor(() => {
-      expect(toast.error).toHaveBeenCalledWith("Failed to sign in catch: Auth failed")
+      expect(toast.error).toHaveBeenCalledWith("Failed to sign in: Auth failed")
     })
   })
 

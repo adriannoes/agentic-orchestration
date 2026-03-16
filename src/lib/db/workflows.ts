@@ -2,8 +2,6 @@ import { getSupabaseServerClient } from "@/lib/supabase/server"
 import type { Workflow, WorkflowNode, Connection } from "@/lib/workflow-types"
 import { mapWorkflowRow, mapWorkflowRows, type WorkflowRow } from "./workflow-mapper"
 
-// In-Memory cache for offline development without Supabase
-// We use a global variable to persist across Next.js HMR
 const globalForWorkflows = globalThis as unknown as { memoryWorkflows: Map<string, Workflow> }
 const memoryWorkflows = globalForWorkflows.memoryWorkflows || new Map<string, Workflow>()
 if (process.env.NODE_ENV !== "production") globalForWorkflows.memoryWorkflows = memoryWorkflows

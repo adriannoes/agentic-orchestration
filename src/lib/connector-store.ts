@@ -145,7 +145,6 @@ class ConnectorStore {
     }
     this.connections.push(newConnection)
 
-    // Update connector status
     const connector = this.connectors.find((c) => c.id === connection.connectorId)
     if (connector) {
       connector.status = "connected"
@@ -168,7 +167,6 @@ class ConnectorStore {
 
     this.connections = this.connections.filter((c) => c.id !== id)
 
-    // Update connector status if no more connections
     const hasOtherConnections = this.connections.some(
       (c) => c.connectorId === connection.connectorId,
     )

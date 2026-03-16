@@ -891,7 +891,7 @@ function BuilderCanvasInner() {
               }
               handleAddNode(type, snapped)
             } catch {
-              // ignore invalid drop data
+              // Ignore invalid JSON from clipboard
             }
           }}
         >

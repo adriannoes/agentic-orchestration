@@ -8,7 +8,6 @@ export async function GET(request: Request) {
   const state = searchParams.get("state")
   const error = searchParams.get("error")
 
-  // Handle OAuth errors
   if (error) {
     return NextResponse.redirect(
       new URL(`/connectors?error=${encodeURIComponent(error)}`, request.url),
@@ -20,7 +19,6 @@ export async function GET(request: Request) {
   }
 
   try {
-    // Verify state and exchange code for token
     const oauthState = oauthManager.verifyState(state)
     if (!oauthState) {
       throw new Error("Invalid OAuth state")
@@ -28,7 +26,6 @@ export async function GET(request: Request) {
 
     const tokens = await oauthManager.exchangeCodeForToken(code, state)
 
-    // Create connection with tokens
     const connection = connectorStore.addConnection({
       connectorId: oauthState.connectorId,
       name: `${oauthState.connectorId} Connection`,
@@ -44,7 +41,6 @@ export async function GET(request: Request) {
 
     console.log(`[v0] OAuth connection created:`, connection.id)
 
-    // Redirect back to connectors page with success
     return NextResponse.redirect(new URL("/connectors?success=connected", request.url))
   } catch (error) {
     console.error("[v0] OAuth callback error:", error)

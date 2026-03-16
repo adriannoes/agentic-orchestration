@@ -26,13 +26,9 @@ const ratelimit =
       })
     : null
 
-export async function middleware(request: NextRequest) {
-  const allowedOriginAsap = process.env.NEXT_PUBLIC_ASAP_PROTOCOL_URL?.startsWith("http")
-    ? process.env.NEXT_PUBLIC_ASAP_PROTOCOL_URL
-    : "https://asap-protocol.vercel.app"
-  const allowedOriginSelf = process.env.NEXT_PUBLIC_APP_URL?.startsWith("http")
-    ? process.env.NEXT_PUBLIC_APP_URL
-    : "https://open-agentic-flow.vercel.app"
+export async function proxy(request: NextRequest) {
+  const allowedOriginAsap = process.env.NEXT_PUBLIC_ASAP_PROTOCOL_URL
+  const allowedOriginSelf = process.env.NEXT_PUBLIC_APP_URL
   const requestOrigin = request.headers.get("origin")
 
   // For /api routes, reject non-allowlisted cross-origin requests
@@ -54,29 +50,31 @@ export async function middleware(request: NextRequest) {
       }
     }
 
-    if (
-      requestOrigin &&
-      !requestOrigin.startsWith(allowedOriginAsap) &&
-      !requestOrigin.startsWith(allowedOriginSelf) &&
-      !requestOrigin.startsWith("http://localhost")
-    ) {
+    const isAllowedOrigin =
+      !requestOrigin ||
+      (allowedOriginAsap && requestOrigin.startsWith(allowedOriginAsap)) ||
+      (allowedOriginSelf && requestOrigin.startsWith(allowedOriginSelf)) ||
+      (process.env.NODE_ENV === "development" && requestOrigin.startsWith("http://localhost"))
+
+    if (!isAllowedOrigin) {
       return new NextResponse("Forbidden", { status: 403 })
     }
 
+    const responseHeaders = {
+      "Access-Control-Allow-Origin": requestOrigin || allowedOriginSelf || "*",
+      "Access-Control-Allow-Methods": "GET, POST, PUT, DELETE, OPTIONS",
+      "Access-Control-Allow-Headers": "Content-Type, Authorization",
+    }
+
     if (request.method === "OPTIONS") {
-      const preflightHeaders = {
-        "Access-Control-Allow-Origin": requestOrigin || allowedOriginSelf,
-        "Access-Control-Allow-Methods": "GET, POST, PUT, DELETE, OPTIONS",
-        "Access-Control-Allow-Headers": "Content-Type, Authorization",
-      }
-      return NextResponse.json({}, { headers: preflightHeaders })
+      return NextResponse.json({}, { headers: responseHeaders })
     }
 
     // Pass the request along with CORS headers attached to the response
     const response = NextResponse.next()
-    response.headers.set("Access-Control-Allow-Origin", requestOrigin || allowedOriginSelf)
-    response.headers.set("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS")
-    response.headers.set("Access-Control-Allow-Headers", "Content-Type, Authorization")
+    Object.entries(responseHeaders).forEach(([key, value]) => {
+      response.headers.set(key, value)
+    })
     return response
   }
 
