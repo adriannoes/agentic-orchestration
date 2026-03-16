@@ -1,8 +1,6 @@
 "use client"
 
-import type React from "react"
-
-import { useState } from "react"
+import React, { useState } from "react"
 import {
   Search,
   Sparkles,
@@ -133,7 +131,10 @@ export function TemplatesLibrary() {
                 onClick={() => setSelectedCategory(category.id)}
                 className="gap-2"
               >
-                <Icon className="h-4 w-4" />
+                {(Icon as any) &&
+                  React.createElement(Icon as React.ComponentType<{ className?: string }>, {
+                    className: "h-4 w-4",
+                  })}
                 {category.label}
               </Button>
             )
@@ -157,7 +158,10 @@ export function TemplatesLibrary() {
                   >
                     <div className="mb-4 flex items-start justify-between">
                       <div className={cn("rounded-lg p-3", categoryColors[template.category])}>
-                        <Icon className="h-6 w-6" />
+                        {(Icon as any) &&
+                          React.createElement(Icon as React.ComponentType<{ className?: string }>, {
+                            className: "h-6 w-6",
+                          })}
                       </div>
                       <span className="text-muted-foreground text-xs">
                         {template.usageCount} uses
@@ -217,7 +221,10 @@ export function TemplatesLibrary() {
                   >
                     <div className="mb-4 flex items-start justify-between">
                       <div className={cn("rounded-lg p-3", categoryColors[template.category])}>
-                        <Icon className="h-6 w-6" />
+                        {(Icon as any) &&
+                          React.createElement(Icon as React.ComponentType<{ className?: string }>, {
+                            className: "h-6 w-6",
+                          })}
                       </div>
                       <span className="text-muted-foreground text-xs">
                         {template.usageCount} uses

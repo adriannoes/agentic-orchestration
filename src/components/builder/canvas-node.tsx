@@ -1,8 +1,6 @@
 "use client"
 
-import type React from "react"
-
-import { useState, useEffect } from "react"
+import React, { useState, useEffect } from "react"
 import {
   Bot,
   Shield,
@@ -153,13 +151,14 @@ export function CanvasNode({ data, selected, type: nodeTypeProp }: WorkflowNodeP
               selected ? "scale-105" : "group-hover:scale-105",
             )}
           >
-            <Icon
-              className={cn(
-                "h-5 w-5 transition-transform duration-500",
-                colors.icon,
-                selected ? "scale-110" : "group-hover:scale-110",
-              )}
-            />
+            {(Icon as any) &&
+              React.createElement(Icon as React.ComponentType<{ className?: string }>, {
+                className: cn(
+                  "h-5 w-5 transition-transform duration-500",
+                  (colors as any).icon,
+                  selected ? "scale-110" : "group-hover:scale-110",
+                ),
+              })}
           </div>
 
           <div className="min-w-0 flex-1 pt-0.5">

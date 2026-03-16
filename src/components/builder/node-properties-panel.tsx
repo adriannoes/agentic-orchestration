@@ -1,6 +1,6 @@
 "use client"
 
-import type React from "react"
+import React from "react"
 
 import {
   Bot,
@@ -122,7 +122,10 @@ export function NodePropertiesPanel({
               <div className="border-border/80 border-b p-5">
                 <div className="flex items-center gap-3">
                   <div className="bg-muted/40 ring-border/80 rounded-xl p-2.5 ring-1 ring-inset">
-                    <Icon className="text-foreground h-5 w-5" />
+                    {(Icon as any) &&
+                      React.createElement(Icon as React.ComponentType<{ className?: string }>, {
+                        className: "text-foreground h-5 w-5",
+                      })}
                   </div>
                   <div>
                     <h2 className="text-foreground leading-snug font-semibold tracking-tight">
