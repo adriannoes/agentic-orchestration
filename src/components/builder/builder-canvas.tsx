@@ -871,7 +871,7 @@ function BuilderCanvasInner() {
         </div>
 
         <div
-          className="bg-background relative flex-1"
+          className="bg-background relative h-full w-full flex-1"
           data-testid="builder-canvas"
           onDragOver={(e) => {
             e.preventDefault()
@@ -1015,9 +1015,7 @@ function BuilderCanvasInner() {
         workflowId={workflowId}
         isOpen={showVersionHistory}
         onToggle={() => setShowVersionHistory(!showVersionHistory)}
-        onRestoreVersion={(version) => {
-          console.log("Restoring version:", version)
-        }}
+        onRestoreVersion={(_version) => {}}
       />
 
       <ExecutionMonitor

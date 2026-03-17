@@ -177,6 +177,7 @@ export function NodeSidebar({ isOpen, onToggle, onAddNode }: NodeSidebarProps) {
           "hover:text-foreground transition-all duration-300 hover:scale-110",
         )}
         onClick={onToggle}
+        aria-label={isOpen ? "Close node sidebar" : "Open node sidebar"}
       >
         {isOpen ? <ChevronLeft className="h-4 w-4" /> : <ChevronRight className="h-4 w-4" />}
       </Button>

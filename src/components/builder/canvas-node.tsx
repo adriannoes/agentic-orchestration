@@ -1,7 +1,8 @@
 "use client"
 
-import React, { useState, useEffect } from "react"
+import { useState, useEffect } from "react"
 import {
+  type LucideIcon,
   Bot,
   Shield,
   GitBranch,
@@ -23,7 +24,7 @@ import { motion } from "framer-motion"
 export type WorkflowNodeData = NodeData & { isHighlighted?: boolean; customOnDelete?: () => void }
 export type WorkflowNodeType = Node<WorkflowNodeData, NodeType>
 
-const NODE_ICONS: Record<NodeType, React.ElementType> = {
+const NODE_ICONS: Record<NodeType, LucideIcon> = {
   start: Play,
   end: Square,
   agent: Bot,
@@ -151,14 +152,15 @@ export function CanvasNode({ data, selected, type: nodeTypeProp }: WorkflowNodeP
               selected ? "scale-105" : "group-hover:scale-105",
             )}
           >
-            {(Icon as any) &&
-              React.createElement(Icon as React.ComponentType<{ className?: string }>, {
-                className: cn(
+            {Icon && (
+              <Icon
+                className={cn(
                   "h-5 w-5 transition-transform duration-500",
-                  (colors as any).icon,
+                  colors.icon,
                   selected ? "scale-110" : "group-hover:scale-110",
-                ),
-              })}
+                )}
+              />
+            )}
           </div>
 
           <div className="min-w-0 flex-1 pt-0.5">

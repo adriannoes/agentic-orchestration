@@ -67,7 +67,7 @@ export function FrameNode({ data, selected }: NodeProps<FrameNodeType>) {
             onKeyDown={(e) => e.key === "Enter" && handleLabelBlur()}
             className="text-foreground flex-1 border-none bg-transparent px-0 text-sm font-medium outline-none focus:ring-0"
             autoFocus
-            data-label="frame-label"
+            aria-label="Frame label"
           />
         ) : (
           <span
