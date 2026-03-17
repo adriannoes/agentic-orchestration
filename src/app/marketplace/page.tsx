@@ -1,3 +1,5 @@
+import { auth } from "@/auth"
+import { redirect } from "next/navigation"
 import { fetchRegistryAgents, getRegistryCategories } from "@/lib/registry"
 import { RegistryContent } from "@/components/registry/registry-content"
 import { BackgroundPaths } from "@/components/ui/background-paths"
@@ -6,6 +8,9 @@ import { EmptyState } from "@/components/ui/empty-state"
 import { AlertCircle, Globe } from "lucide-react"
 
 export default async function MarketplacePage() {
+  const session = await auth()
+  if (!session) redirect("/login")
+
   const { agents, error } = await fetchRegistryAgents()
   const categories = getRegistryCategories(agents)
 
@@ -18,7 +23,7 @@ export default async function MarketplacePage() {
             <AnimatedText
               text="ASAP Agent Registry"
               as="h1"
-              className="text-3xl font-bold tracking-tight"
+              className="text-3xl leading-snug font-bold tracking-tight"
             />
             <p className="text-muted-foreground mt-2">
               Discover agents registered on the ASAP Protocol network
