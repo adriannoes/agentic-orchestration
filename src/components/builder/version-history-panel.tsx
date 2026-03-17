@@ -64,13 +64,19 @@ export function VersionHistoryPanel({
   if (!isOpen) return null
 
   return (
-    <div className="bg-card/95 border-border fixed inset-y-0 right-0 z-40 flex w-80 flex-col border-l shadow-xl backdrop-blur-md">
+    <div className="bg-card/95 border-border fixed inset-y-0 right-0 z-40 flex w-80 flex-col border-l backdrop-blur-md">
       <div className="border-border flex h-14 items-center justify-between border-b px-4">
         <div className="flex items-center gap-2">
           <History className="text-muted-foreground h-4 w-4" />
           <h2 className="font-semibold">Version History</h2>
         </div>
-        <Button variant="ghost" size="icon" className="h-8 w-8" onClick={onToggle}>
+        <Button
+          variant="ghost"
+          size="icon"
+          className="h-8 w-8"
+          onClick={onToggle}
+          aria-label="Close version history"
+        >
           <X className="h-4 w-4" />
         </Button>
       </div>
@@ -105,6 +111,7 @@ export function VersionHistoryPanel({
                     variant="ghost"
                     size="icon"
                     className="h-6 w-6"
+                    aria-label={`Restore version ${version.name}`}
                     onClick={(e) => {
                       e.stopPropagation()
                       onRestoreVersion?.(version)
@@ -116,6 +123,7 @@ export function VersionHistoryPanel({
                     variant="ghost"
                     size="icon"
                     className="text-muted-foreground hover:text-destructive h-6 w-6"
+                    aria-label={`Delete version ${version.name}`}
                     onClick={(e) => {
                       e.stopPropagation()
                       handleDeleteVersion(version.version)

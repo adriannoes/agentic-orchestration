@@ -27,7 +27,10 @@ export async function POST(request: NextRequest, { params }: { params: Promise<{
 
     return NextResponse.json(execution)
   } catch (error) {
-    console.error("Workflow execution error:", error)
+    console.error(
+      "Workflow execution error:",
+      error instanceof Error ? error.message : String(error),
+    )
     return NextResponse.json({ error: "Failed to execute workflow" }, { status: 500 })
   }
 }

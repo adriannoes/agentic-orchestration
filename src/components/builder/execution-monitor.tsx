@@ -44,7 +44,7 @@ export function ExecutionMonitor({
         onNodeHighlight(null)
       }
     } catch (error) {
-      console.error("Execution error:", error)
+      console.error("Execution error:", error instanceof Error ? error.message : String(error))
     } finally {
       setIsExecuting(false)
     }
@@ -101,11 +101,17 @@ export function ExecutionMonitor({
   if (!isOpen) return null
 
   return (
-    <div className="bg-card/95 border-border fixed inset-y-0 right-0 z-50 flex w-96 flex-col border-l shadow-xl backdrop-blur-md">
+    <div className="bg-card/95 border-border fixed inset-y-0 right-0 z-50 flex w-96 flex-col border-l backdrop-blur-md">
       {/* Header */}
       <div className="border-border flex h-14 items-center justify-between border-b px-4">
         <h2 className="font-semibold">Execution Monitor</h2>
-        <Button variant="ghost" size="icon" className="h-8 w-8" onClick={onClose}>
+        <Button
+          variant="ghost"
+          size="icon"
+          className="h-8 w-8"
+          onClick={onClose}
+          aria-label="Close execution monitor"
+        >
           <X className="h-4 w-4" />
         </Button>
       </div>

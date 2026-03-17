@@ -1,7 +1,8 @@
 "use client"
 
-import React, { useState } from "react"
+import { useState } from "react"
 import {
+  type LucideIcon,
   Search,
   Sparkles,
   Users,
@@ -24,7 +25,7 @@ import { useRouter } from "next/navigation"
 
 const fetcher = (url: string) => fetch(url).then((res) => res.json())
 
-const categoryIcons: Record<string, React.ElementType> = {
+const categoryIcons: Record<string, LucideIcon> = {
   "customer-support": Users,
   "data-analysis": BarChart3,
   "content-creation": FileText,
@@ -82,7 +83,10 @@ export function TemplatesLibrary() {
       const workflow = await response.json()
       router.push(`/builder?workflow=${workflow.id}`)
     } catch (error) {
-      console.error("Failed to use template:", error)
+      console.error(
+        "Failed to use template:",
+        error instanceof Error ? error.message : String(error),
+      )
     }
   }
 
@@ -91,7 +95,7 @@ export function TemplatesLibrary() {
       {/* Header */}
       <div className="border-border/80 bg-card/60 border-b">
         <div className="mx-auto max-w-7xl px-6 py-8">
-          <h1 className="mb-2 text-3xl font-bold">Workflow Templates</h1>
+          <h1 className="mb-2 text-3xl leading-snug font-bold">Workflow Templates</h1>
           <p className="text-muted-foreground">
             Start with pre-built workflows and customize them for your needs
           </p>
@@ -131,10 +135,7 @@ export function TemplatesLibrary() {
                 onClick={() => setSelectedCategory(category.id)}
                 className="gap-2"
               >
-                {(Icon as any) &&
-                  React.createElement(Icon as React.ComponentType<{ className?: string }>, {
-                    className: "h-4 w-4",
-                  })}
+                {Icon && <Icon className="h-4 w-4" />}
                 {category.label}
               </Button>
             )
@@ -158,10 +159,7 @@ export function TemplatesLibrary() {
                   >
                     <div className="mb-4 flex items-start justify-between">
                       <div className={cn("rounded-lg p-3", categoryColors[template.category])}>
-                        {(Icon as any) &&
-                          React.createElement(Icon as React.ComponentType<{ className?: string }>, {
-                            className: "h-6 w-6",
-                          })}
+                        {Icon && <Icon className="h-6 w-6" />}
                       </div>
                       <span className="text-muted-foreground text-xs">
                         {template.usageCount} uses
@@ -221,10 +219,7 @@ export function TemplatesLibrary() {
                   >
                     <div className="mb-4 flex items-start justify-between">
                       <div className={cn("rounded-lg p-3", categoryColors[template.category])}>
-                        {(Icon as any) &&
-                          React.createElement(Icon as React.ComponentType<{ className?: string }>, {
-                            className: "h-6 w-6",
-                          })}
+                        {Icon && <Icon className="h-6 w-6" />}
                       </div>
                       <span className="text-muted-foreground text-xs">
                         {template.usageCount} uses

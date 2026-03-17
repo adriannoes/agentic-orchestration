@@ -1,6 +1,7 @@
 "use client"
 
-import { useState, useEffect, useCallback, useMemo } from "react"
+import { useState, useEffect, useMemo } from "react"
+import useSWR from "swr"
 import type { Connector, ConnectorCategory } from "@/lib/connector-types"
 import { Input } from "@/components/ui/input"
 import { Card } from "@/components/ui/card"
@@ -12,6 +13,12 @@ import { ConnectorCard } from "./connector-card"
 import { AddConnectionDialog } from "./add-connection-dialog"
 import { useToast } from "@/hooks/use-toast"
 import { useSearchParams } from "next/navigation"
+
+const fetcher = (url: string) =>
+  fetch(url).then((res) => {
+    if (!res.ok) throw new Error(`Failed to fetch: ${res.status}`)
+    return res.json()
+  })
 
 const categories: { value: ConnectorCategory | "all"; label: string }[] = [
   { value: "all", label: "All" },
@@ -25,8 +32,11 @@ const categories: { value: ConnectorCategory | "all"; label: string }[] = [
 ]
 
 export function ConnectorRegistry() {
-  const [connectors, setConnectors] = useState<Connector[]>([])
-  const [loading, setLoading] = useState(true)
+  const {
+    data: connectors = [],
+    isLoading: loading,
+    mutate,
+  } = useSWR<Connector[]>("/api/connectors", fetcher)
   const [searchQuery, setSearchQuery] = useState("")
   const [selectedCategory, setSelectedCategory] = useState<string>("all")
   const [selectedConnector, setSelectedConnector] = useState<Connector | null>(null)
@@ -34,24 +44,9 @@ export function ConnectorRegistry() {
   const { toast } = useToast()
   const searchParams = useSearchParams()
 
-  const fetchConnectors = useCallback(async () => {
-    setLoading(true)
-    try {
-      const res = await fetch("/api/connectors")
-      if (!res.ok) throw new Error(`Failed to fetch: ${res.status}`)
-      const data = await res.json()
-      setConnectors(data)
-    } finally {
-      setLoading(false)
-    }
-  }, [])
-
   useEffect(() => {
-    fetchConnectors()
-
     const success = searchParams?.get("success")
     const error = searchParams?.get("error")
-
     if (success === "connected") {
       toast({
         title: "Connected successfully",
@@ -64,7 +59,7 @@ export function ConnectorRegistry() {
         variant: "destructive",
       })
     }
-  }, [fetchConnectors, searchParams, toast])
+  }, [searchParams, toast])
 
   const filteredConnectors = useMemo(() => {
     let filtered = connectors
@@ -91,7 +86,7 @@ export function ConnectorRegistry() {
 
   const handleConnectionAdded = () => {
     setDialogOpen(false)
-    fetchConnectors()
+    mutate()
   }
 
   const connectedCount = connectors.filter((c) => c.status === "connected").length
