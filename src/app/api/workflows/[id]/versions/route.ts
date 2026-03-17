@@ -28,7 +28,7 @@ export async function POST(request: NextRequest, { params }: { params: Promise<{
     const version = versionStore.createVersion(workflow, description)
     return NextResponse.json(version)
   } catch (error) {
-    console.error("Version creation error:", error)
+    console.error("Version creation error:", error instanceof Error ? error.message : String(error))
     return NextResponse.json({ error: "Failed to create version" }, { status: 500 })
   }
 }

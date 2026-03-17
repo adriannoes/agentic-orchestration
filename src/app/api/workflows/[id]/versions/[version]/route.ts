@@ -57,7 +57,7 @@ export async function PATCH(
 
     return NextResponse.json({ success: true })
   } catch (error) {
-    console.error("Version tag error:", error)
+    console.error("Version tag error:", error instanceof Error ? error.message : String(error))
     return NextResponse.json({ error: "Failed to tag version" }, { status: 500 })
   }
 }

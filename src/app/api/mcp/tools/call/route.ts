@@ -1,7 +1,11 @@
 import { NextResponse } from "next/server"
+import { auth } from "@/auth"
 import { mcpClient } from "@/lib/mcp-client"
 
 export async function POST(request: Request) {
+  const session = await auth()
+  if (!session) return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
+
   const body = await request.json()
 
   try {

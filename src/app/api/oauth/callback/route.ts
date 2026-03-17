@@ -26,7 +26,7 @@ export async function GET(request: Request) {
 
     const tokens = await oauthManager.exchangeCodeForToken(code, state)
 
-    const connection = connectorStore.addConnection({
+    const _connection = connectorStore.addConnection({
       connectorId: oauthState.connectorId,
       name: `${oauthState.connectorId} Connection`,
       status: "connected",
@@ -39,11 +39,8 @@ export async function GET(request: Request) {
       },
     })
 
-    console.log(`[v0] OAuth connection created:`, connection.id)
-
     return NextResponse.redirect(new URL("/connectors?success=connected", request.url))
   } catch (error) {
-    console.error("[v0] OAuth callback error:", error)
     return NextResponse.redirect(
       new URL(`/connectors?error=${encodeURIComponent((error as Error).message)}`, request.url),
     )
