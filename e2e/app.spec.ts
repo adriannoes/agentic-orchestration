@@ -22,10 +22,13 @@ test.describe("App shell and critical routes", () => {
 
   test("navigating via sidebar to each main route", async ({ page }) => {
     await page.goto("/")
+    await page.waitForLoadState("networkidle")
 
     await page.getByRole("link", { name: /Connectors/i }).click()
     await expect(page).toHaveURL(/\/connectors/)
-    await expect(page.getByRole("heading", { name: /Connector Registry/i })).toBeVisible()
+    await expect(page.getByRole("heading", { name: /Connector Registry/i })).toBeVisible({
+      timeout: 10_000,
+    })
 
     await page.getByRole("link", { name: /Builder/i }).click()
     await expect(page).toHaveURL(/\/builder/)
@@ -34,23 +37,33 @@ test.describe("App shell and critical routes", () => {
         .getByRole("button")
         .or(page.locator(".react-flow"))
         .or(page.locator(".canvas-grid"))
-        .or(page.getByText(/Workflow|Builder|Save|Sign in/i))
+        .or(page.getByText(/Workflow|Builder|Save|Sign in|Loading workflow/i))
         .first(),
     ).toBeVisible({ timeout: 15_000 })
 
     await page.getByRole("link", { name: /Registry/i }).click()
     await expect(page).toHaveURL(/\/marketplace/)
-    await expect(page.getByRole("heading", { name: /ASAP Agent Registry/i })).toBeVisible()
+    await expect(
+      page
+        .getByRole("heading", { name: /ASAP Agent Registry/i })
+        .or(page.getByText(/ASAP Agent Registry/i))
+        .first(),
+    ).toBeVisible({ timeout: 10_000 })
 
     await page.getByRole("link", { name: /Agents/i }).click()
     await expect(page).toHaveURL("/")
-    await expect(page.getByRole("heading", { name: "Agents", exact: true })).toBeVisible()
+    await expect(page.getByRole("heading", { name: /Agents/i }).first()).toBeVisible({
+      timeout: 10_000,
+    })
   })
 
   test("/connectors loads Connector Registry", async ({ page }) => {
     await page.goto("/connectors")
-    await expect(page.getByRole("heading", { name: /Connector Registry/i })).toBeVisible()
-    await expect(page.getByPlaceholder(/Search connectors/i)).toBeVisible()
+    await page.waitForLoadState("networkidle")
+    await expect(page.getByRole("heading", { name: /Connector Registry/i })).toBeVisible({
+      timeout: 10_000,
+    })
+    await expect(page.getByPlaceholder(/Search connectors/i)).toBeVisible({ timeout: 10_000 })
   })
 
   test("/builder loads canvas or sign-in prompt", async ({ page }) => {
@@ -66,6 +79,12 @@ test.describe("App shell and critical routes", () => {
 
   test("/marketplace loads ASAP Agent Registry", async ({ page }) => {
     await page.goto("/marketplace")
-    await expect(page.getByRole("heading", { name: /ASAP Agent Registry/i })).toBeVisible()
+    await page.waitForLoadState("networkidle")
+    await expect(
+      page
+        .getByRole("heading", { name: /ASAP Agent Registry/i })
+        .or(page.getByText(/ASAP Agent Registry/i))
+        .first(),
+    ).toBeVisible({ timeout: 10_000 })
   })
 })

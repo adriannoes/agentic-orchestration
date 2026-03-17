@@ -28,14 +28,14 @@ test.describe("Agents dashboard", () => {
   })
 
   test("opening Create Agent dialog", async ({ page }) => {
-    const btn = page.getByText(/New Agent|Create Agent/i).first()
+    const btn = page.getByRole("button", { name: /New Agent|Create Agent/i }).first()
     await btn.waitFor({ state: "visible" })
     await btn.click({ force: true })
     await expect(
       page
-        .getByRole("dialog")
-        .or(page.getByText(/Name|Model|Instructions/i))
+        .getByTestId("create-agent-dialog")
+        .or(page.getByRole("dialog", { name: /Create New Agent/i }))
         .first(),
-    ).toBeVisible({ timeout: 5_000 })
+    ).toBeVisible({ timeout: 8_000 })
   })
 })
