@@ -79,7 +79,7 @@ class OAuthManager {
     return this.providers.get(connectorId)
   }
 
-  generateAuthUrl(connectorId: string, redirectUri: string): string {
+  async generateAuthUrl(connectorId: string, redirectUri: string): Promise<string> {
     const provider = this.providers.get(connectorId)
     if (!provider) {
       throw new Error(`Provider ${connectorId} not found`)
@@ -109,7 +109,7 @@ class OAuthManager {
     })
 
     if (codeVerifier) {
-      const codeChallenge = this.generateCodeChallenge(codeVerifier)
+      const codeChallenge = await this.generateCodeChallenge(codeVerifier)
       params.append("code_challenge", codeChallenge)
       params.append("code_challenge_method", "S256")
     }
@@ -133,8 +133,6 @@ class OAuthManager {
 
     this.pendingStates.delete(state)
 
-    console.log(`[v0] Exchanging code for token with provider ${provider.name}`)
-
     return {
       accessToken: `mock_access_token_${Date.now()}`,
       refreshToken: `mock_refresh_token_${Date.now()}`,
@@ -150,8 +148,6 @@ class OAuthManager {
     if (!provider) {
       throw new Error("Provider not found")
     }
-
-    console.log(`[v0] Refreshing token for provider ${provider.name}`)
 
     return {
       accessToken: `mock_refreshed_token_${Date.now()}`,
@@ -176,8 +172,14 @@ class OAuthManager {
       .replace(/=/g, "")
   }
 
-  private generateCodeChallenge(verifier: string): string {
-    return verifier
+  private async generateCodeChallenge(verifier: string): Promise<string> {
+    const encoder = new TextEncoder()
+    const data = encoder.encode(verifier)
+    const digest = await crypto.subtle.digest("SHA-256", data)
+    return btoa(String.fromCharCode(...new Uint8Array(digest)))
+      .replace(/\+/g, "-")
+      .replace(/\//g, "_")
+      .replace(/=/g, "")
   }
 
   private cleanupOldStates(): void {

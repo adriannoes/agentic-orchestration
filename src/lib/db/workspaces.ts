@@ -1,9 +1,21 @@
 import { getSupabaseServerClient } from "@/lib/supabase/server"
 import { getCurrentUser } from "@/lib/auth/actions"
 
-export async function getCurrentWorkspace() {
+export interface Workspace {
+  id: string
+  name: string
+}
+
+export interface WorkspaceWithRole extends Workspace {
+  role: string
+}
+
+const LOCAL_WORKSPACE: Workspace = { id: "local-workspace", name: "Local Workspace" }
+const LOCAL_WORKSPACE_WITH_ROLE: WorkspaceWithRole = { ...LOCAL_WORKSPACE, role: "admin" }
+
+export async function getCurrentWorkspace(): Promise<Workspace | null> {
   const supabase = await getSupabaseServerClient()
-  if (!supabase) return { id: "local-workspace", name: "Local Workspace" } as any
+  if (!supabase) return LOCAL_WORKSPACE
 
   const user = await getCurrentUser()
 
@@ -17,14 +29,15 @@ export async function getCurrentWorkspace() {
     .single()
 
   if (error || !data?.workspaces) {
-    return { id: "local-workspace", name: "Local Workspace" } as any
+    return LOCAL_WORKSPACE
   }
-  return data.workspaces as any
+  const ws = data.workspaces as unknown as Workspace
+  return ws
 }
 
-export async function getUserWorkspaces() {
+export async function getUserWorkspaces(): Promise<WorkspaceWithRole[]> {
   const supabase = await getSupabaseServerClient()
-  if (!supabase) return [{ id: "local-workspace", name: "Local Workspace", role: "admin" }] as any
+  if (!supabase) return [LOCAL_WORKSPACE_WITH_ROLE]
 
   const user = await getCurrentUser()
 
@@ -36,9 +49,9 @@ export async function getUserWorkspaces() {
     .eq("user_id", user.id)
 
   if (error || !data?.length) {
-    return [{ id: "local-workspace", name: "Local Workspace", role: "admin" }] as any
+    return [LOCAL_WORKSPACE_WITH_ROLE]
   }
-  return data.map((item) => ({ ...item.workspaces, role: item.role }))
+  return data.map((item) => ({ ...(item.workspaces as unknown as Workspace), role: item.role }))
 }
 
 export async function getWorkspaceMembers(workspaceId: string) {

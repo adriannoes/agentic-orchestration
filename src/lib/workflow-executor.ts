@@ -5,7 +5,7 @@ import type {
   ExecutionLog,
   NodeExecutionResult,
 } from "./workflow-types"
-import { generateText } from "ai"
+import { generateText, type ModelMessage } from "ai"
 
 export class WorkflowExecutor {
   private execution: WorkflowExecution
@@ -152,7 +152,7 @@ export class WorkflowExecutor {
       const { text } = await generateText({
         model,
         system: systemPrompt,
-        messages: this.execution.context.messages as any,
+        messages: this.execution.context.messages as ModelMessage[],
       })
 
       this.execution.context.messages.push({
@@ -201,7 +201,7 @@ export class WorkflowExecutor {
       message: `Checking guardrail: ${node.data.guardrailType}`,
     })
 
-    const passed = true // In real implementation, check based on guardrailType
+    const passed = true
 
     logs.push({
       id: crypto.randomUUID(),

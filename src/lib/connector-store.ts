@@ -10,7 +10,7 @@ class ConnectorStore {
       authType: "oauth2",
       status: "disconnected",
       icon: "📁",
-      color: "#4285F4",
+      color: "var(--connector-google)",
       website: "https://drive.google.com",
       isOfficial: true,
     },
@@ -22,7 +22,7 @@ class ConnectorStore {
       authType: "oauth2",
       status: "disconnected",
       icon: "📦",
-      color: "#0061FF",
+      color: "var(--connector-dropbox)",
       isOfficial: true,
     },
     {
@@ -33,7 +33,7 @@ class ConnectorStore {
       authType: "api_key",
       status: "connected",
       icon: "🤖",
-      color: "#10A37F",
+      color: "var(--connector-openai)",
       isOfficial: true,
     },
     {
@@ -44,7 +44,7 @@ class ConnectorStore {
       authType: "api_key",
       status: "disconnected",
       icon: "🧠",
-      color: "#D4A574",
+      color: "var(--connector-anthropic)",
       isOfficial: true,
     },
     {
@@ -55,7 +55,7 @@ class ConnectorStore {
       authType: "oauth2",
       status: "disconnected",
       icon: "💬",
-      color: "#4A154B",
+      color: "var(--connector-slack)",
       isOfficial: true,
     },
     {
@@ -66,7 +66,7 @@ class ConnectorStore {
       authType: "oauth2",
       status: "disconnected",
       icon: "📝",
-      color: "#000000",
+      color: "var(--connector-notion)",
       isOfficial: true,
     },
     {
@@ -77,7 +77,7 @@ class ConnectorStore {
       authType: "oauth2",
       status: "disconnected",
       icon: "🐙",
-      color: "#181717",
+      color: "var(--connector-github)",
       isOfficial: true,
     },
     {
@@ -88,7 +88,7 @@ class ConnectorStore {
       authType: "basic",
       status: "disconnected",
       icon: "🐘",
-      color: "#336791",
+      color: "var(--connector-postgres)",
       isOfficial: true,
     },
     {
@@ -99,7 +99,7 @@ class ConnectorStore {
       authType: "mcp",
       status: "disconnected",
       icon: "📂",
-      color: "#F59E0B",
+      color: "var(--connector-mcp-filesystem)",
       isOfficial: true,
     },
     {
@@ -110,7 +110,7 @@ class ConnectorStore {
       authType: "mcp",
       status: "disconnected",
       icon: "🧩",
-      color: "#8B5CF6",
+      color: "var(--connector-mcp-memory)",
       isOfficial: true,
     },
   ]
