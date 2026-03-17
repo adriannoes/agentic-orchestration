@@ -1,8 +1,7 @@
 "use client"
 
-import type React from "react"
-
-import { useState, useEffect } from "react"
+import { useState, type ReactNode } from "react"
+import useSWR from "swr"
 import { Search, Wrench, Globe, Database, Code, Sparkles } from "lucide-react"
 import { Input } from "@/components/ui/input"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
@@ -11,7 +10,9 @@ import { Badge } from "@/components/ui/badge"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import type { Tool } from "@/lib/types"
 
-const categoryIcons: Record<string, React.ReactNode> = {
+const fetcher = (url: string) => fetch(url).then((res) => res.json())
+
+const categoryIcons: Record<string, ReactNode> = {
   web: <Globe className="h-5 w-5" />,
   data: <Database className="h-5 w-5" />,
   code: <Code className="h-5 w-5" />,
@@ -26,19 +27,8 @@ const categoryColors: Record<string, string> = {
 }
 
 export function ToolsLibrary() {
-  const [tools, setTools] = useState<Tool[]>([])
+  const { data: tools = [], isLoading: loading } = useSWR<Tool[]>("/api/tools", fetcher)
   const [search, setSearch] = useState("")
-  const [loading, setLoading] = useState(true)
-
-  useEffect(() => {
-    fetch("/api/tools")
-      .then((res) => res.json())
-      .then((data) => {
-        setTools(data)
-        setLoading(false)
-      })
-      .catch(console.error)
-  }, [])
 
   const filteredTools = tools.filter(
     (tool) =>
@@ -51,7 +41,7 @@ export function ToolsLibrary() {
   return (
     <div className="p-8">
       <div className="mb-8">
-        <h1 className="mb-2 text-3xl font-bold">Tools Library</h1>
+        <h1 className="mb-2 text-3xl leading-snug font-bold">Tools Library</h1>
         <p className="text-muted-foreground">Browse and explore available tools for your agents</p>
       </div>
 

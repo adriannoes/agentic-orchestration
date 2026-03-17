@@ -17,11 +17,13 @@ import {
   Server,
   Globe,
   ExternalLink,
+  Menu,
 } from "lucide-react"
 import { useState } from "react"
 import { Button } from "@/components/ui/button"
 import { UserMenu } from "@/components/user-menu"
 import { env } from "@/lib/env"
+import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from "@/components/ui/sheet"
 
 const navItems = [
   { href: "/", label: "Agents", icon: Bot },
@@ -35,21 +37,27 @@ const navItems = [
   { href: "/settings", label: "Settings", icon: Settings },
 ]
 
-export function Sidebar() {
-  const pathname = usePathname()
-  const [collapsed, setCollapsed] = useState(false)
+function SidebarContent({
+  pathname,
+  collapsed,
+  onCollapseToggle,
+  onNavClick,
+  isMobile = false,
+}: {
+  pathname: string
+  collapsed: boolean
+  onCollapseToggle: () => void
+  onNavClick?: () => void
+  isMobile?: boolean
+}) {
   const { data: session, status } = useSession()
   const user = session?.user
+  const expanded = isMobile || !collapsed
 
   return (
-    <aside
-      className={cn(
-        "border-border/80 bg-card/80 flex flex-col border-r backdrop-blur-sm transition-all duration-300",
-        collapsed ? "w-16" : "w-64",
-      )}
-    >
+    <>
       <div className="border-border/80 flex items-center justify-between border-b p-4">
-        {!collapsed && (
+        {expanded && (
           <div className="flex items-center gap-2">
             <div className="bg-primary flex h-8 w-8 items-center justify-center rounded-lg">
               <Bot className="text-primary-foreground h-5 w-5" />
@@ -57,15 +65,17 @@ export function Sidebar() {
             <span className="text-lg font-semibold">Agent Builder</span>
           </div>
         )}
-        <Button
-          variant="ghost"
-          size="icon"
-          onClick={() => setCollapsed(!collapsed)}
-          className={cn(collapsed && "mx-auto")}
-          aria-label={collapsed ? "Expand sidebar" : "Collapse sidebar"}
-        >
-          {collapsed ? <ChevronRight className="h-4 w-4" /> : <ChevronLeft className="h-4 w-4" />}
-        </Button>
+        {!isMobile && (
+          <Button
+            variant="ghost"
+            size="icon"
+            onClick={onCollapseToggle}
+            className={cn(collapsed && "mx-auto")}
+            aria-label={collapsed ? "Expand sidebar" : "Collapse sidebar"}
+          >
+            {collapsed ? <ChevronRight className="h-4 w-4" /> : <ChevronLeft className="h-4 w-4" />}
+          </Button>
+        )}
       </div>
 
       <nav className="flex-1 space-y-1 p-2">
@@ -77,15 +87,16 @@ export function Sidebar() {
             <Link
               key={item.href}
               href={item.href}
+              onClick={onNavClick}
               className={cn(
-                "flex items-center gap-3 rounded-lg px-3 py-2 transition-all duration-200",
+                "flex items-center gap-3 rounded-lg px-3 py-2 transition-all duration-200 active:scale-[0.98]",
                 "hover:bg-accent/80 hover:text-accent-foreground",
                 isActive && "border-primary bg-accent text-foreground border-l-2",
-                collapsed && "justify-center px-2",
+                collapsed && !isMobile && "justify-center px-2",
               )}
             >
               <item.icon className="h-5 w-5 shrink-0" />
-              {!collapsed && <span>{item.label}</span>}
+              {expanded && <span>{item.label}</span>}
             </Link>
           )
         })}
@@ -98,23 +109,23 @@ export function Sidebar() {
           rel="noopener noreferrer"
           aria-label="Open ASAP Protocol"
           className={cn(
-            "flex items-center gap-3 rounded-lg px-3 py-2 transition-all duration-200",
+            "flex items-center gap-3 rounded-lg px-3 py-2 transition-all duration-200 active:scale-[0.98]",
             "text-muted-foreground hover:bg-accent/80 hover:text-foreground",
-            collapsed && "justify-center px-2",
+            collapsed && !isMobile && "justify-center px-2",
           )}
         >
           <ExternalLink className="h-5 w-5 shrink-0" />
-          {!collapsed && <span>ASAP Protocol</span>}
+          {expanded && <span>ASAP Protocol</span>}
         </a>
       </div>
 
       <div className="border-border/80 border-t p-4">
         {status === "authenticated" && user ? (
-          <div className={cn(collapsed && "flex justify-center")}>
+          <div className={cn(collapsed && !isMobile && "flex justify-center")}>
             <UserMenu user={user} />
           </div>
         ) : (
-          !collapsed && (
+          expanded && (
             <div className="text-muted-foreground text-xs">
               <a
                 href={env.NEXT_PUBLIC_ASAP_PROTOCOL_URL}
@@ -128,6 +139,60 @@ export function Sidebar() {
           )
         )}
       </div>
-    </aside>
+    </>
+  )
+}
+
+export function Sidebar() {
+  const pathname = usePathname()
+  const [collapsed, setCollapsed] = useState(false)
+  const [mobileOpen, setMobileOpen] = useState(false)
+
+  return (
+    <>
+      {/* Mobile: hamburger trigger + Sheet (< lg) */}
+      <div className="border-border/80 bg-card/80 fixed inset-x-0 top-0 z-40 flex h-14 items-center border-b px-4 lg:hidden">
+        <Sheet open={mobileOpen} onOpenChange={setMobileOpen}>
+          <SheetTrigger asChild>
+            <Button
+              variant="ghost"
+              size="icon"
+              className="active:scale-[0.98]"
+              aria-label="Open menu"
+            >
+              <Menu className="h-5 w-5" />
+            </Button>
+          </SheetTrigger>
+          <SheetContent side="left" className="border-border/80 bg-card/80 w-64 p-0">
+            <SheetHeader className="sr-only">
+              <SheetTitle>Navigation</SheetTitle>
+            </SheetHeader>
+            <div className="flex h-full flex-col pt-4">
+              <SidebarContent
+                pathname={pathname}
+                collapsed={false}
+                onCollapseToggle={() => {}}
+                onNavClick={() => setMobileOpen(false)}
+                isMobile
+              />
+            </div>
+          </SheetContent>
+        </Sheet>
+      </div>
+
+      {/* Desktop: sidebar (hidden below lg) */}
+      <aside
+        className={cn(
+          "border-border/80 bg-card/80 hidden flex-col border-r backdrop-blur-sm transition-all duration-300 lg:flex",
+          collapsed ? "w-16" : "w-64",
+        )}
+      >
+        <SidebarContent
+          pathname={pathname}
+          collapsed={collapsed}
+          onCollapseToggle={() => setCollapsed(!collapsed)}
+        />
+      </aside>
+    </>
   )
 }

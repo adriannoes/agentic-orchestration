@@ -1,6 +1,7 @@
 "use client"
 
-import { useState, useEffect } from "react"
+import { useState } from "react"
+import useSWR from "swr"
 import { Plus, Bot, MoreHorizontal, Pencil, Trash2, History } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
@@ -21,43 +22,27 @@ import { EditAgentDialog } from "@/components/edit-agent-dialog"
 import { formatDistanceToNow } from "date-fns"
 
 const FLUID_BADGE = "bg-black/5 dark:bg-white/10 backdrop-blur-sm text-xs"
+const fetcher = (url: string) => fetch(url).then((res) => res.json())
 
 export function AgentsDashboard() {
-  const [agents, setAgents] = useState<Agent[]>([])
-  const [loading, setLoading] = useState(true)
+  const { data: agents = [], isLoading: loading, mutate } = useSWR<Agent[]>("/api/agents", fetcher)
   const [createDialogOpen, setCreateDialogOpen] = useState(false)
   const [editingAgent, setEditingAgent] = useState<Agent | null>(null)
 
-  const fetchAgents = async () => {
-    try {
-      const res = await fetch("/api/agents")
-      const data = await res.json()
-      setAgents(data)
-    } catch (error) {
-      console.error("Failed to fetch agents:", error)
-    } finally {
-      setLoading(false)
-    }
-  }
-
-  useEffect(() => {
-    fetchAgents()
-  }, [])
-
   const handleDelete = async (id: string) => {
-    try {
-      await fetch(`/api/agents/${id}`, { method: "DELETE" })
-      setAgents(agents.filter((a) => a.id !== id))
-    } catch (error) {
-      console.error("Failed to delete agent:", error)
-    }
+    await fetch(`/api/agents/${id}`, { method: "DELETE" })
+    mutate()
   }
 
   return (
     <div className="p-8">
       <div className="mb-8 flex items-center justify-between">
         <div>
-          <AnimatedText text="Agents" as="h1" className="text-3xl font-bold tracking-tight" />
+          <AnimatedText
+            text="Agents"
+            as="h1"
+            className="text-3xl leading-snug font-bold tracking-tight"
+          />
           <p className="text-muted-foreground mt-1">Create and manage your AI agents</p>
         </div>
         <Button onClick={() => setCreateDialogOpen(true)}>
@@ -127,6 +112,7 @@ export function AgentsDashboard() {
                           variant="ghost"
                           size="icon"
                           className="opacity-0 transition-opacity group-hover:opacity-100"
+                          aria-label="Agent actions"
                         >
                           <MoreHorizontal className="h-4 w-4" />
                         </Button>
@@ -178,7 +164,7 @@ export function AgentsDashboard() {
       <CreateAgentDialog
         open={createDialogOpen}
         onOpenChange={setCreateDialogOpen}
-        onCreated={fetchAgents}
+        onCreated={() => mutate()}
       />
 
       {editingAgent && (
@@ -186,7 +172,7 @@ export function AgentsDashboard() {
           agent={editingAgent}
           open={!!editingAgent}
           onOpenChange={(open) => !open && setEditingAgent(null)}
-          onUpdated={fetchAgents}
+          onUpdated={() => mutate()}
         />
       )}
     </div>

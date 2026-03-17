@@ -28,7 +28,7 @@ export function ConnectorCard({ connector, onConnect }: ConnectorCardProps) {
         <div className="flex items-center gap-3">
           <div
             className="flex h-12 w-12 items-center justify-center rounded-lg text-2xl"
-            style={{ backgroundColor: `${connector.color}15` }}
+            style={{ backgroundColor: `color-mix(in oklch, ${connector.color} 8%, transparent)` }}
           >
             {connector.icon}
           </div>
@@ -78,7 +78,7 @@ export function ConnectorCard({ connector, onConnect }: ConnectorCardProps) {
           </Button>
         )}
         {connector.website && (
-          <Button variant="ghost" size="icon" asChild>
+          <Button variant="ghost" size="icon" asChild aria-label={`Open ${connector.name} website`}>
             <a href={connector.website} target="_blank" rel="noopener noreferrer">
               <ExternalLink className="h-4 w-4" />
             </a>

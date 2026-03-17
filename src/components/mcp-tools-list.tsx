@@ -21,8 +21,8 @@ export function MCPToolsList({ tools }: MCPToolsListProps) {
 
   return (
     <div className="space-y-3">
-      {tools.map((tool, index) => (
-        <Card key={index} className="border-border/80 p-4">
+      {tools.map((tool) => (
+        <Card key={`${tool.serverId}-${tool.name}`} className="border-border/80 p-4">
           <div className="mb-2 flex items-start justify-between">
             <div className="flex items-center gap-2">
               <Wrench className="h-4 w-4 text-indigo-300" />
