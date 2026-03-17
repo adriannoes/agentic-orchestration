@@ -59,7 +59,7 @@ const BentoCard = forwardRef<HTMLDivElement, BentoCardProps>(
         <h3 className="text-lg font-semibold">{title}</h3>
         <p className="text-muted-foreground mt-1 text-sm">{description}</p>
         {value != null && (
-          <p className="mt-2 font-mono text-3xl font-bold tracking-tight">{value}</p>
+          <p className="mt-2 font-mono text-3xl leading-snug font-bold tracking-tight">{value}</p>
         )}
       </div>
     </div>
