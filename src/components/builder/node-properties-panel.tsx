@@ -1,8 +1,7 @@
 "use client"
 
-import React from "react"
-
 import {
+  type LucideIcon,
   Bot,
   Shield,
   GitBranch,
@@ -39,7 +38,7 @@ interface NodePropertiesPanelProps {
   onUpdate: () => void
 }
 
-const NODE_ICONS: Record<NodeType, React.ElementType> = {
+const NODE_ICONS: Record<NodeType, LucideIcon> = {
   start: Play,
   end: Square,
   agent: Bot,
@@ -110,6 +109,7 @@ export function NodePropertiesPanel({
           "hover:text-foreground transition-all duration-300 hover:scale-110",
         )}
         onClick={onToggle}
+        aria-label={isOpen ? "Close properties panel" : "Open properties panel"}
       >
         {isOpen ? <ChevronRight className="h-4 w-4" /> : <ChevronLeft className="h-4 w-4" />}
       </Button>
@@ -122,10 +122,7 @@ export function NodePropertiesPanel({
               <div className="border-border/80 border-b p-5">
                 <div className="flex items-center gap-3">
                   <div className="bg-muted/40 ring-border/80 rounded-xl p-2.5 ring-1 ring-inset">
-                    {(Icon as any) &&
-                      React.createElement(Icon as React.ComponentType<{ className?: string }>, {
-                        className: "text-foreground h-5 w-5",
-                      })}
+                    {Icon && <Icon className="text-foreground h-5 w-5" />}
                   </div>
                   <div>
                     <h2 className="text-foreground leading-snug font-semibold tracking-tight">

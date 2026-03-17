@@ -46,7 +46,10 @@ export async function POST(request: NextRequest, { params }: { params: Promise<{
 
     return NextResponse.json(workflow)
   } catch (error) {
-    console.error("Template instantiation error:", error)
+    console.error(
+      "Template instantiation error:",
+      error instanceof Error ? error.message : String(error),
+    )
     return NextResponse.json({ error: "Failed to create workflow from template" }, { status: 500 })
   }
 }

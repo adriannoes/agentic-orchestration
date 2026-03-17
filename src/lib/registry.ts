@@ -51,7 +51,10 @@ export async function fetchRegistryAgents(): Promise<FetchRegistryResult> {
       }
       revokedIds = new Set(revokedParsed.data.revoked.map((r) => r.id))
     } catch (error) {
-      console.error("Failed to fetch revoked agents list", error)
+      console.error(
+        "Failed to fetch revoked agents list",
+        error instanceof Error ? error.message : String(error),
+      )
       return { agents: [], error: REVOCATION_LIST_UNAVAILABLE_ERROR }
     }
 
@@ -59,7 +62,7 @@ export async function fetchRegistryAgents(): Promise<FetchRegistryResult> {
 
     return { agents: activeAgents }
   } catch (error) {
-    console.error("Registry fetch error:", error)
+    console.error("Registry fetch error:", error instanceof Error ? error.message : String(error))
     return { agents: [], error: "Failed to connect to registry" }
   }
 }

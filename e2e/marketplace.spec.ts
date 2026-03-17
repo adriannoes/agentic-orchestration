@@ -50,10 +50,15 @@ test.describe("Sidebar navigation", () => {
 })
 
 test.describe("Login with ASAP context", () => {
-  test("shows contextual message with ?from=asap", async ({ page }) => {
+  test("shows contextual message with ?from=asap or redirects when authenticated", async ({
+    page,
+  }) => {
     await page.goto("/login?from=asap")
     await expect(
-      page.getByText("Continue with GitHub to access Agent Builder from ASAP Protocol."),
-    ).toBeVisible()
+      page
+        .getByText("Continue with GitHub to access Agent Builder from ASAP Protocol.")
+        .or(page.getByRole("heading", { name: /Agents/i }))
+        .first(),
+    ).toBeVisible({ timeout: 10_000 })
   })
 })

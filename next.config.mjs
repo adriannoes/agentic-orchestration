@@ -1,7 +1,7 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   typescript: {
-    ignoreBuildErrors: true,
+    ignoreBuildErrors: false,
   },
   images: {
     unoptimized: true,
@@ -27,7 +27,7 @@ const nextConfig = {
             value:
               process.env.NODE_ENV === "development"
                 ? "default-src 'self'; script-src 'self' 'unsafe-eval' 'unsafe-inline' https://va.vercel-scripts.com; style-src 'self' 'unsafe-inline'; img-src 'self' blob: data: https:; font-src 'self' data:; connect-src 'self' https://raw.githubusercontent.com https://vitals.vercel-insights.com https://vitals.vercel-analytics.com https://api.github.com;"
-                : "default-src 'self'; script-src 'self' https://va.vercel-scripts.com; style-src 'self' 'unsafe-inline'; img-src 'self' blob: data: https:; font-src 'self' data:; connect-src 'self' https://raw.githubusercontent.com https://vitals.vercel-insights.com https://vitals.vercel-analytics.com https://api.github.com;",
+                : "default-src 'self'; script-src 'self' 'unsafe-inline' https://va.vercel-scripts.com; style-src 'self' 'unsafe-inline'; img-src 'self' blob: data: https:; font-src 'self' data:; connect-src 'self' https://raw.githubusercontent.com https://vitals.vercel-insights.com https://vitals.vercel-analytics.com https://api.github.com;",
           },
         ],
       },

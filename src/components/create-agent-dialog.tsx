@@ -1,6 +1,7 @@
 "use client"
 
-import { useState, useEffect } from "react"
+import { useState } from "react"
+import useSWR from "swr"
 import {
   Dialog,
   DialogContent,
@@ -30,6 +31,8 @@ interface CreateAgentDialogProps {
   onCreated: () => void
 }
 
+const fetcher = (url: string) => fetch(url).then((res) => res.json())
+
 const models = [
   { id: "gpt-4o", name: "GPT-4o" },
   { id: "gpt-4o-mini", name: "GPT-4o Mini" },
@@ -44,17 +47,8 @@ export function CreateAgentDialog({ open, onOpenChange, onCreated }: CreateAgent
   const [model, setModel] = useState("gpt-4o")
   const [systemPrompt, setSystemPrompt] = useState("")
   const [selectedTools, setSelectedTools] = useState<string[]>([])
-  const [tools, setTools] = useState<Tool[]>([])
   const [loading, setLoading] = useState(false)
-
-  useEffect(() => {
-    if (open) {
-      fetch("/api/tools")
-        .then((res) => res.json())
-        .then(setTools)
-        .catch(console.error)
-    }
-  }, [open])
+  const { data: tools = [] } = useSWR<Tool[]>(open ? "/api/tools" : null, fetcher)
 
   const handleSubmit = async () => {
     if (!name.trim()) {
@@ -102,7 +96,10 @@ export function CreateAgentDialog({ open, onOpenChange, onCreated }: CreateAgent
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="max-h-[90vh] max-w-2xl overflow-y-auto">
+      <DialogContent
+        className="max-h-[90vh] max-w-2xl overflow-y-auto"
+        data-testid="create-agent-dialog"
+      >
         <DialogHeader>
           <DialogTitle>Create New Agent</DialogTitle>
           <DialogDescription>Configure your AI agent with a model and tools</DialogDescription>

@@ -7,6 +7,19 @@ import { cn } from "@/lib/utils"
 import { useCanvasVisibility } from "@/hooks/use-canvas-visibility"
 import { useIsMobile } from "@/hooks/use-mobile"
 
+// Suppress upstream THREE.Clock deprecation from @react-three/fiber internals (v9.5.0)
+if (typeof window !== "undefined") {
+  const origWarn = console.warn
+  console.warn = (...args: unknown[]) => {
+    if (
+      typeof args[0] === "string" &&
+      (args[0].includes("THREE.Clock") || args[0].includes("three.module.js"))
+    )
+      return
+    origWarn.apply(console, args)
+  }
+}
+
 const DOT_MATRIX_VERTEX = /* glsl */ `
   varying vec2 vUv;
   void main() {

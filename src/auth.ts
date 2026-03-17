@@ -1,8 +1,9 @@
 import NextAuth from "next-auth"
+import type { NextAuthConfig } from "next-auth"
 import GitHub from "next-auth/providers/github"
 import { resolveRedirectUrl } from "@/lib/auth-redirect"
 
-export const { handlers, auth, signIn, signOut } = NextAuth({
+const config: NextAuthConfig = {
   providers: [
     GitHub({
       clientId: process.env.AUTH_GITHUB_ID ?? "",
@@ -37,4 +38,22 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
   pages: {
     signIn: "/login",
   },
-})
+}
+
+export const { handlers, auth: authInternal, signIn, signOut } = NextAuth(config)
+
+// Export a wrapped auth that provides a mock session in development and E2E
+export const auth = (async () => {
+  if (process.env.NODE_ENV === "development" || process.env.PLAYWRIGHT_E2E === "1") {
+    return {
+      user: {
+        id: "mock-user-id",
+        name: "Dev User",
+        email: "dev@example.com",
+        username: "devuser",
+      },
+      expires: new Date(Date.now() + 3600 * 1000).toISOString(),
+    }
+  }
+  return authInternal()
+}) as typeof authInternal

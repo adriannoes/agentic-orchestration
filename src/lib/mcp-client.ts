@@ -194,8 +194,6 @@ class MCPClient {
       throw new Error("MCP server not connected")
     }
 
-    console.log(`[v0] Calling MCP tool ${toolName} on server ${server.name}`, args)
-
     if (toolName === "read_file") {
       return { content: "File content from MCP server", mimeType: "text/plain" }
     } else if (toolName === "write_file") {

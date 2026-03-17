@@ -6,7 +6,7 @@ test.describe("MCP Servers", () => {
   })
 
   test("shows MCP Servers heading and description", async ({ page }) => {
-    await expect(page.getByRole("heading", { name: /MCP Servers/i })).toBeVisible()
+    await expect(page.getByRole("heading", { name: "MCP Servers", exact: true })).toBeVisible()
     await expect(page.getByText(/Model Context Protocol/i)).toBeVisible()
   })
 

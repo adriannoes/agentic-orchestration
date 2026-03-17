@@ -1,8 +1,80 @@
 import { streamText, tool, convertToModelMessages, type UIMessage } from "ai"
 import { z } from "zod"
+import { auth } from "@/auth"
 import { store } from "@/lib/store"
 
 export const maxDuration = 60
+
+function safeEvaluateMath(expression: string): number {
+  const sanitized = expression.replace(/\s/g, "")
+  if (!/^[\d+\-*/().%^]+$/.test(sanitized)) {
+    throw new Error("Invalid characters in expression")
+  }
+  if (sanitized.length > 200) {
+    throw new Error("Expression too long")
+  }
+  const tokens = sanitized.match(/(\d+\.?\d*|[+\-*/().%^])/g)
+  if (!tokens) throw new Error("Invalid expression")
+
+  let pos = 0
+  function parseExpression(): number {
+    let result = parseTerm()
+    while (pos < tokens!.length && (tokens![pos] === "+" || tokens![pos] === "-")) {
+      const op = tokens![pos++]
+      const term = parseTerm()
+      result = op === "+" ? result + term : result - term
+    }
+    return result
+  }
+  function parseTerm(): number {
+    let result = parseFactor()
+    while (
+      pos < tokens!.length &&
+      (tokens![pos] === "*" || tokens![pos] === "/" || tokens![pos] === "%")
+    ) {
+      const op = tokens![pos++]
+      const factor = parseFactor()
+      if ((op === "/" || op === "%") && factor === 0) throw new Error("Division by zero")
+      result = op === "*" ? result * factor : op === "/" ? result / factor : result % factor
+    }
+    return result
+  }
+  function parseFactor(): number {
+    let result = parseUnary()
+    if (pos < tokens!.length && tokens![pos] === "^") {
+      pos++
+      const exponent = parseFactor()
+      result = Math.pow(result, exponent)
+    }
+    return result
+  }
+  function parseUnary(): number {
+    if (tokens![pos] === "-") {
+      pos++
+      return -parseUnary()
+    }
+    if (tokens![pos] === "+") {
+      pos++
+      return parseUnary()
+    }
+    return parsePrimary()
+  }
+  function parsePrimary(): number {
+    if (tokens![pos] === "(") {
+      pos++
+      const result = parseExpression()
+      if (tokens![pos] !== ")") throw new Error("Mismatched parentheses")
+      pos++
+      return result
+    }
+    const num = parseFloat(tokens![pos++])
+    if (isNaN(num)) throw new Error("Invalid number")
+    return num
+  }
+  const result = parseExpression()
+  if (pos !== tokens.length) throw new Error("Unexpected tokens")
+  return result
+}
 
 const availableTools = {
   "web-search": tool({
@@ -52,7 +124,7 @@ const availableTools = {
     async execute({ expression }) {
       await new Promise((resolve) => setTimeout(resolve, 300))
       try {
-        const result = Function('"use strict"; return (' + expression + ")")()
+        const result = safeEvaluateMath(expression)
         return { expression, result }
       } catch {
         return { expression, error: "Could not evaluate expression" }
@@ -92,6 +164,9 @@ const availableTools = {
 }
 
 export async function POST(req: Request) {
+  const session = await auth()
+  if (!session) return new Response("Unauthorized", { status: 401 })
+
   const { messages, agentId }: { messages: UIMessage[]; agentId: string } = await req.json()
 
   const agent = store.getAgent(agentId)

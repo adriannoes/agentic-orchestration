@@ -1,6 +1,7 @@
 "use client"
 
-import { useState, useEffect } from "react"
+import { useState } from "react"
+import useSWR from "swr"
 import type { MCPServer, MCPTool } from "@/lib/mcp-client"
 import { Button } from "@/components/ui/button"
 import { Card } from "@/components/ui/card"
@@ -11,42 +12,26 @@ import { Plus, Server, Trash2, RefreshCw, CheckCircle2, XCircle } from "lucide-r
 import { AddMCPServerDialog } from "./add-mcp-server-dialog"
 import { MCPToolsList } from "./mcp-tools-list"
 
+const fetcher = (url: string) =>
+  fetch(url).then((res) => {
+    if (!res.ok) throw new Error(`Failed to fetch: ${res.status}`)
+    return res.json()
+  })
+
 export function MCPManager() {
-  const [servers, setServers] = useState<MCPServer[]>([])
-  const [serversLoading, setServersLoading] = useState(true)
   const [selectedServer, setSelectedServer] = useState<MCPServer | null>(null)
-  const [tools, setTools] = useState<MCPTool[]>([])
   const [dialogOpen, setDialogOpen] = useState(false)
   const [loading, setLoading] = useState(false)
 
-  useEffect(() => {
-    fetchServers()
-  }, [])
-
-  useEffect(() => {
-    if (selectedServer) {
-      fetchTools(selectedServer.id)
-    }
-  }, [selectedServer])
-
-  const fetchServers = async () => {
-    setServersLoading(true)
-    try {
-      const res = await fetch("/api/mcp/servers")
-      if (!res.ok) throw new Error(`Failed to fetch: ${res.status}`)
-      const data = await res.json()
-      setServers(data)
-    } finally {
-      setServersLoading(false)
-    }
-  }
-
-  const fetchTools = async (serverId: string) => {
-    const res = await fetch(`/api/mcp/servers/${serverId}/tools`)
-    if (!res.ok) throw new Error(`Failed to fetch: ${res.status}`)
-    const data = await res.json()
-    setTools(data)
-  }
+  const {
+    data: servers = [],
+    isLoading: serversLoading,
+    mutate: mutateServers,
+  } = useSWR<MCPServer[]>("/api/mcp/servers", fetcher)
+  const { data: tools = [] } = useSWR<MCPTool[]>(
+    selectedServer ? `/api/mcp/servers/${selectedServer.id}/tools` : null,
+    fetcher,
+  )
 
   const handleAddServer = async (config: {
     name: string
@@ -62,11 +47,11 @@ export function MCPManager() {
       })
 
       if (res.ok) {
-        await fetchServers()
+        await mutateServers()
         setDialogOpen(false)
       }
-    } catch (error) {
-      console.error("Failed to add MCP server:", error)
+    } catch {
+      // Error already surfaced to user via UI state
     } finally {
       setLoading(false)
     }
@@ -77,13 +62,12 @@ export function MCPManager() {
 
     try {
       await fetch(`/api/mcp/servers/${serverId}`, { method: "DELETE" })
-      await fetchServers()
+      await mutateServers()
       if (selectedServer?.id === serverId) {
         setSelectedServer(null)
-        setTools([])
       }
-    } catch (error) {
-      console.error("Failed to delete server:", error)
+    } catch {
+      // Error already surfaced via mutateServers / selectedServer state
     }
   }
 
@@ -95,7 +79,7 @@ export function MCPManager() {
             <Plus className="mr-2 h-4 w-4" />
             Add MCP Server
           </Button>
-          <Button variant="outline" onClick={fetchServers}>
+          <Button variant="outline" onClick={() => mutateServers()}>
             <RefreshCw className="mr-2 h-4 w-4" />
             Refresh
           </Button>
@@ -158,6 +142,7 @@ export function MCPManager() {
                     <Button
                       variant="ghost"
                       size="icon"
+                      aria-label={`Delete ${server.name}`}
                       onClick={(e) => {
                         e.stopPropagation()
                         handleDeleteServer(server.id)

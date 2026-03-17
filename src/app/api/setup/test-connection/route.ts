@@ -1,7 +1,10 @@
+import { auth } from "@/auth"
 import { type NextRequest, NextResponse } from "next/server"
 import { createClient } from "@supabase/supabase-js"
 
 export async function POST(request: NextRequest) {
+  const session = await auth()
+  if (!session) return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
   try {
     const { url, key } = await request.json()
 
@@ -79,13 +82,14 @@ export async function POST(request: NextRequest) {
         authEnabled,
       },
     })
-  } catch (error: any) {
+  } catch (error) {
+    const message = error instanceof Error ? error.message : String(error)
     return NextResponse.json(
       {
         success: false,
-        message: "Connection failed: " + error.message,
+        message: "Connection failed: " + message,
         details: {
-          error: error.message,
+          error: message,
           hint: "Check your Supabase URL and API key",
         },
       },

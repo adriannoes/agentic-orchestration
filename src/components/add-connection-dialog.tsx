@@ -49,7 +49,10 @@ export function AddConnectionDialog({
         window.location.href = data.authUrl
       }
     } catch (error) {
-      console.error("Failed to initiate OAuth:", error)
+      console.error(
+        "Failed to initiate OAuth:",
+        error instanceof Error ? error.message : String(error),
+      )
       setLoading(false)
     }
   }
@@ -89,7 +92,10 @@ export function AddConnectionDialog({
         setApiKey("")
       }
     } catch (error) {
-      console.error("Failed to add connection:", error)
+      console.error(
+        "Failed to add connection:",
+        error instanceof Error ? error.message : String(error),
+      )
     } finally {
       setLoading(false)
     }

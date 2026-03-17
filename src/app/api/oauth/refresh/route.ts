@@ -1,8 +1,12 @@
 import { NextResponse } from "next/server"
+import { auth } from "@/auth"
 import { oauthManager } from "@/lib/oauth-manager"
 import { connectorStore } from "@/lib/connector-store"
 
 export async function POST(request: Request) {
+  const session = await auth()
+  if (!session) return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
+
   const body = await request.json()
   const { connectionId } = body
 
@@ -33,7 +37,7 @@ export async function POST(request: Request) {
       },
     })
 
-    return NextResponse.json({ success: true, accessToken: tokens.accessToken })
+    return NextResponse.json({ success: true })
   } catch (error) {
     return NextResponse.json({ error: (error as Error).message }, { status: 400 })
   }

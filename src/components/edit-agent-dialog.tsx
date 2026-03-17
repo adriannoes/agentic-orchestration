@@ -1,6 +1,7 @@
 "use client"
 
 import { useState, useEffect } from "react"
+import useSWR from "swr"
 import {
   Dialog,
   DialogContent,
@@ -31,6 +32,8 @@ interface EditAgentDialogProps {
   onUpdated: () => void
 }
 
+const fetcher = (url: string) => fetch(url).then((res) => res.json())
+
 const models = [
   { id: "gpt-4o", name: "GPT-4o" },
   { id: "gpt-4o-mini", name: "GPT-4o Mini" },
@@ -45,17 +48,8 @@ export function EditAgentDialog({ agent, open, onOpenChange, onUpdated }: EditAg
   const [model, setModel] = useState(agent.model)
   const [systemPrompt, setSystemPrompt] = useState(agent.systemPrompt)
   const [selectedTools, setSelectedTools] = useState<string[]>(agent.tools)
-  const [tools, setTools] = useState<Tool[]>([])
   const [loading, setLoading] = useState(false)
-
-  useEffect(() => {
-    if (open) {
-      fetch("/api/tools")
-        .then((res) => res.json())
-        .then(setTools)
-        .catch(console.error)
-    }
-  }, [open])
+  const { data: tools = [] } = useSWR<Tool[]>(open ? "/api/tools" : null, fetcher)
 
   useEffect(() => {
     setName(agent.name)

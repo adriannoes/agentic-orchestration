@@ -24,6 +24,7 @@ function createPathData(index: number): string {
   return `M 0 ${y0} C ${c1x} ${c1y} ${c2x} ${c2y} 100 ${y1}`
 }
 
+/** Decorative animated path background. No Lucide equivalent — design system exception (S5). */
 function BackgroundPaths({ className, pathCount = 6 }: BackgroundPathsProps) {
   const paths = useMemo(() => {
     return Array.from({ length: pathCount }, (_, i) => ({

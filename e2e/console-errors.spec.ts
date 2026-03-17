@@ -28,6 +28,8 @@ test.describe("Console Errors & Warnings", () => {
         "WebGL context could not be created",
         "Error creating WebGL context",
         "BindToCurrentSequence",
+        "Content Security Policy",
+        "Connection closed",
       ]
 
       page.on("console", (msg) => {

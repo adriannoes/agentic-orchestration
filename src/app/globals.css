@@ -82,6 +82,16 @@
   --sidebar-accent-foreground: oklch(0.205 0 0);
   --sidebar-border: oklch(0.922 0 0);
   --sidebar-ring: oklch(0.708 0 0);
+  --connector-google: oklch(0.628 0.187 264);
+  --connector-dropbox: oklch(0.515 0.204 264);
+  --connector-openai: oklch(0.631 0.169 164);
+  --connector-anthropic: oklch(0.72 0.1 70);
+  --connector-slack: oklch(0.22 0.12 308);
+  --connector-notion: oklch(0 0 0);
+  --connector-github: oklch(0.14 0 0);
+  --connector-postgres: oklch(0.45 0.08 248);
+  --connector-mcp-filesystem: oklch(0.76 0.18 66);
+  --connector-mcp-memory: oklch(0.64 0.24 293);
 }
 
 .dark {

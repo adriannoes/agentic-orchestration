@@ -27,12 +27,30 @@ const tabFadeIn = {
 }
 
 const ACCENT_COLORS = [
-  { hex: "#3b82f6", hsl: "217.2 91.2% 59.8%" }, // Blue
-  { hex: "#8b5cf6", hsl: "258.3 89.5% 66.3%" }, // Violet
-  { hex: "#10b981", hsl: "159.6 83.5% 39.4%" }, // Emerald
-  { hex: "#f59e0b", hsl: "37.7 92.1% 50.2%" }, // Amber
-  { hex: "#ef4444", hsl: "0 84.2% 60.2%" }, // Red
+  { oklch: "oklch(0.576 0.204 262.881)", label: "Blue" },
+  { oklch: "oklch(0.637 0.235 293.755)", label: "Violet" },
+  { oklch: "oklch(0.647 0.177 164.364)", label: "Emerald" },
+  { oklch: "oklch(0.756 0.178 66.29)", label: "Amber" },
+  { oklch: "oklch(0.637 0.237 25.331)", label: "Red" },
 ]
+
+const AI_MODELS = [
+  { value: "gpt-4o", label: "GPT-4o", provider: "OpenAI" },
+  { value: "gpt-4o-mini", label: "GPT-4o Mini", provider: "OpenAI" },
+  { value: "gpt-4-turbo", label: "GPT-4 Turbo", provider: "OpenAI" },
+  { value: "gpt-4o-2024-11-20", label: "GPT-4o (2024-11-20)", provider: "OpenAI" },
+  { value: "o1", label: "o1", provider: "OpenAI" },
+  { value: "o1-mini", label: "o1 Mini", provider: "OpenAI" },
+  { value: "claude-sonnet-4-6", label: "Claude Sonnet 4.6", provider: "Anthropic" },
+  { value: "claude-sonnet-4-20250514", label: "Claude Sonnet 4", provider: "Anthropic" },
+  { value: "claude-3-5-sonnet-20241022", label: "Claude 3.5 Sonnet", provider: "Anthropic" },
+  { value: "gemini-2.0-flash", label: "Gemini 2.0 Flash", provider: "Google" },
+  { value: "gemini-1.5-pro", label: "Gemini 1.5 Pro", provider: "Google" },
+  { value: "gemini-1.5-flash", label: "Gemini 1.5 Flash", provider: "Google" },
+  { value: "gemini-1.5-flash-8b", label: "Gemini 1.5 Flash 8B", provider: "Google" },
+  { value: "deepseek-reasoner", label: "DeepSeek R1", provider: "DeepSeek" },
+  { value: "deepseek-chat", label: "DeepSeek Chat", provider: "DeepSeek" },
+] as const
 
 export function SettingsPanel() {
   const { theme, setTheme } = useTheme()
@@ -51,19 +69,19 @@ export function SettingsPanel() {
     toast.success("Settings saved successfully")
   }
 
-  const handleColorChange = (colorObj: { hex: string; hsl: string }) => {
+  const handleColorChange = (colorObj: { oklch: string; label: string }) => {
     try {
-      localStorage.setItem("app-accent-color", colorObj.hsl)
-      document.documentElement.style.setProperty("--primary", colorObj.hsl)
+      localStorage.setItem("app-accent-color", colorObj.oklch)
+      document.documentElement.style.setProperty("--primary", colorObj.oklch)
     } catch (e) {
-      console.error(e)
+      console.error(e instanceof Error ? e.message : String(e))
     }
   }
 
   return (
     <div className="max-w-4xl p-8">
       <div className="mb-8">
-        <h1 className="mb-2 text-3xl font-bold">Settings</h1>
+        <h1 className="mb-2 text-3xl leading-snug font-bold">Settings</h1>
         <p className="text-muted-foreground">Configure your Agent Builder preferences</p>
       </div>
 
@@ -102,10 +120,11 @@ export function SettingsPanel() {
                       <SelectValue />
                     </SelectTrigger>
                     <SelectContent>
-                      <SelectItem value="gpt-4o">GPT-4o</SelectItem>
-                      <SelectItem value="gpt-4o-mini">GPT-4o Mini</SelectItem>
-                      <SelectItem value="gpt-4-turbo">GPT-4 Turbo</SelectItem>
-                      <SelectItem value="claude-sonnet-4-20250514">Claude Sonnet 4</SelectItem>
+                      {AI_MODELS.map((m) => (
+                        <SelectItem key={m.value} value={m.value}>
+                          {m.label} ({m.provider})
+                        </SelectItem>
+                      ))}
                     </SelectContent>
                   </Select>
                   <p className="text-muted-foreground text-sm">
@@ -234,12 +253,12 @@ export function SettingsPanel() {
                   <div className="flex gap-2">
                     {ACCENT_COLORS.map((color) => (
                       <button
-                        key={color.hex}
+                        key={color.label}
                         type="button"
                         onClick={() => handleColorChange(color)}
-                        className="hover:border-foreground h-8 w-8 rounded-full border-2 border-transparent transition-colors"
-                        style={{ backgroundColor: color.hex }}
-                        aria-label={`Accent color ${color.hex}`}
+                        className="hover:border-foreground h-8 w-8 rounded-xl border-2 border-transparent transition-colors"
+                        style={{ backgroundColor: color.oklch }}
+                        aria-label={`Accent color ${color.label}`}
                       />
                     ))}
                   </div>
