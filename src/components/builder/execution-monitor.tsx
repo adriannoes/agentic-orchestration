@@ -1,7 +1,17 @@
 "use client"
 
 import { useState } from "react"
-import { Play, X, ChevronRight, Clock, CheckCircle2, XCircle, Pause, Loader2 } from "lucide-react"
+import {
+  Play,
+  X,
+  ChevronRight,
+  Clock,
+  CheckCircle2,
+  XCircle,
+  Pause,
+  Loader2,
+  Copy,
+} from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { cn } from "@/lib/utils"
@@ -14,6 +24,39 @@ interface ExecutionMonitorProps {
   isOpen: boolean
   onClose: () => void
   onNodeHighlight?: (nodeId: string | null) => void
+}
+
+function JsonViewer({ data }: { data: unknown }) {
+  const [copied, setCopied] = useState(false)
+  const jsonStr = JSON.stringify(data, null, 2)
+  const handleCopy = () => {
+    navigator.clipboard.writeText(jsonStr)
+    setCopied(true)
+    setTimeout(() => setCopied(false), 2000)
+  }
+  return (
+    <div className="group relative mt-2">
+      <Button
+        variant="secondary"
+        size="icon"
+        className="absolute top-2 right-2 h-6 w-6 opacity-0 transition-opacity group-hover:opacity-100"
+        onClick={(e) => {
+          e.stopPropagation()
+          handleCopy()
+        }}
+        title="Copy JSON"
+      >
+        {copied ? (
+          <CheckCircle2 className="h-3 w-3 text-emerald-500" />
+        ) : (
+          <Copy className="h-3 w-3" />
+        )}
+      </Button>
+      <pre className="bg-muted overflow-x-auto rounded p-2 text-xs text-indigo-900 dark:text-indigo-200">
+        {jsonStr}
+      </pre>
+    </div>
+  )
 }
 
 export function ExecutionMonitor({
@@ -182,11 +225,7 @@ export function ExecutionMonitor({
                         <span>{log.nodeId}</span>
                         {log.duration && <span>• {log.duration}ms</span>}
                       </div>
-                      {log.data ? (
-                        <pre className="bg-muted mt-2 overflow-x-auto rounded p-2 text-xs">
-                          {JSON.stringify(log.data, null, 2)}
-                        </pre>
-                      ) : null}
+                      {log.data ? <JsonViewer data={log.data} /> : null}
                     </div>
                   </div>
                 </div>

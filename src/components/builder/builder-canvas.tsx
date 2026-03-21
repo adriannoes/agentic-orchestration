@@ -80,6 +80,23 @@ function BuilderCanvasInner() {
   const { toast } = useToast()
   const { screenToFlowPosition, getViewport } = useReactFlow()
 
+  const safeFetch = useCallback(
+    async (url: string, options?: RequestInit) => {
+      const res = await fetch(url, options)
+      if (!res.ok) {
+        let msg = "Operation failed"
+        try {
+          msg = (await res.clone().json()).error || msg
+        } catch {
+          /* ignore JSON parsing errors */
+        }
+        toast({ title: "Database Error", description: msg, variant: "destructive" })
+      }
+      return res
+    },
+    [toast],
+  )
+
   const [workflowId, setWorkflowId] = useState<string | null>(null)
 
   const {
@@ -95,7 +112,7 @@ function BuilderCanvasInner() {
     if (isLoadingWorkflows || isUnauthorized) return
     if (workflows && Array.isArray(workflows)) {
       if (workflows.length === 0 && !workflowId) {
-        fetch("/api/workflows", {
+        safeFetch("/api/workflows", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({
@@ -112,7 +129,9 @@ function BuilderCanvasInner() {
               mutate("/api/workflows")
             }
           })
-          .catch(() => {})
+          .catch((err) => {
+            console.error("Failed to default create workflow:", err)
+          })
       } else if (workflows.length > 0 && !workflowId) {
         setWorkflowId(workflows[0].id)
       }
@@ -186,7 +205,7 @@ function BuilderCanvasInner() {
     async (nodeId: string) => {
       if (!workflowId) return
       saveToHistory()
-      await fetch(`/api/workflows/${workflowId}/nodes/${nodeId}`, { method: "DELETE" })
+      await safeFetch(`/api/workflows/${workflowId}/nodes/${nodeId}`, { method: "DELETE" })
       mutateWorkflowAndHistory(workflowId)
     },
     [workflowId, saveToHistory, mutateWorkflowAndHistory],
@@ -196,7 +215,7 @@ function BuilderCanvasInner() {
     async (nodeId: string, frameId: string) => {
       if (!workflowId) return
       saveToHistory()
-      await fetch(`/api/workflows/${workflowId}/nodes/${nodeId}`, {
+      await safeFetch(`/api/workflows/${workflowId}/nodes/${nodeId}`, {
         method: "PATCH",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ parentId: frameId }),
@@ -211,7 +230,7 @@ function BuilderCanvasInner() {
     async (nodeId: string) => {
       if (!workflowId) return
       saveToHistory()
-      await fetch(`/api/workflows/${workflowId}/nodes/${nodeId}`, {
+      await safeFetch(`/api/workflows/${workflowId}/nodes/${nodeId}`, {
         method: "PATCH",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ parentId: null }),
@@ -228,7 +247,7 @@ function BuilderCanvasInner() {
       const node = workflow?.nodes.find((n) => n.id === nodeId)
       if (!node) return
       saveToHistory()
-      await fetch(`/api/workflows/${workflowId}/nodes/${nodeId}`, {
+      await safeFetch(`/api/workflows/${workflowId}/nodes/${nodeId}`, {
         method: "PATCH",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ data: { ...node.data, label: newLabel } }),
@@ -316,7 +335,7 @@ function BuilderCanvasInner() {
       if (removeChanges.length > 0 && workflowId) {
         saveToHistory()
         const updatedEdges = edges.filter((e) => !removeChanges.some((r) => r.id === e.id))
-        fetch(`/api/workflows/${workflowId}`, {
+        safeFetch(`/api/workflows/${workflowId}`, {
           method: "PATCH",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({ connections: reactFlowEdgesToConnections(updatedEdges) }),
@@ -330,7 +349,7 @@ function BuilderCanvasInner() {
     async (connection: ReactFlowConnection) => {
       if (!workflowId || !connection.source || !connection.target) return
       saveToHistory()
-      await fetch(`/api/workflows/${workflowId}/connections`, {
+      await safeFetch(`/api/workflows/${workflowId}/connections`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
@@ -353,7 +372,7 @@ function BuilderCanvasInner() {
         y: Math.round(node.position.y / GRID_SIZE) * GRID_SIZE,
       }
       saveToHistory()
-      await fetch(`/api/workflows/${workflowId}/nodes/${node.id}`, {
+      await safeFetch(`/api/workflows/${workflowId}/nodes/${node.id}`, {
         method: "PATCH",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ position: snappedPosition }),
@@ -415,7 +434,7 @@ function BuilderCanvasInner() {
         nodePayload.style = { width: 400, height: 300 }
       }
 
-      await fetch(`/api/workflows/${workflowId}/nodes`, {
+      await safeFetch(`/api/workflows/${workflowId}/nodes`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(nodePayload),
@@ -434,19 +453,19 @@ function BuilderCanvasInner() {
 
   const handleUndo = useCallback(async () => {
     if (!workflowId) return
-    await fetch(`/api/workflows/${workflowId}/undo`, { method: "POST" })
+    await safeFetch(`/api/workflows/${workflowId}/undo`, { method: "POST" })
     mutateWorkflowAndHistory(workflowId)
   }, [workflowId, mutateWorkflowAndHistory])
 
   const handleRedo = useCallback(async () => {
     if (!workflowId) return
-    await fetch(`/api/workflows/${workflowId}/redo`, { method: "POST" })
+    await safeFetch(`/api/workflows/${workflowId}/redo`, { method: "POST" })
     mutateWorkflowAndHistory(workflowId)
   }, [workflowId, mutateWorkflowAndHistory])
 
   const handleCopy = useCallback(async () => {
     if (!selectedNodeId || !workflowId) return
-    const response = await fetch(`/api/workflows/${workflowId}/copy`, {
+    const response = await safeFetch(`/api/workflows/${workflowId}/copy`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ nodeIds: [selectedNodeId] }),
@@ -466,7 +485,7 @@ function BuilderCanvasInner() {
       return
     }
     saveToHistory()
-    const response = await fetch(`/api/workflows/${workflowId}/paste`, {
+    const response = await safeFetch(`/api/workflows/${workflowId}/paste`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ nodes: clipboard.nodes, connections: clipboard.connections }),
@@ -483,7 +502,7 @@ function BuilderCanvasInner() {
   const handleDuplicate = useCallback(async () => {
     if (!selectedNodeId || !workflowId) return
     saveToHistory()
-    const copyRes = await fetch(`/api/workflows/${workflowId}/copy`, {
+    const copyRes = await safeFetch(`/api/workflows/${workflowId}/copy`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ nodeIds: [selectedNodeId] }),
@@ -494,7 +513,7 @@ function BuilderCanvasInner() {
       nodes: copyResult.nodes ?? [],
       connections: copyResult.connections ?? [],
     }
-    const pasteRes = await fetch(`/api/workflows/${workflowId}/paste`, {
+    const pasteRes = await safeFetch(`/api/workflows/${workflowId}/paste`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
@@ -522,7 +541,7 @@ function BuilderCanvasInner() {
     }
     saveToHistory()
     setIsLayoutTransitioning(true)
-    const response = await fetch(`/api/workflows/${workflowId}/auto-layout`, { method: "POST" })
+    const response = await safeFetch(`/api/workflows/${workflowId}/auto-layout`, { method: "POST" })
     if (response.ok) {
       mutateWorkflowAndHistory(workflowId)
       toast({ title: "Layout applied successfully" })
@@ -548,7 +567,7 @@ function BuilderCanvasInner() {
   const handleNodeDelete = useCallback(async () => {
     if (!selectedNodeId || !workflowId) return
     saveToHistory()
-    await fetch(`/api/workflows/${workflowId}/nodes/${selectedNodeId}`, { method: "DELETE" })
+    await safeFetch(`/api/workflows/${workflowId}/nodes/${selectedNodeId}`, { method: "DELETE" })
     mutateWorkflowAndHistory(workflowId)
   }, [selectedNodeId, workflowId, saveToHistory, mutateWorkflowAndHistory])
 
@@ -556,14 +575,14 @@ function BuilderCanvasInner() {
     async (nodeId: string) => {
       if (!workflowId) return
       saveToHistory()
-      const copyRes = await fetch(`/api/workflows/${workflowId}/copy`, {
+      const copyRes = await safeFetch(`/api/workflows/${workflowId}/copy`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ nodeIds: [nodeId] }),
       })
       if (!copyRes.ok) return
       const copyResult = await copyRes.json()
-      const pasteRes = await fetch(`/api/workflows/${workflowId}/paste`, {
+      const pasteRes = await safeFetch(`/api/workflows/${workflowId}/paste`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
@@ -582,7 +601,7 @@ function BuilderCanvasInner() {
   const handleCopyById = useCallback(
     async (nodeId: string) => {
       if (!workflowId) return
-      const response = await fetch(`/api/workflows/${workflowId}/copy`, {
+      const response = await safeFetch(`/api/workflows/${workflowId}/copy`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ nodeIds: [nodeId] }),
@@ -607,12 +626,12 @@ function BuilderCanvasInner() {
 
   const handleSaveVersion = useCallback(async () => {
     if (!workflowId) return
-    await fetch(`/api/workflows/${workflowId}/versions`, {
+    await safeFetch(`/api/workflows/${workflowId}/versions`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ description: "Manual save" }),
     })
-  }, [workflowId])
+  }, [workflowId, safeFetch])
 
   const { zoomIn, zoomOut, fitView } = useReactFlow()
 
@@ -723,6 +742,20 @@ function BuilderCanvasInner() {
         <p className="text-muted-foreground">Sign in to access the workflow builder</p>
         <Button asChild>
           <Link href="/login">Sign in</Link>
+        </Button>
+      </div>
+    )
+  }
+
+  if (workflowsError) {
+    return (
+      <div className="bg-background flex h-screen flex-col items-center justify-center gap-4">
+        <div className="text-destructive text-lg font-semibold">Failed to load workflow data</div>
+        <p className="text-muted-foreground">
+          {workflowsError.message || "Database connection required."}
+        </p>
+        <Button onClick={() => mutate("/api/workflows")} variant="outline">
+          Retry Connection
         </Button>
       </div>
     )
