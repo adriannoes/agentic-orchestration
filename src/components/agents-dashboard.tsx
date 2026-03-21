@@ -2,13 +2,24 @@
 
 import { useState } from "react"
 import useSWR from "swr"
-import { Plus, Bot, MoreHorizontal, Pencil, Trash2, History } from "lucide-react"
+import { Plus, Bot, MoreHorizontal, Pencil, Trash2, History, Play } from "lucide-react"
+import Link from "next/link"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Skeleton } from "@/components/ui/skeleton"
 import { EmptyState } from "@/components/ui/empty-state"
 import { AnimatedText } from "@/components/ui/animated-text"
 import { BentoGrid, BentoCard } from "@/components/ui/bento-grid"
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "@/components/ui/alert-dialog"
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -28,10 +39,12 @@ export function AgentsDashboard() {
   const { data: agents = [], isLoading: loading, mutate } = useSWR<Agent[]>("/api/agents", fetcher)
   const [createDialogOpen, setCreateDialogOpen] = useState(false)
   const [editingAgent, setEditingAgent] = useState<Agent | null>(null)
+  const [deletingAgentId, setDeletingAgentId] = useState<string | null>(null)
 
   const handleDelete = async (id: string) => {
     await fetch(`/api/agents/${id}`, { method: "DELETE" })
     mutate()
+    setDeletingAgentId(null)
   }
 
   return (
@@ -106,31 +119,37 @@ export function AgentsDashboard() {
                         <p className="text-muted-foreground mt-0.5 text-xs">{agent.model}</p>
                       </div>
                     </div>
-                    <DropdownMenu>
-                      <DropdownMenuTrigger asChild>
-                        <Button
-                          variant="ghost"
-                          size="icon"
-                          className="opacity-0 transition-opacity group-hover:opacity-100"
-                          aria-label="Agent actions"
-                        >
-                          <MoreHorizontal className="h-4 w-4" />
-                        </Button>
-                      </DropdownMenuTrigger>
-                      <DropdownMenuContent align="end">
-                        <DropdownMenuItem onClick={() => setEditingAgent(agent)}>
-                          <Pencil className="mr-2 h-4 w-4" />
-                          Edit
-                        </DropdownMenuItem>
-                        <DropdownMenuItem
-                          onClick={() => handleDelete(agent.id)}
-                          className="text-destructive"
-                        >
-                          <Trash2 className="mr-2 h-4 w-4" />
-                          Delete
-                        </DropdownMenuItem>
-                      </DropdownMenuContent>
-                    </DropdownMenu>
+                    <div className="flex items-center gap-1 opacity-100 md:opacity-0 md:group-hover:opacity-100 transition-opacity duration-300">
+                      <Button variant="ghost" size="icon" asChild title="Run Agent">
+                        <Link href={`/runs?agentId=${agent.id}`}>
+                          <Play className="h-4 w-4" />
+                        </Link>
+                      </Button>
+                      <DropdownMenu>
+                        <DropdownMenuTrigger asChild>
+                          <Button
+                            variant="ghost"
+                            size="icon"
+                            aria-label="Agent actions"
+                          >
+                            <MoreHorizontal className="h-4 w-4" />
+                          </Button>
+                        </DropdownMenuTrigger>
+                        <DropdownMenuContent align="end">
+                          <DropdownMenuItem onClick={() => setEditingAgent(agent)}>
+                            <Pencil className="mr-2 h-4 w-4" />
+                            Edit
+                          </DropdownMenuItem>
+                          <DropdownMenuItem
+                            onClick={() => setDeletingAgentId(agent.id)}
+                            className="text-destructive focus:bg-destructive/10 focus:text-destructive"
+                          >
+                            <Trash2 className="mr-2 h-4 w-4" />
+                            Delete
+                          </DropdownMenuItem>
+                        </DropdownMenuContent>
+                      </DropdownMenu>
+                    </div>
                   </div>
                 </CardHeader>
                 <CardContent>
@@ -175,6 +194,26 @@ export function AgentsDashboard() {
           onUpdated={() => mutate()}
         />
       )}
+
+      <AlertDialog open={!!deletingAgentId} onOpenChange={(open) => !open && setDeletingAgentId(null)}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
+            <AlertDialogDescription>
+              This action cannot be undone. This will permanently delete your agent and remove its data from our servers.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>Cancel</AlertDialogCancel>
+            <AlertDialogAction
+              className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+              onClick={() => deletingAgentId && handleDelete(deletingAgentId)}
+            >
+              Delete Agent
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </div>
   )
 }
