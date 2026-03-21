@@ -12,8 +12,10 @@ export async function POST(request: Request, { params }: { params: Promise<{ id:
   try {
     const workflow = await addWorkflowNode(id, nodeData)
     const newNode = workflow.nodes[workflow.nodes.length - 1]
-    return NextResponse.json(newNode)
-  } catch (_err) {
-    return NextResponse.json({ error: "Failed to add node" }, { status: 400 })
+  } catch (err: unknown) {
+    const message = err instanceof Error ? err.message : "Database Error"
+    const status = message.includes("not found") ? 404 : 500
+    console.error("[Node Addition Error]:", message)
+    return NextResponse.json({ error: message }, { status })
   }
 }

@@ -1,11 +1,11 @@
 import { NextResponse } from "next/server"
-import { auth } from "@/auth"
+import { withWorkspace } from "@/lib/api/with-workspace"
 import { executionStore } from "@/lib/execution-store"
 
 export async function GET() {
-  const session = await auth()
-  if (!session) return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
+  const result = await withWorkspace()
+  if (result.error) return result.error
 
-  const executions = executionStore.getAllExecutions()
+  const executions = await executionStore.getAllExecutions(result.workspace.id)
   return NextResponse.json(executions)
 }
