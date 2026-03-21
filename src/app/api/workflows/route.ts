@@ -6,8 +6,12 @@ export async function GET() {
   const result = await withWorkspace()
   if (result.error) return result.error
 
-  const workflows = await getWorkflows(result.workspace.id)
-  return NextResponse.json(workflows)
+  try {
+    const workflows = await getWorkflows(result.workspace.id)
+    return NextResponse.json(workflows)
+  } catch (err: any) {
+    return NextResponse.json({ error: err.message }, { status: 500 })
+  }
 }
 
 export async function POST(request: Request) {
