@@ -2,13 +2,11 @@ import { getSupabaseServerClient } from "@/lib/supabase/server"
 import type { Workflow, WorkflowNode, Connection } from "@/lib/workflow-types"
 import { mapWorkflowRow, mapWorkflowRows, type WorkflowRow } from "./workflow-mapper"
 
-const globalForWorkflows = globalThis as unknown as { memoryWorkflows: Map<string, Workflow> }
-const memoryWorkflows = globalForWorkflows.memoryWorkflows || new Map<string, Workflow>()
-if (process.env.NODE_ENV !== "production") globalForWorkflows.memoryWorkflows = memoryWorkflows
+// Strict Supabase configuration enforced
 
 export async function getWorkflows(workspaceId: string): Promise<Workflow[]> {
   const supabase = await getSupabaseServerClient()
-  if (!supabase || workspaceId === "local-workspace") return Array.from(memoryWorkflows.values())
+  if (!supabase) throw new Error("Database connection is required.")
   const { data, error } = await supabase
     .from("workflows")
     .select("*")
@@ -21,7 +19,7 @@ export async function getWorkflows(workspaceId: string): Promise<Workflow[]> {
 
 export async function getWorkflow(id: string): Promise<Workflow | null> {
   const supabase = await getSupabaseServerClient()
-  if (!supabase) return memoryWorkflows.get(id) || null
+  if (!supabase) throw new Error("Database connection is required.")
   const { data, error } = await supabase.from("workflows").select("*").eq("id", id).single()
 
   if (error || !data) return null
@@ -33,21 +31,8 @@ export async function createWorkflow(
   workflow: Omit<Workflow, "id" | "version" | "createdAt" | "updatedAt">,
 ): Promise<Workflow> {
   const supabase = await getSupabaseServerClient()
-  if (!supabase || workspaceId === "local-workspace") {
-    const newWorkflow: Workflow = {
-      id: crypto.randomUUID(),
-      workspaceId,
-      name: workflow.name,
-      description: workflow.description,
-      nodes: workflow.nodes,
-      connections: workflow.connections,
-      version: 1,
-      createdAt: new Date(),
-      updatedAt: new Date(),
-    }
-    memoryWorkflows.set(newWorkflow.id, newWorkflow)
-    return newWorkflow
-  }
+  if (!supabase) throw new Error("Database connection is required to create a workflow.")
+
   const { data, error } = await supabase
     .from("workflows")
     .insert({
@@ -66,13 +51,8 @@ export async function createWorkflow(
 
 export async function updateWorkflow(id: string, updates: Partial<Workflow>): Promise<Workflow> {
   const supabase = await getSupabaseServerClient()
-  if (!supabase) {
-    const existing = memoryWorkflows.get(id)
-    if (!existing) return { id, ...updates } as Workflow
-    const updated = { ...existing, ...updates, updatedAt: new Date() }
-    memoryWorkflows.set(id, updated as Workflow)
-    return updated as Workflow
-  }
+  if (!supabase) throw new Error("Database connection is required to update a workflow.")
+
   const payload: Record<string, unknown> = {}
   if (updates.name !== undefined) payload.name = updates.name
   if (updates.description !== undefined) payload.description = updates.description
@@ -92,10 +72,8 @@ export async function updateWorkflow(id: string, updates: Partial<Workflow>): Pr
 
 export async function deleteWorkflow(id: string): Promise<boolean> {
   const supabase = await getSupabaseServerClient()
-  if (!supabase) {
-    memoryWorkflows.delete(id)
-    return true
-  }
+  if (!supabase) throw new Error("Database connection is required to delete a workflow.")
+
   const { error } = await supabase.from("workflows").delete().eq("id", id)
 
   return !error

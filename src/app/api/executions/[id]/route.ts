@@ -1,13 +1,13 @@
 import { type NextRequest, NextResponse } from "next/server"
-import { auth } from "@/auth"
+import { withWorkspace } from "@/lib/api/with-workspace"
 import { executionStore } from "@/lib/execution-store"
 
 export async function GET(request: NextRequest, { params }: { params: Promise<{ id: string }> }) {
-  const session = await auth()
-  if (!session) return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
+  const result = await withWorkspace()
+  if (result.error) return result.error
 
   const { id } = await params
-  const execution = executionStore.getExecution(id)
+  const execution = await executionStore.getExecution(id)
 
   if (!execution) {
     return NextResponse.json({ error: "Execution not found" }, { status: 404 })

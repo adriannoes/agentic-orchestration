@@ -19,11 +19,12 @@ export async function POST(request: NextRequest, { params }: { params: Promise<{
     }
 
     const executor = new WorkflowExecutor(workflow, input, (execution) => {
-      executionStore.updateExecution(execution.id, execution)
+      // Note: We don't await this fire-and-forget update to avoid blocking executor
+      executionStore.updateExecution(execution.id, execution).catch(console.error)
     })
 
     const execution = await executor.execute()
-    executionStore.addExecution(execution)
+    await executionStore.addExecution(result.workspace.id, execution)
 
     return NextResponse.json(execution)
   } catch (error) {
