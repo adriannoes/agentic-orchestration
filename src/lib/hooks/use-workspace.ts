@@ -11,11 +11,11 @@ const fetcher = async (url: string) => {
 }
 
 export function useWorkspace() {
-  const { data: workspace, isLoading: loading, error } = useSWR<Workspace | null>(
-    "/api/workspaces",
-    fetcher,
-    { revalidateOnFocus: false }
-  )
+  const {
+    data: workspace,
+    isLoading: loading,
+    error,
+  } = useSWR<Workspace | null>("/api/workspaces", fetcher, { revalidateOnFocus: false })
 
   return { workspace: workspace ?? null, loading, error }
 }

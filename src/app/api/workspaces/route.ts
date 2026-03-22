@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server"
-import { getCurrentWorkspace, getUserWorkspaces } from "@/lib/db/workspaces"
+import { getCurrentWorkspace } from "@/lib/db/workspaces"
 
 export const dynamic = "force-dynamic"
 
