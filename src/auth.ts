@@ -51,7 +51,7 @@ export const auth = (async () => {
   if (process.env.NODE_ENV === "development" || process.env.PLAYWRIGHT_E2E === "1") {
     return {
       user: {
-        id: "mock-user-id",
+        id: "00000000-0000-0000-0000-000000000001",
         name: "Dev User",
         email: "dev@example.com",
         username: "devuser",

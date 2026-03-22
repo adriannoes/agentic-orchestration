@@ -1,53 +1,21 @@
 "use client"
 
-import { useEffect, useState } from "react"
-import { getSupabaseBrowserClient } from "@/lib/supabase/client"
-import { AuthChangeEvent, Session } from "@supabase/supabase-js"
+import useSWR from "swr"
+import type { Workspace } from "@/lib/db/workspaces"
+
+const fetcher = async (url: string) => {
+  const res = await fetch(url)
+  if (res.status === 401) return null
+  if (!res.ok) throw new Error(await res.text())
+  return res.json()
+}
 
 export function useWorkspace() {
-  const [workspace, setWorkspace] = useState<any>(null)
-  const [loading, setLoading] = useState(true)
+  const { data: workspace, isLoading: loading, error } = useSWR<Workspace | null>(
+    "/api/workspaces",
+    fetcher,
+    { revalidateOnFocus: false }
+  )
 
-  useEffect(() => {
-    const supabase = getSupabaseBrowserClient()
-
-    async function loadWorkspace() {
-      const {
-        data: { user },
-      } = await supabase.auth.getUser()
-
-      if (!user) {
-        setLoading(false)
-        return
-      }
-
-      const { data } = await supabase
-        .from("workspace_members")
-        .select("workspace_id, workspaces(*)")
-        .eq("user_id", user.id)
-        .limit(1)
-        .single()
-
-      if (data) {
-        setWorkspace(data.workspaces)
-      }
-      setLoading(false)
-    }
-
-    loadWorkspace()
-
-    const {
-      data: { subscription },
-    } = supabase.auth.onAuthStateChange((event: AuthChangeEvent, _session: Session | null) => {
-      if (event === "SIGNED_IN") {
-        loadWorkspace()
-      } else if (event === "SIGNED_OUT") {
-        setWorkspace(null)
-      }
-    })
-
-    return () => subscription.unsubscribe()
-  }, [])
-
-  return { workspace, loading }
+  return { workspace: workspace ?? null, loading, error }
 }
