@@ -10,7 +10,10 @@ export interface WorkspaceWithRole extends Workspace {
   role: string
 }
 
-const LOCAL_WORKSPACE: Workspace = { id: "local-workspace", name: "Local Workspace" }
+const LOCAL_WORKSPACE: Workspace = {
+  id: "00000000-0000-0000-0000-000000000000",
+  name: "Local Workspace",
+}
 const LOCAL_WORKSPACE_WITH_ROLE: WorkspaceWithRole = { ...LOCAL_WORKSPACE, role: "admin" }
 
 export async function getCurrentWorkspace(): Promise<Workspace | null> {

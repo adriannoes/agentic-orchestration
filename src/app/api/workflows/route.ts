@@ -2,6 +2,8 @@ import { NextResponse } from "next/server"
 import { withWorkspace } from "@/lib/api/with-workspace"
 import { getWorkflows, createWorkflow } from "@/lib/db/workflows"
 
+export const dynamic = "force-dynamic"
+
 export async function GET() {
   const result = await withWorkspace()
   if (result.error) return result.error

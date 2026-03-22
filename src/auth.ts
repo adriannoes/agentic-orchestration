@@ -19,8 +19,9 @@ const config: NextAuthConfig = {
     jwt({ token, user, profile }) {
       if (user) {
         token.id = user.id
+        token.email = user.email
         if (profile && typeof profile === "object" && "login" in profile) {
-          token.username = profile.login
+          token.username = profile.login as string
         }
       }
       return token
@@ -31,6 +32,9 @@ const config: NextAuthConfig = {
       }
       if (typeof token.username === "string" && session.user) {
         ;(session.user as { username?: string }).username = token.username
+      }
+      if (typeof token.supabaseAccessToken === "string") {
+        ;(session as any).supabaseAccessToken = token.supabaseAccessToken
       }
       return session
     },

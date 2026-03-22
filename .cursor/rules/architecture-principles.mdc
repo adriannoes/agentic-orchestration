@@ -1,0 +1,35 @@
+---
+description: "SOLID/DRY principles and architecture guidance for this Next.js app"
+alwaysApply: false
+---
+
+# Architecture & Principles (SOLID/DRY)
+
+## Project structure
+
+- **Stack atual:** Next.js (App Router) + React 19 + TypeScript, com frontend em `src/` (não há backend Python dentro deste repositório).
+- **Camadas principais:** `src/app`, `src/components`, `src/lib`, `src/hooks`, `src/test`.
+- **Estado e dados:** usar Server Components como padrão; empurrar estado de UI para componentes client com `"use client"` apenas quando necessário.
+- **Serviços externos:** preferir wrappers em `src/lib` para integração com APIs e serviços (Supabase, etc.), com validação explícita de contratos.
+
+## Code Quality Standards
+
+### SOLID
+
+1. **Single Responsibility**: each module should have one reason to change.
+2. **Open/Closed**: extend behavior sem precisar reescrever fluxos estáveis.
+3. **Liskov Substitution**: componentes/serviços devem ser substituíveis por versões compatíveis.
+4. **Interface Segregation**: expor interfaces pequenas e específicas por consumidor.
+5. **Dependency Inversion**: depender de abstrações (`types`, `interfaces`, adapters`) em vez de acoplamento direto.
+
+### DRY
+
+- Se uma regra de negócio, transformação ou layout for reaproveitada 2+ vezes, extrair para utilitário, hook, componente ou service.
+- Evitar duplicar mapeamentos de tipos e schemas; centralizar em camadas de domínio.
+
+### Clean code
+
+- **Nomeação semântica:** variáveis, funções e componentes devem comunicar intenção.
+- **Funções pequenas:** cada função testa/aplica uma responsabilidade bem definida.
+- **Baixa aninhamento:** preferir `guard clauses` e extração de etapas.
+

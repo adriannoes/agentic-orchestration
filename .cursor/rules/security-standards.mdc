@@ -1,0 +1,39 @@
+---
+description: "Security standards for TypeScript code: secrets, validation, and access control."
+globs:
+  - "**/*.ts"
+  - "**/*.tsx"
+alwaysApply: true
+---
+
+# Security Standards
+
+## 1. Secrets Management
+- **NO Hardcoded Secrets**: Never commit API keys, tokens, or passwords.
+- **Detection**: Patterns like `sk-`, `ghp_`, `eyJ` (JWT) are strictly forbidden in code.
+- **Env Vars**: Use `process.env` with `.env` files and load only non-secret defaults for local dev.
+- **Access**: Treat `.env` as sensitive. Add to `.gitignore`.
+
+## 2. Input Validation (Zero Trust)
+- **Trust No Input**: unexpected JSON fields, query params, or headers.
+- **TypeScript/React**: Use **Zod** schema validation para formulários, actions e rotas de API.
+  ```ts
+  const schema = z.object({ email: z.string().email() });
+  ```
+
+## 3. Dependency Security
+- **Lock files**: manter `package-lock.json` atualizado e versionado.
+- **Revisão**: rodar `npm audit` antes de merges relevantes.
+
+## 4. Output Encoding
+- **No InnerHTML**: Avoid `dangerouslySetInnerHTML` in React unless sanitized (DOMPurify).
+- **Persistência e consultas**: evitar composição manual de consultas (strings); use APIs tipadas e parâmetros.
+
+## 5. Authentication & AuthZ
+- **Least Privilege**: aplicar escopo mínimo para integrações OAuth e chaves externas.
+- **Sessão**: não persistir tokens/secretos sensíveis em `localStorage`; usar cookies `httpOnly` quando aplicável.
+- **Requisições autenticadas**: validar sessão/claims no fluxo de cada rota/somente onde houver verificação de identidade.
+
+## 6. Transport Security
+- Prefira HTTPS/TLS em integrações e rotas externas em produção.
+- Em testes, nunca registrar tokens, cookies ou headers com credenciais.

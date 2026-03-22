@@ -98,6 +98,7 @@ function BuilderCanvasInner() {
   )
 
   const [workflowId, setWorkflowId] = useState<string | null>(null)
+  const [creationFailed, setCreationFailed] = useState(false)
 
   const {
     data: workflows,
@@ -111,7 +112,7 @@ function BuilderCanvasInner() {
   useEffect(() => {
     if (isLoadingWorkflows || isUnauthorized) return
     if (workflows && Array.isArray(workflows)) {
-      if (workflows.length === 0 && !workflowId) {
+      if (workflows.length === 0 && !workflowId && !creationFailed) {
         safeFetch("/api/workflows", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
@@ -122,21 +123,24 @@ function BuilderCanvasInner() {
             connections: [],
           }),
         })
-          .then((res) => (res.ok ? res.json() : null))
+          .then((res) => res.json())
           .then((created) => {
             if (created?.id) {
               setWorkflowId(created.id)
               mutate("/api/workflows")
+            } else {
+              setCreationFailed(true)
             }
           })
           .catch((err) => {
             console.error("Failed to default create workflow:", err)
+            setCreationFailed(true)
           })
       } else if (workflows.length > 0 && !workflowId) {
         setWorkflowId(workflows[0].id)
       }
     }
-  }, [workflows, isLoadingWorkflows, isUnauthorized, workflowId])
+  }, [workflows, isLoadingWorkflows, isUnauthorized, workflowId, creationFailed, safeFetch])
   /* eslint-enable react-hooks/set-state-in-effect */
 
   const { data: workflow, isLoading } = useSWR<Workflow | null>(
@@ -756,6 +760,20 @@ function BuilderCanvasInner() {
         </p>
         <Button onClick={() => mutate("/api/workflows")} variant="outline">
           Retry Connection
+        </Button>
+      </div>
+    )
+  }
+
+  if (workflows && workflows.length === 0 && creationFailed) {
+    return (
+      <div className="bg-background flex h-screen flex-col items-center justify-center gap-4">
+        <div className="text-muted-foreground text-lg font-semibold">No Workspaces Detected</div>
+        <p className="text-muted-foreground text-sm">
+          Please create a Project Workspace first via the main Dashboard.
+        </p>
+        <Button asChild variant="outline">
+          <Link href="/">Back to Dashboard</Link>
         </Button>
       </div>
     )

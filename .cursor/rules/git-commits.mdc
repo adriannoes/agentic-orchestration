@@ -1,0 +1,7 @@
+description: "Reference and apply the git commits skill for Conventional Commit formatting and pre-push checks."
+alwaysApply: true
+---
+
+# Git Commit Workflow
+
+Apply `.cursor/skills/git-commits/SKILL.md` when working with commit messages, staging/committing, or pre-push validation.

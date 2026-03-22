@@ -17,10 +17,12 @@ export async function getWorkflows(workspaceId: string): Promise<Workflow[]> {
   return mapWorkflowRows((data ?? []) as WorkflowRow[])
 }
 
-export async function getWorkflow(id: string): Promise<Workflow | null> {
+export async function getWorkflow(id: string, workspaceId?: string): Promise<Workflow | null> {
   const supabase = await getSupabaseServerClient()
   if (!supabase) throw new Error("Database connection is required.")
-  const { data, error } = await supabase.from("workflows").select("*").eq("id", id).single()
+  let query = supabase.from("workflows").select("*").eq("id", id)
+  if (workspaceId) query = query.eq("workspace_id", workspaceId)
+  const { data, error } = await query.single()
 
   if (error || !data) return null
   return mapWorkflowRow(data as WorkflowRow)
@@ -49,7 +51,11 @@ export async function createWorkflow(
   return mapWorkflowRow(data as WorkflowRow)
 }
 
-export async function updateWorkflow(id: string, updates: Partial<Workflow>): Promise<Workflow> {
+export async function updateWorkflow(
+  id: string,
+  updates: Partial<Workflow>,
+  workspaceId?: string,
+): Promise<Workflow> {
   const supabase = await getSupabaseServerClient()
   if (!supabase) throw new Error("Database connection is required to update a workflow.")
 
@@ -59,22 +65,27 @@ export async function updateWorkflow(id: string, updates: Partial<Workflow>): Pr
   if (updates.nodes !== undefined) payload.nodes = updates.nodes
   if (updates.connections !== undefined) payload.connections = updates.connections
 
-  const { data, error } = await supabase
-    .from("workflows")
-    .update(payload)
-    .eq("id", id)
-    .select()
-    .single()
+  let query = supabase.from("workflows").update(payload).eq("id", id)
+  if (workspaceId) {
+    query = query.eq("workspace_id", workspaceId)
+  }
+
+  const { data, error } = await query.select().single()
 
   if (error) throw error
   return mapWorkflowRow(data as WorkflowRow)
 }
 
-export async function deleteWorkflow(id: string): Promise<boolean> {
+export async function deleteWorkflow(id: string, workspaceId?: string): Promise<boolean> {
   const supabase = await getSupabaseServerClient()
   if (!supabase) throw new Error("Database connection is required to delete a workflow.")
 
-  const { error } = await supabase.from("workflows").delete().eq("id", id)
+  let query = supabase.from("workflows").delete().eq("id", id)
+  if (workspaceId) {
+    query = query.eq("workspace_id", workspaceId)
+  }
+
+  const { error } = await query
 
   return !error
 }
