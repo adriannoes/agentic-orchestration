@@ -168,6 +168,50 @@
     transform: scale(0.98);
   }
 
+  /* Hover-only-with-pointer: avoids sticky hover on touch (design-system-agent-builder §5.1) */
+  @media (hover: hover) {
+    .hover-shadow-sm-if-pointer:hover {
+      @apply shadow-sm;
+    }
+    .hover-border-primary-soft:hover {
+      border-color: color-mix(in oklch, var(--primary) 20%, transparent);
+    }
+    .hover-border-primary-medium:hover {
+      border-color: color-mix(in oklch, var(--primary) 40%, transparent);
+    }
+    .hover-border-primary-strong:hover {
+      border-color: color-mix(in oklch, var(--primary) 50%, transparent);
+    }
+    .group:hover .group-hover-border-primary-firm {
+      border-color: color-mix(in oklch, var(--primary) 60%, transparent);
+    }
+    .hover-bg-muted-soft:hover {
+      @apply bg-muted/50;
+    }
+    .hover-scale-105-if-pointer:hover {
+      transform: scale(1.05);
+    }
+    .hover-scale-110-if-pointer:hover {
+      transform: scale(1.1);
+    }
+    .group:hover .group-hover-scale-105-if-pointer {
+      transform: scale(1.05);
+    }
+    .group:hover .group-hover-scale-110-if-pointer {
+      transform: scale(1.1);
+    }
+    .group:hover .group-hover-opacity-100-if-pointer {
+      opacity: 1;
+    }
+  }
+
+  /* Desktop-only: reveal actions when parent card is hovered (pointer devices only) */
+  @media (min-width: 768px) and (hover: hover) {
+    .group:hover .md-group-hover-reveal-if-pointer {
+      opacity: 1;
+    }
+  }
+
   /* Smooth node dragging */
   .node-drag-active {
     transition: transform 0.1s cubic-bezier(0.4, 0, 0.2, 1);
