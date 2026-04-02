@@ -47,12 +47,12 @@ function JsonViewer({ data }: { data: unknown }) {
         title="Copy JSON"
       >
         {copied ? (
-          <CheckCircle2 className="h-3 w-3 text-emerald-500" />
+          <CheckCircle2 className="text-chart-2 h-3 w-3" />
         ) : (
           <Copy className="h-3 w-3" />
         )}
       </Button>
-      <pre className="bg-muted overflow-x-auto rounded p-2 text-xs text-indigo-900 dark:text-indigo-200">
+      <pre className="bg-muted text-foreground overflow-x-auto rounded p-2 text-xs">
         {jsonStr}
       </pre>
     </div>
@@ -96,15 +96,15 @@ export function ExecutionMonitor({
   const getLogIcon = (type: ExecutionLog["type"]) => {
     switch (type) {
       case "success":
-        return <CheckCircle2 className="h-4 w-4 text-emerald-500" />
+        return <CheckCircle2 className="text-chart-2 h-4 w-4" />
       case "error":
-        return <XCircle className="h-4 w-4 text-rose-500" />
+        return <XCircle className="text-destructive h-4 w-4" />
       case "info":
-        return <ChevronRight className="h-4 w-4 text-indigo-300" />
+        return <ChevronRight className="text-primary h-4 w-4" />
       case "tool-call":
-        return <Play className="h-4 w-4 text-violet-300" />
+        return <Play className="text-primary h-4 w-4" />
       case "tool-result":
-        return <CheckCircle2 className="h-4 w-4 text-indigo-300" />
+        return <CheckCircle2 className="text-primary h-4 w-4" />
     }
   }
 
@@ -112,14 +112,14 @@ export function ExecutionMonitor({
     switch (status) {
       case "running":
         return (
-          <div className="flex items-center gap-1.5 rounded border border-violet-500/20 bg-violet-500/10 px-2 py-1 text-xs font-medium text-violet-300">
+          <div className="border-primary/30 bg-primary/15 text-primary flex items-center gap-1.5 rounded border px-2 py-1 text-xs font-medium">
             <Loader2 className="h-3 w-3 animate-spin" />
             Running
           </div>
         )
       case "completed":
         return (
-          <div className="flex items-center gap-1.5 rounded border border-indigo-500/20 bg-indigo-500/10 px-2 py-1 text-xs font-medium text-indigo-300">
+          <div className="border-primary/20 bg-primary/10 text-primary flex items-center gap-1.5 rounded border px-2 py-1 text-xs font-medium">
             <CheckCircle2 className="h-3 w-3" />
             Completed
           </div>
@@ -133,7 +133,7 @@ export function ExecutionMonitor({
         )
       case "paused":
         return (
-          <div className="flex items-center gap-1.5 rounded border border-violet-500/20 bg-violet-500/10 px-2 py-1 text-xs font-medium text-violet-300">
+          <div className="border-primary/30 bg-primary/15 text-primary flex items-center gap-1.5 rounded border px-2 py-1 text-xs font-medium">
             <Pause className="h-3 w-3" />
             Paused
           </div>

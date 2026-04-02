@@ -106,20 +106,20 @@ export function AgentsDashboard() {
             {agents.map((agent) => (
               <Card
                 key={agent.id}
-                className="group border-border/80 hover:border-primary/20 hover-lift transition-all duration-300"
+                className="group border-border/80 hover-border-primary-soft hover-lift transition-all duration-300"
               >
                 <CardHeader className="pb-3">
                   <div className="flex items-start justify-between">
                     <div className="flex items-center gap-3">
-                      <div className="flex h-10 w-10 items-center justify-center rounded-lg border border-indigo-500/20 bg-indigo-500/10">
-                        <Bot className="h-5 w-5 text-indigo-300" />
+                      <div className="border-primary/20 bg-primary/10 flex h-10 w-10 items-center justify-center rounded-lg border">
+                        <Bot className="text-primary h-5 w-5" />
                       </div>
                       <div>
                         <CardTitle className="text-lg">{agent.name}</CardTitle>
                         <p className="text-muted-foreground mt-0.5 text-xs">{agent.model}</p>
                       </div>
                     </div>
-                    <div className="flex items-center gap-1 opacity-100 transition-opacity duration-300 md:opacity-0 md:group-hover:opacity-100">
+                    <div className="flex items-center gap-1 opacity-100 transition-opacity duration-300 md:opacity-0 md-group-hover-reveal-if-pointer">
                       <Button variant="ghost" size="icon" asChild title="Run Agent">
                         <Link href={`/runs?agentId=${agent.id}`}>
                           <Play className="h-4 w-4" />

@@ -121,7 +121,7 @@ function RenderTrigger({ isVisible }: RenderTriggerProps) {
 }
 
 const WEBGL_FALLBACK_CLASS =
-  "absolute inset-0 bg-gradient-to-br from-zinc-950 via-indigo-950/20 to-zinc-950"
+  "absolute inset-0 bg-gradient-to-br from-background via-primary/10 to-background"
 
 interface WebGLErrorBoundaryState {
   hasError: boolean

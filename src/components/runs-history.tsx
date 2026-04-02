@@ -131,19 +131,19 @@ export function RunsHistory() {
   const getStatusIcon = (status: Run["status"]) => {
     switch (status) {
       case "completed":
-        return <CheckCircle2 className="h-4 w-4 text-green-500" />
+        return <CheckCircle2 className="text-chart-2 h-4 w-4" />
       case "failed":
-        return <XCircle className="h-4 w-4 text-red-500" />
+        return <XCircle className="text-destructive h-4 w-4" />
       case "running":
-        return <Loader2 className="h-4 w-4 animate-spin text-blue-500" />
+        return <Loader2 className="text-primary h-4 w-4 animate-spin" />
     }
   }
 
   const getStatusBadge = (status: Run["status"]) => {
     const variants: Record<Run["status"], string> = {
-      completed: "border-indigo-500/20 bg-indigo-500/10 text-indigo-300",
+      completed: "border-primary/20 bg-primary/10 text-primary",
       failed: "border-destructive/20 bg-destructive/10 text-destructive",
-      running: "border-violet-500/20 bg-violet-500/10 text-violet-300",
+      running: "border-primary/30 bg-primary/15 text-primary",
     }
     return variants[status]
   }
@@ -193,7 +193,7 @@ export function RunsHistory() {
           {filteredRuns.map((run) => (
             <Card
               key={run.id}
-              className="hover:border-primary/50 hover:bg-muted/50 cursor-pointer transition-colors"
+              className="hover-border-primary-strong hover-bg-muted-soft cursor-pointer transition-colors"
               onClick={() => setSelectedRun(run)}
             >
               <CardContent className="p-4">

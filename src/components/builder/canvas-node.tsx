@@ -40,57 +40,57 @@ const NODE_COLORS: Record<NodeType, { bg: string; iconBg: string; border: string
   {
     start: {
       bg: "bg-card/95",
-      iconBg: "bg-indigo-500/10",
+      iconBg: "bg-primary/10",
       border: "border-border/80",
-      icon: "text-indigo-300",
+      icon: "text-primary",
     },
     end: {
       bg: "bg-card/95",
-      iconBg: "bg-violet-500/10",
+      iconBg: "bg-primary/15",
       border: "border-border/80",
-      icon: "text-violet-300",
+      icon: "text-primary",
     },
     agent: {
       bg: "bg-card/95",
-      iconBg: "bg-indigo-400/15",
+      iconBg: "bg-primary/15",
       border: "border-border/80",
-      icon: "text-indigo-200",
+      icon: "text-primary",
     },
     guardrail: {
       bg: "bg-card/95",
-      iconBg: "bg-zinc-500/10",
+      iconBg: "bg-muted/50",
       border: "border-border/80",
-      icon: "text-zinc-300",
+      icon: "text-muted-foreground",
     },
     condition: {
       bg: "bg-card/95",
-      iconBg: "bg-violet-500/10",
+      iconBg: "bg-primary/15",
       border: "border-border/80",
-      icon: "text-violet-300",
+      icon: "text-primary",
     },
     mcp: {
       bg: "bg-card/95",
-      iconBg: "bg-violet-400/15",
+      iconBg: "bg-primary/15",
       border: "border-border/80",
-      icon: "text-violet-200",
+      icon: "text-primary",
     },
     "user-approval": {
       bg: "bg-card/95",
-      iconBg: "bg-zinc-500/10",
+      iconBg: "bg-muted/50",
       border: "border-border/80",
-      icon: "text-zinc-300",
+      icon: "text-muted-foreground",
     },
     "file-search": {
       bg: "bg-card/95",
-      iconBg: "bg-indigo-400/15",
+      iconBg: "bg-primary/15",
       border: "border-border/80",
-      icon: "text-indigo-200",
+      icon: "text-primary",
     },
     frame: {
       bg: "bg-card/95",
-      iconBg: "bg-zinc-500/10",
+      iconBg: "bg-muted/50",
       border: "border-border/80",
-      icon: "text-zinc-300",
+      icon: "text-muted-foreground",
     },
   }
 
@@ -122,7 +122,7 @@ export function CanvasNode({ data, selected, type: nodeTypeProp }: WorkflowNodeP
         "border",
         colors.bg,
         colors.border,
-        "hover:border-primary/40",
+        "hover-border-primary-medium",
         selected ? "ring-primary/40 z-10 ring-2" : "",
         isHighlighted && "ring-primary/60 ring-2",
         "cursor-grab active:cursor-grabbing",
@@ -149,7 +149,7 @@ export function CanvasNode({ data, selected, type: nodeTypeProp }: WorkflowNodeP
               "relative flex-shrink-0 rounded-xl p-2.5 transition-all duration-500 ease-out",
               colors.iconBg,
               "ring-border/80 ring-1 ring-inset",
-              selected ? "scale-105" : "group-hover:scale-105",
+              selected ? "scale-105" : "group-hover-scale-105-if-pointer",
             )}
           >
             {Icon && (
@@ -157,7 +157,7 @@ export function CanvasNode({ data, selected, type: nodeTypeProp }: WorkflowNodeP
                 className={cn(
                   "h-5 w-5 transition-transform duration-500",
                   colors.icon,
-                  selected ? "scale-110" : "group-hover:scale-110",
+                  selected ? "scale-110" : "group-hover-scale-110-if-pointer",
                 )}
               />
             )}
@@ -184,7 +184,7 @@ export function CanvasNode({ data, selected, type: nodeTypeProp }: WorkflowNodeP
               <Button
                 variant="ghost"
                 size="icon"
-                className="nodrag nopan border-border/80 bg-background/80 text-muted-foreground hover:border-destructive hover:bg-destructive/80 h-7 w-7 rounded-full border transition-all duration-200 hover:scale-105 hover:text-white"
+                className="nodrag nopan border-border/80 bg-background/80 text-muted-foreground hover:border-destructive hover:bg-destructive/80 h-7 w-7 rounded-md border transition-all duration-200 hover-scale-105-if-pointer hover:text-white"
                 onClick={(e) => {
                   e.stopPropagation()
                   handleDelete()
@@ -200,11 +200,11 @@ export function CanvasNode({ data, selected, type: nodeTypeProp }: WorkflowNodeP
 
         {nodeType === "agent" && data?.model && (
           <div className="mt-4 flex items-center gap-2 pt-1">
-            <span className="rounded-full border border-indigo-500/20 bg-indigo-500/10 px-2.5 py-1 text-[11px] font-medium text-indigo-300">
+            <span className="border-primary/20 bg-primary/10 text-primary rounded-md border px-2.5 py-1 text-[11px] font-medium">
               {data.model}
             </span>
             {data.tools && data.tools.length > 0 && (
-              <span className="border-border/80 bg-muted/30 text-muted-foreground/80 rounded-full border px-2.5 py-1 text-[11px] font-medium">
+              <span className="border-border/80 bg-muted/30 text-muted-foreground/80 rounded-md border px-2.5 py-1 text-[11px] font-medium">
                 {data.tools.length} tool{data.tools.length !== 1 ? "s" : ""}
               </span>
             )}
@@ -213,7 +213,7 @@ export function CanvasNode({ data, selected, type: nodeTypeProp }: WorkflowNodeP
 
         {nodeType === "guardrail" && data?.guardrailType && (
           <div className="mt-4 pt-1">
-            <span className="inline-block rounded-full border border-zinc-500/20 bg-zinc-500/10 px-2.5 py-1 text-[11px] font-medium text-zinc-300">
+            <span className="border-border bg-muted/40 text-muted-foreground inline-block rounded-md border px-2.5 py-1 text-[11px] font-medium">
               {data.guardrailType}
             </span>
           </div>

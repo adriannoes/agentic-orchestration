@@ -107,44 +107,44 @@ const NODE_CATEGORIES = [
 
 const COLOR_CLASSES: Record<string, { bg: string; icon: string; border: string }> = {
   emerald: {
-    bg: "bg-indigo-500/10",
-    icon: "text-indigo-300",
-    border: "border-indigo-500/20",
+    bg: "bg-primary/10",
+    icon: "text-primary",
+    border: "border-primary/20",
   },
   rose: {
-    bg: "bg-violet-500/10",
-    icon: "text-violet-300",
-    border: "border-violet-500/20",
+    bg: "bg-primary/15",
+    icon: "text-primary",
+    border: "border-primary/25",
   },
   blue: {
-    bg: "bg-indigo-400/15",
-    icon: "text-indigo-200",
-    border: "border-indigo-400/20",
+    bg: "bg-primary/15",
+    icon: "text-primary",
+    border: "border-primary/25",
   },
   purple: {
-    bg: "bg-violet-500/10",
-    icon: "text-violet-300",
-    border: "border-violet-500/20",
+    bg: "bg-primary/15",
+    icon: "text-primary",
+    border: "border-primary/25",
   },
   amber: {
-    bg: "bg-zinc-500/10",
-    icon: "text-zinc-300",
-    border: "border-zinc-500/20",
+    bg: "bg-muted/50",
+    icon: "text-muted-foreground",
+    border: "border-border",
   },
   orange: {
-    bg: "bg-zinc-500/10",
-    icon: "text-zinc-300",
-    border: "border-zinc-500/20",
+    bg: "bg-muted/50",
+    icon: "text-muted-foreground",
+    border: "border-border",
   },
   cyan: {
-    bg: "bg-violet-400/15",
-    icon: "text-violet-200",
-    border: "border-violet-400/20",
+    bg: "bg-primary/15",
+    icon: "text-primary",
+    border: "border-primary/25",
   },
   teal: {
-    bg: "bg-indigo-400/15",
-    icon: "text-indigo-200",
-    border: "border-indigo-400/20",
+    bg: "bg-primary/15",
+    icon: "text-primary",
+    border: "border-primary/25",
   },
 }
 
@@ -173,8 +173,8 @@ export function NodeSidebar({ isOpen, onToggle, onAddNode }: NodeSidebarProps) {
         variant="outline"
         size="icon"
         className={cn(
-          "border-border/80 bg-card text-muted-foreground absolute top-4 -right-4 z-50 h-8 w-8 rounded-full border",
-          "hover:text-foreground transition-all duration-300 hover:scale-110",
+          "border-border/80 bg-card text-muted-foreground absolute top-4 -right-4 z-50 h-8 w-8 rounded-md border",
+          "hover:text-foreground transition-all duration-300 hover-scale-110-if-pointer",
         )}
         onClick={onToggle}
         aria-label={isOpen ? "Close node sidebar" : "Open node sidebar"}

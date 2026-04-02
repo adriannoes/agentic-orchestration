@@ -34,11 +34,11 @@ const categoryIcons: Record<string, LucideIcon> = {
 }
 
 const categoryColors: Record<string, string> = {
-  "customer-support": "text-indigo-300 bg-indigo-500/10 border border-indigo-500/20",
-  "data-analysis": "text-violet-300 bg-violet-500/10 border border-violet-500/20",
-  "content-creation": "text-zinc-200 bg-zinc-500/10 border border-zinc-500/20",
-  automation: "text-indigo-300 bg-indigo-500/10 border border-indigo-500/20",
-  research: "text-violet-300 bg-violet-500/10 border border-violet-500/20",
+  "customer-support": "border border-primary/20 bg-primary/10 text-primary",
+  "data-analysis": "border border-primary/30 bg-primary/15 text-primary",
+  "content-creation": "border border-border bg-muted/50 text-muted-foreground",
+  automation: "border border-primary/20 bg-primary/10 text-primary",
+  research: "border border-primary/30 bg-primary/15 text-primary",
 }
 
 export function TemplatesLibrary() {
@@ -155,7 +155,7 @@ export function TemplatesLibrary() {
                 return (
                   <div
                     key={template.id}
-                    className="group border-border/80 bg-card hover:border-primary/40 hover-lift rounded-xl border p-6 transition-all duration-300"
+                    className="group border-border/80 bg-card hover-border-primary-medium hover-lift rounded-xl border p-6 transition-all duration-300"
                   >
                     <div className="mb-4 flex items-start justify-between">
                       <div className={cn("rounded-lg p-3", categoryColors[template.category])}>
@@ -177,7 +177,7 @@ export function TemplatesLibrary() {
                       ))}
                     </div>
                     <Button
-                      className="group-hover:border-primary/60 w-full bg-transparent"
+                      className="group-hover-border-primary-firm w-full bg-transparent"
                       variant="outline"
                       onClick={() => handleUseTemplate(template.id, template.name)}
                     >
@@ -215,7 +215,7 @@ export function TemplatesLibrary() {
                 return (
                   <div
                     key={template.id}
-                    className="group border-border/80 bg-card hover:border-primary/40 hover-lift rounded-xl border p-6 transition-all duration-300"
+                    className="group border-border/80 bg-card hover-border-primary-medium hover-lift rounded-xl border p-6 transition-all duration-300"
                   >
                     <div className="mb-4 flex items-start justify-between">
                       <div className={cn("rounded-lg p-3", categoryColors[template.category])}>

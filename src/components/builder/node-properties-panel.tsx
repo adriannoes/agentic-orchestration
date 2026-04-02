@@ -105,8 +105,8 @@ export function NodePropertiesPanel({
         variant="outline"
         size="icon"
         className={cn(
-          "border-border/80 bg-card text-muted-foreground absolute top-4 -left-4 z-50 h-8 w-8 rounded-full border",
-          "hover:text-foreground transition-all duration-300 hover:scale-110",
+          "border-border/80 bg-card text-muted-foreground absolute top-4 -left-4 z-50 h-8 w-8 rounded-md border",
+          "hover:text-foreground transition-all duration-300 hover-scale-110-if-pointer",
         )}
         onClick={onToggle}
         aria-label={isOpen ? "Close properties panel" : "Open properties panel"}
@@ -310,7 +310,7 @@ export function NodePropertiesPanel({
             </>
           ) : (
             <div className="flex flex-1 flex-col items-center justify-center p-6 text-center">
-              <div className="border-border/80 bg-muted/30 mb-4 rounded-full border p-4">
+              <div className="border-border/80 bg-muted/30 mb-4 rounded-xl border p-4">
                 <Settings2 className="text-muted-foreground/40 h-8 w-8" />
               </div>
               <h3 className="text-foreground mb-1 font-medium tracking-tight">No Node Selected</h3>

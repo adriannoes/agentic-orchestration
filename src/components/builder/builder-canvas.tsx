@@ -805,12 +805,12 @@ function BuilderCanvasInner() {
               <h1 className="truncate text-sm font-semibold tracking-tight">
                 {workflow?.name || "Untitled Workflow"}
               </h1>
-              <span className="border-border/80 bg-muted/40 text-muted-foreground rounded-full border px-2 py-0.5 text-[10px] font-medium">
+              <span className="border-border/80 bg-muted/40 text-muted-foreground rounded-md border px-2 py-0.5 text-[10px] font-medium">
                 v{workflow?.version || 1}
               </span>
             </div>
 
-            <div className="border-border/80 bg-background/70 ml-auto flex max-w-full items-center gap-1.5 overflow-x-auto rounded-full border p-1">
+            <div className="border-border/80 bg-background/70 ml-auto flex max-w-full items-center gap-1.5 overflow-x-auto rounded-xl border p-1">
               <ExportImportDialog
                 workflowId={workflowId}
                 onImportSuccess={(newWorkflow) => {
@@ -827,7 +827,7 @@ function BuilderCanvasInner() {
               <Button
                 variant="ghost"
                 size="icon"
-                className="hover:bg-accent h-8 w-8 rounded-full"
+                className="hover:bg-accent h-8 w-8 rounded-md"
                 onClick={handleUndo}
                 disabled={!historyStatus?.canUndo}
                 aria-label="Undo"
@@ -838,7 +838,7 @@ function BuilderCanvasInner() {
               <Button
                 variant="ghost"
                 size="icon"
-                className="hover:bg-accent h-8 w-8 rounded-full"
+                className="hover:bg-accent h-8 w-8 rounded-md"
                 onClick={handleRedo}
                 disabled={!historyStatus?.canRedo}
                 aria-label="Redo"
@@ -850,7 +850,7 @@ function BuilderCanvasInner() {
               <Button
                 variant="ghost"
                 size="icon"
-                className="hover:bg-accent h-8 w-8 rounded-full"
+                className="hover:bg-accent h-8 w-8 rounded-md"
                 onClick={handleAutoLayout}
                 title="Auto Layout"
                 aria-label="Auto Layout"
@@ -860,7 +860,7 @@ function BuilderCanvasInner() {
               <Button
                 variant="ghost"
                 size="icon"
-                className="hover:bg-accent h-8 w-8 rounded-full"
+                className="hover:bg-accent h-8 w-8 rounded-md"
                 onClick={handleZoomOut}
                 aria-label="Zoom out"
                 title="Zoom out"
@@ -876,7 +876,7 @@ function BuilderCanvasInner() {
               <Button
                 variant="ghost"
                 size="icon"
-                className="hover:bg-accent h-8 w-8 rounded-full"
+                className="hover:bg-accent h-8 w-8 rounded-md"
                 onClick={handleZoomIn}
                 aria-label="Zoom in"
                 title="Zoom in"
@@ -886,7 +886,7 @@ function BuilderCanvasInner() {
               <Button
                 variant="ghost"
                 size="icon"
-                className="hover:bg-accent h-8 w-8 rounded-full"
+                className="hover:bg-accent h-8 w-8 rounded-md"
                 onClick={handleResetView}
                 aria-label="Fit view"
                 title="Fit view"
@@ -897,7 +897,7 @@ function BuilderCanvasInner() {
               <Button
                 variant="ghost"
                 size="icon"
-                className="hover:bg-accent h-8 w-8 rounded-full"
+                className="hover:bg-accent h-8 w-8 rounded-md"
                 onClick={() => setShowVersionHistory(!showVersionHistory)}
                 aria-label="Version history"
                 title="Version history"
@@ -907,13 +907,13 @@ function BuilderCanvasInner() {
               <Button
                 variant="outline"
                 size="sm"
-                className="ml-1 h-8 gap-2 rounded-full border-indigo-500/20 bg-indigo-500/10 text-indigo-300 hover:bg-indigo-500/20"
+                className="border-primary/20 bg-primary/10 text-primary hover:bg-primary/20 ml-1 h-8 gap-2 rounded-md"
                 onClick={() => setShowExecutionMonitor(!showExecutionMonitor)}
               >
                 <Play className="h-3.5 w-3.5" />
                 {showExecutionMonitor ? "Close" : "Run"}
               </Button>
-              <Button size="sm" className="h-8 gap-2 rounded-full" onClick={handleSaveVersion}>
+              <Button size="sm" className="h-8 gap-2 rounded-md" onClick={handleSaveVersion}>
                 <Save className="h-3.5 w-3.5" />
                 Save
               </Button>

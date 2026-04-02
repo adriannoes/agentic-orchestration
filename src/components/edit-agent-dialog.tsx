@@ -159,7 +159,7 @@ export function EditAgentDialog({ agent, open, onOpenChange, onUpdated }: EditAg
               {tools.map((tool) => (
                 <div
                   key={tool.id}
-                  className="border-border hover:border-primary/50 flex cursor-pointer items-start space-x-3 rounded-lg border p-3 transition-colors"
+                  className="border-border hover-border-primary-strong flex cursor-pointer items-start space-x-3 rounded-lg border p-3 transition-colors"
                   onClick={() => toggleTool(tool.id)}
                 >
                   <Checkbox

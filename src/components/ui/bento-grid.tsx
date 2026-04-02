@@ -32,7 +32,7 @@ const BentoCard = forwardRef<HTMLDivElement, BentoCardProps>(
       ref={ref}
       data-slot="bento-card"
       className={cn(
-        "group border-border bg-card hover-lift relative overflow-hidden rounded-xl border p-6 transition-all duration-300 hover:shadow-sm",
+        "group border-border bg-card hover-lift hover-shadow-sm-if-pointer relative overflow-hidden rounded-xl border p-6 transition-all duration-300",
         className,
       )}
     >
@@ -40,7 +40,7 @@ const BentoCard = forwardRef<HTMLDivElement, BentoCardProps>(
       <div
         data-slot="bento-card-radial"
         aria-hidden
-        className="absolute inset-0 opacity-0 transition-opacity duration-500 group-hover:opacity-100"
+        className="group-hover-opacity-100-if-pointer absolute inset-0 opacity-0 transition-opacity duration-500"
         style={{
           backgroundImage:
             "radial-gradient(circle, oklch(var(--foreground) / 0.04) 1px, transparent 1px)",
@@ -50,7 +50,7 @@ const BentoCard = forwardRef<HTMLDivElement, BentoCardProps>(
       {/* Gleam border overlay */}
       <div
         aria-hidden
-        className="via-muted absolute inset-0 bg-gradient-to-br from-transparent to-transparent opacity-0 transition-opacity duration-500 group-hover:opacity-100"
+        className="via-muted group-hover-opacity-100-if-pointer absolute inset-0 bg-gradient-to-br from-transparent to-transparent opacity-0 transition-opacity duration-500"
       />
       <div className="relative">
         <div className="bg-muted mb-3 w-fit rounded-lg p-2">

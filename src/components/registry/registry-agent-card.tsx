@@ -19,7 +19,7 @@ export function RegistryAgentCard({ agent, onViewDetails }: RegistryAgentCardPro
   const extraTagCount = (agent.tags?.length ?? 0) - 3
 
   return (
-    <Card className="border-border/80 hover:border-primary/20 hover-lift flex flex-col transition-all duration-300 dark:border-white/10">
+    <Card className="border-border/80 hover-border-primary-soft hover-lift flex flex-col transition-all duration-300 dark:border-white/10">
       <CardHeader className="pb-3">
         <div className="flex items-center justify-between">
           <CardTitle className="text-base font-semibold">{agent.name}</CardTitle>

@@ -20,10 +20,10 @@ const categoryIcons: Record<string, ReactNode> = {
 }
 
 const categoryColors: Record<string, string> = {
-  web: "border border-indigo-500/20 bg-indigo-500/10 text-indigo-300",
-  data: "border border-zinc-500/20 bg-zinc-500/10 text-zinc-300",
-  code: "border border-violet-500/20 bg-violet-500/10 text-violet-300",
-  utility: "border border-indigo-500/20 bg-indigo-500/10 text-indigo-300",
+  web: "border border-primary/20 bg-primary/10 text-primary",
+  data: "border border-border bg-muted/40 text-muted-foreground",
+  code: "border border-primary/30 bg-primary/15 text-primary",
+  utility: "border border-primary/20 bg-primary/10 text-primary",
 }
 
 export function ToolsLibrary() {
@@ -81,7 +81,7 @@ export function ToolsLibrary() {
                   .map((tool) => (
                     <Card
                       key={tool.id}
-                      className="border-border/80 hover:border-primary/20 hover-lift transition-all duration-300"
+                      className="border-border/80 hover-border-primary-soft hover-lift transition-all duration-300"
                     >
                       <CardHeader className="pb-3">
                         <div className="flex items-start justify-between">
